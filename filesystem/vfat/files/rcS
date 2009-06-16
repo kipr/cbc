@@ -1,0 +1,68 @@
+#!/bin/sh
+
+PRINT=/psp/rfs1/fb_print
+chmod +x /psp/rfs1/fb_print
+
+export LD_LIBRARY_PATH=/lib
+
+echo "Starting udevd as daemon"
+/sbin/udevd --daemon
+
+# wait for USB subsystem to finish loading
+/usr/chumby/scripts/wait_for_usb
+
+echo "CBC Internal Boot Script" | $PRINT
+
+mkdir -p /mnt/usb
+
+internal=""
+upgrade=""
+maybe_internal=""
+
+for i in /sys/block/sd*; do
+  dev=`echo $i | sed 's/\/sys\/block\///'`;
+  mount /dev/${dev}1 /mnt/usb -t vfat -o ro
+  
+  if [ -e /mnt/usb/userhook0 ]; then
+    type=`/mnt/usb/userhook0 --type`
+    
+    if [ "${type}" == "Upgrade" ]; then
+      upgrade=${dev}
+    elif [ "${type}" == "Firmware" ]; then
+      internal=${dev}
+    else
+      maybe_internal=${dev}
+    fi
+  else
+    maybe_internal=${dev}
+  fi
+
+  umount /mnt/usb
+done
+
+if [ -z "${internal}" -a -n "${maybe_internal}" ]; then
+  internal=${maybe_internal}
+fi
+
+if [ -z "${internal}" ]; then
+  echo "Could not find any internal drives!" | $PRINT
+  exit 1
+fi
+
+if [ -z "${upgrade}" ]; then
+  mount /dev/${internal}1 /mnt/usb -t vfat -o ro
+  
+  if [ -e /mnt/usb/userhook0 ]; then
+    . /mnt/usb/userhook0 ${internal}
+    exit 0
+  else
+    echo "Could not find boot script!" | $PRINT
+    exit 1
+  fi
+fi
+
+mount /dev/${upgrade}1 /mnt/usb -t vfat
+
+/mnt/usb/userhook0 --upgrade ${internal} &
+exit 0
+

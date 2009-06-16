@@ -1,0 +1,11 @@
+#!/bin/bash
+
+PRINT="/mnt/usb/fb_print --skiptop 50"
+PROG=/mnt/user/code/robot
+
+if killall robot; then
+  echo "" | $PRINT
+  echo "robot.c stopped" | $PRINT
+else
+  echo "No program running" | $PRINT
+fi

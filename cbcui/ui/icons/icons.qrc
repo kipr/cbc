@@ -1,0 +1,24 @@
+<RCC>
+  <qresource prefix="actions" >
+    <file>ZeroOn.png</file>
+    <file>ZeroOff.png</file>
+    <file>TwoOn.png</file>
+    <file>TwoOff.png</file>
+    <file>TrkOn.png</file>
+    <file>TrkOff.png</file>
+    <file>TLOn.png</file>
+    <file>TLOff.png</file>
+    <file>ThreeOn.png</file>
+    <file>ThreeOff.png</file>
+    <file>RawOn.png</file>
+    <file>RawOff.png</file>
+    <file>OneOn.png</file>
+    <file>OneOff.png</file>
+    <file>MatOn.png</file>
+    <file>MatOff.png</file>
+    <file>BROn.png</file>
+    <file>BROff.png</file>
+    <file>Crystal_Clear_action_exit.png</file>
+    <file>Crystal_Clear_action_button_cancel.png</file>
+  </qresource>
+</RCC>

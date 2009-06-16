@@ -1,0 +1,13 @@
+#!/bin/bash
+
+PRINT="/mnt/usb/fb_print --skiptop 50"
+PROG=/mnt/user/code/robot
+echo "" | $PRINT
+
+if [ -e $PROG ]; then
+  echo "Running robot.c" | $PRINT
+  ($PROG 2>&1 | $PRINT) &
+else
+  echo "No program to run" | $PRINT
+fi
+

@@ -1,0 +1,12 @@
+all: module
+
+module:
+	make ARCH=arm BOARD=mx21ads CROSS_COMPILE=arm-linux- -C ../linux-2.6.16-chumby-1.6.0 SUBDIRS=$(CURDIR) modules
+
+install: module
+	scp microdia.ko root@${CHUMBYHOST}:/mnt/usb/microdia.ko
+
+clean:
+	rm -f microdia.ko *.o .*.cmd
+	rm -rf .tmp_versions
+

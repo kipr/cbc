@@ -1,0 +1,5 @@
+This directory has two shared memory implementations:
+SharedMem:  C++
+shared_mem:  C
+Look at TestServer.cpp and TestClient.cpp for how to use the C++ library
+and test_server.c / test_client.c for how to use the C library

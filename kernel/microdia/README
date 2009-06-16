@@ -1,0 +1,170 @@
+Microdia USB 2.0 Webcam Driver
+==============================
+
+This Driver is essentially a fork of the Syntek Webcam drivers for Linux
+by Nicolas Vivien, specifically to accomodate SN9C20x chipset based Webcams.
+
+The driver currently supports the latest version of Video For Linux i.e
+V4L2. V4L1 is deprecated, and applications like Camorama that use only V4L1 will
+no longer work.
+
+This driver currently supports Skype v2.x, Ekiga v2.x & even aMSN
+
+Warning :
+The Microdia USB 2.0 Webcam Driver for SN9C20x chipset based Webcams is
+currently under development. Using this driver can result in damage.
+Use this driver only if you know what you are doing.
+--------------------------------------------------------------------------------
+
+Table of contents :
+
+1. Requirements
+ 1.1 Kernel module
+ 1.2 Documentation
+
+2. Available Packages
+
+3. Compilation
+ 3.1 Kernel module
+ 3.2 Documentation
+
+4. Testing
+
+5. Installation
+
+6. Usage
+
+7. Status of project
+
+8. Documentation & References
+
+9. Contact
+
+10. Licence
+
+11. Disclaimer
+
+--------------------------------------------------------------------------------
+
+1. Requirements
+
+ 1.1 Kernel module
+
+   To compile the driver you need :
+     Kernel 2.6.18 or higher
+     Kernel headers
+     make
+     gcc
+
+ 1.2 Documentation
+
+   To compile the documentation you need :
+     doxygen
+     graphviz
+
+--------------------------------------------------------------------------------
+
+2. Available Packages
+
+  There are packages for various distributions available here:
+    http://repo.or.cz/w/pkgmicrodia.git
+
+--------------------------------------------------------------------------------
+
+3. Compilation
+
+ 3.1 Kernel module
+
+   To build the kernel module ("driver") :
+     $ make
+     (This will create the kernel object file called "microdia.ko".)
+
+ 3.2 Documentation
+
+   To build the documentation :
+     $ make doc
+     $ make cleandoc
+
+--------------------------------------------------------------------------------
+
+4. Testing
+
+  To load the driver, follow these steps (as root) :
+    # modprobe videodev
+    # modprobe compat-ioctl32  // Only required for 64-bit Linux OS
+    # make insmod
+
+  To test the driver with a V4L2 compliant application, try mplayer :
+    $ mplayer tv:// -tv driver=v4l2:width=640:height=480:fps=25:device=/dev/video0 -vo x11
+    $ mplayer tv:// -tv driver=v4l2:width=640:height=480:fps=25:device=/dev/video0 -vo xv
+
+--------------------------------------------------------------------------------
+
+5. Install
+
+  $ strip -g microdia.ko
+  And as root :
+  # cp microdia.ko /lib/modules/`uname -r`/kernel/drivers/media/video/usbvideo/
+  # depmod -a
+
+--------------------------------------------------------------------------------
+
+6. Usage
+
+  We recommend to use v4l2ucp to improve image quality.
+    http://sourceforge.net/projects/v4l2ucp/
+
+  We also develop our own gui, available here:
+    http://repo.or.cz/r/guimicrodia.git
+
+--------------------------------------------------------------------------------
+
+7. Status
+
+  The kernel module is currently under active development.
+
+  Currently the driver supports following webcam models :
+    0c45:6242
+    0c45:624e
+    0c45:624f
+    0c45:6253
+    0c45:6260
+    0c45:6270
+    0c45:627b
+    0c45:627f
+    0c45:6288
+  The full list can be found here :
+    http://groups.google.com/group/microdia/web/project-status
+
+--------------------------------------------------------------------------------
+
+8. Contact
+
+  To request support, please contact us on Microdia Mailing List :
+    https://groups.google.com/group/microdia/
+    microdia@googlegroups.com
+
+--------------------------------------------------------------------------------
+
+9. More Documentation & References
+
+  All documentation and references for microdia webcam driver can be found at
+    http://groups.google.com/group/microdia/web
+
+  Latest version of this driver is usually available at the following location
+    http://repo.or.cz/w/microdia.git
+
+--------------------------------------------------------------------------------
+
+10. Licence
+
+  Microdia USB 2.0 Webcam Driver is distributed under the GPL licence version 2
+  or later (GPLv2+).
+
+--------------------------------------------------------------------------------
+
+11. Disclaimer
+
+  The Microdia Linux driver has no connection to "MICRODIA Ltd.". They are not
+  responsible for anything we do or our driver does and we are not responsible
+  for their actions or their hardware.

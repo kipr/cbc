@@ -1,0 +1,5 @@
+#!/bin/sh
+/mnt/kiss/bin/gcc -w -I/mnt/kiss/usercode/include -include track.h -include stdio.h -include cbc.h -include compat.h -include process.h -include create.h -include botball.h "${1}" "${2}" "${3}" /mnt/kiss/usercode/lib/libcbc.a /mnt/kiss/usercode/lib/libtrack.a /mnt/kiss/usercode/lib/libshared.a /mnt/kiss/usercode/lib/init.o -lpthread -lm
+sync
+sync
+

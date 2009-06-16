@@ -1,0 +1,16 @@
+#!/bin/bash
+
+DIR=/mnt/user/bin
+PROG=$DIR/robot
+
+rm -rf $DIR
+mkdir -p $DIR
+
+echo "Compiling ${1}" 
+/mnt/kiss/usercode/gcc-usercode "${1}" -o $PROG 2>&1
+if [ -e $PROG ]; then
+  echo "Compile succeeded." 
+else
+  echo "Compile failed." 
+fi
+

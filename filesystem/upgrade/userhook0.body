@@ -1,0 +1,203 @@
+#!/bin/sh
+
+#upgrade
+
+set -x
+
+if echo $0 | grep userhook0 > /dev/null; then
+  # Being called from Botball boot script
+  ROOT=`echo $0 | sed s./userhook0..`
+  SUBHOOK=1
+else
+  # Being called from normal chumby bootup (/etc/init.d/rcS)
+  # We must be on /mnt/usb
+  ROOT=/mnt/usb
+  SUBHOOK=0
+fi
+  
+cd $ROOT
+SELF=$ROOT/userhook0
+
+
+# Unpack some files we'll need
+$EXTRACT_fb_print > /tmp/fb_print
+chmod +x /tmp/fb_print
+$EXTRACT_ext2_ko > /tmp/ext2.ko
+PRINT="/tmp/fb_print --echo"
+
+if [ -e /psp ]; then
+  # yes we're on a chumby
+  if [ ! -e /psp/rfs1/rcS ]; then
+    # this chumby didn't start the correct way, fix it
+    mkdir -p /psp/rfs1
+    $EXTRACT_rcS >/psp/rfs1/rcS
+    $EXTRACT_fb_print >/psp/rfs1/fb_print
+    chmod +x /psp/rfs1/rcS
+    chmod +x /psp/rfs1/fb_print
+    echo "Boot scripts updated...rebooting in 3 seconds" | $PRINT
+    sleep 2
+    sync
+    sync
+    reboot
+  fi
+fi
+
+if [ "$SUBHOOK" == "1" ]; then
+  if [ "$1" == "--version" ]; then
+    echo $VERSION
+    exit 0
+  elif [ "$1" == "--type" ]; then
+    echo Upgrade
+    exit 0
+  elif [ "$1" == "--extract" ]; then
+    echo Extract
+    $EXTRACT_ptable_bin  >ptable.bin
+    $EXTRACT_dosmkfs     >dosmkfs
+    $EXTRACT_mkfs_ext2   >mkfs.ext2
+    $EXTRACT_block_probe >block_probe
+    $EXTRACT_rcS         >rcS
+    $EXTRACT_fb_print    >fb_print
+    $EXTRACT_ext2_ko     >ext2.ko
+    $EXTRACT_vfat_tgz    >vfat.tgz
+    $EXTRACT_ext2_tgz    >ext2.tgz
+    exit 0
+  elif [ "$1" == "--upgrade" ]; then
+    INTERNAL_DEVICE=$2
+    if [ ! -b /dev/${INTERNAL_DEVICE} ]; then
+      echo "Incorrect option passed to --upgrade" | $PRINT
+      exit 1
+    else
+      echo "Upgrade requested" | $PRINT
+    fi
+  fi
+fi
+
+echo "" | $PRINT
+echo "CBC Firmware Update Version $VERSION" | $PRINT 
+
+echo "Please plug in your power adapter" | $PRINT 
+echo "Updating firmware in 10 seconds..." | $PRINT 
+sleep 10
+
+echo -n ""| $PRINT 
+echo "*************************************" | $PRINT 
+echo "* UPDATING FIRMWARE                 *" | $PRINT 
+echo "* THIS WILL TAKE SEVERAL MINUTES    *" | $PRINT 
+echo "* PLEASE PLUG IN YOUR POWER ADAPTER *" | $PRINT
+echo "* AND KEEP POWER ON                 *" | $PRINT
+echo "*************************************" | $PRINT
+sleep 3
+
+PRINT="$PRINT --skiptop 72"
+
+echo -n ""| $PRINT 
+
+# Check the partition table...
+
+PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
+echo -n "Checking partition table..." | $PRINT
+
+if [ "$PARTITION_COUNT" != "4" ]; then
+  echo -n "updating..." | $PRINT
+  
+  $EXTRACT_ptable_bin >/tmp/ptable.bin
+  $EXTRACT_block_probe >/tmp/block_probe
+  chmod +x /tmp/block_probe
+  
+  dd if=/tmp/ptable.bin of=/dev/${INTERNAL_DEVICE} bs=512 count=1
+  /tmp/block_probe /dev/${INTERNAL_DEVICE}
+  
+  PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
+  if [ "$PARTITION_COUNT" != "4" ]; then
+    echo "failed!" | $PRINT
+    echo "" | $PRINT
+    echo "You probably have a bad internal flash drive, call KIPR for support" | $PRINT
+    exit 1
+  fi
+fi
+
+echo "done." | $PRINT
+
+# MKFS
+
+ln -s /proc/mounts /psp/mtab
+
+$EXTRACT_mkdosfs >/tmp/mkdosfs
+chmod +x /tmp/mkdosfs
+$EXTRACT_mkfs_ext2 >/tmp/mkfs.ext2
+chmod +x /tmp/mkfs.ext2
+
+echo -n "Creating vfat partition on /dev/${INTERNAL_DEVICE}1..." | $PRINT
+/tmp/mkdosfs /dev/${INTERNAL_DEVICE}1
+if [ "$?" != "0" ]; then
+  echo "failed!" | $PRINT
+  exit 1
+fi
+echo "done." | $PRINT
+
+echo -n "Creating ext2 partition on /dev/${INTERNAL_DEVICE}2..." | $PRINT
+/tmp/mkfs.ext2 /dev/${INTERNAL_DEVICE}2
+if [ "$?" != "0" ]; then
+  echo "failed!" | $PRINT
+  exit 1
+fi
+echo "done." | $PRINT
+
+echo -n "Creating ext2 partition on /dev/${INTERNAL_DEVICE}3..." | $PRINT
+/tmp/mkfs.ext2 /dev/${INTERNAL_DEVICE}3
+if [ "$?" != "0" ]; then
+  echo "failed!" | $PRINT
+  exit 1
+fi
+echo "done." | $PRINT
+
+BOOT=/mnt/kiss-usb
+KISS=/mnt/kiss
+USER=/mnt/user
+
+BOOT_DEV=/dev/${INTERNAL_DEVICE}1
+KISS_DEV=/dev/${INTERNAL_DEVICE}2
+USER_DEV=/dev/${INTERNAL_DEVICE}3
+
+mkdir -p $BOOT $KISS $USER
+
+$EXTRACT_ext2_ko >/tmp/ext2.ko
+insmod /tmp/ext2.ko
+
+mount $BOOT_DEV $BOOT -t vfat
+mount $KISS_DEV $KISS -t ext2
+mount $USER_DEV $USER -t ext2
+
+df $BOOT_DEV $KISS_DEV $USER_DEV | $PRINT
+$EXTRACT_vfat_tgz | tar -xvzf - -C $BOOT | $PRINT
+sync
+sync
+$EXTRACT_ext2_tgz | tar -xvzf - -C $KISS | $PRINT
+df $BOOT_DEV $KISS_DEV $USER_DEV | $PRINT
+
+mkdir $USER/code
+mkdir $USER/config
+mkdir $USER/vision
+
+echo -n "Updating boot scripts..." | $PRINT
+#rm /psp/rfs1/pointercal
+cp -f $BOOT/rcS /psp/rfs1
+cp -f $BOOT/fb_print /psp/rfs1
+chmod +x /psp/rfs1/fb_print
+sync
+sync
+echo "done." | $PRINT
+
+echo "Sync'ing drives..." | $PRINT
+
+umount $BOOT
+umount $KISS
+umount $USER
+
+PRINT="/tmp/fb_print --echo"
+
+echo "Firmware update complete"             | $PRINT
+echo ""                                       | $PRINT
+echo "Please remove firmware update USB key " | $PRINT
+echo "and turn off then back on"              | $PRINT
+exit 0

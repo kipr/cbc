@@ -1,0 +1,163 @@
+#!/bin/sh
+
+ROOT=/mnt/usb
+
+PRINT=$ROOT/fb_print
+VERSION=`cat $ROOT/FIRMWARE_VERSION`
+
+
+if [ "$1" == "--version" ]; then
+  echo $VERSION
+  exit 0
+elif [ "$1" == "--type" ]; then
+  echo Firmware
+  exit 0
+fi
+
+echo "CBC Firmware Version $VERSION" | $PRINT --echo
+
+if [ ! -e /psp/rfs1/rcS ]; then
+  echo "Updating internal boot script..." | $PRINT
+  mkdir -p /psp/rfs1
+  cp $ROOT/rcS /psp/rfs1
+  cp $ROOT/fb_print /psp/rfs1
+  chmod +x /psp/rfs1/rcS
+  chmod +x /psp/rfs1/fb_print
+  sync
+  sync
+  reboot
+fi
+
+if [ -z "$1" ]; then
+  echo "BUG: Didn't get a device from rcS" | $PRINT --echo
+  exit 1
+fi
+
+INTERNAL_DEVICE=$1
+
+#
+# Set up loopback
+#
+ifconfig lo 127.0.0.1
+
+#
+# Set up wired network
+#
+echo "Checking for network" | $PRINT
+echo "Starting wired network driver"
+insmod /drivers/pegasus.ko
+echo "Starting DHCP on eth0"
+udhcpc eth0
+
+#
+# Set up wireless network
+#
+echo "Starting wireless network driver"
+insmod /drivers/rt73.ko
+if [ -e /mnt/usb/network_config ]; then
+	cp /mnt/usb/network_config /psp
+	/usr/chumby/scripts/start_network &
+else
+	if [ -e /psp/network_config ]; then
+		/usr/chumby/scripts/start_network &
+	else
+		ifconfig rausb0 up
+	fi
+fi
+
+#
+# Display network interfaces
+#
+ifconfig
+ifconfig | grep inet | grep -v 127.0.0.1 | sed 's/Bcast.*//' | $PRINT
+
+# sshd
+echo "Starting sshd"
+/sbin/sshd
+
+# Touch screen and sensors
+hwversion=`/usr/chumby/scripts/chumby_version -h`
+if [ "$hwversion" == "3.8" ]; then
+    # touch screen
+    insmod /drivers/chumby-tsc2100.ko version038=1
+
+    # chumby sensor driver
+    insmod /drivers/chumby_sense1.ko version038=1
+else
+    # touch screen
+    insmod /drivers/chumby-tsc2100.ko
+
+    # chumby sensor driver
+    insmod /drivers/chumby_sense1.ko
+fi
+echo "Chumby hardware version $hwversion" | $PRINT --echo
+
+#
+# USB HID: keyboard / mouse
+#
+echo "Starting USB HID"
+insmod /drivers/usbhid.ko
+
+insmod /drivers/chumby_udma.ko
+insmod /drivers/chumby_timer.ko
+mknod /dev/timerx c `cat /proc/devices |awk '/timer/ {print $1}'` 0
+mknod /dev/timerm c `cat /proc/devices |awk '/timer/ {print $1}'` 1
+
+# chumby switch
+mknod /dev/switch c `cat /proc/devices |awk '/switch/ {print $1}'` 0
+
+# chumby udma
+mknod /dev/udma c `cat /proc/devices |awk '/udma/ {print $1}'` 1
+
+# set paranoid boot flag/semaphore
+echo "Clearing paranoid boot flag"
+/bin/eraseall /dev/mtd7
+nandwrite /dev/mtd7 /usr/chumby/msp_00_64k_no_oob.bin 0x70000
+
+echo "Disabling touchscreen touchclick"
+echo 0 > /proc/chumby/touchscreen/touchclick
+
+echo "Loading CBOB SPI module"
+insmod /mnt/usb/cbob_spi.ko
+mknod /dev/cbob c 251 0
+
+KISS=/mnt/kiss
+USER=/mnt/user
+
+KISS_DEV=/dev/${INTERNAL_DEVICE}2
+USER_DEV=/dev/${INTERNAL_DEVICE}3
+
+echo "Adding ext2 driver"
+insmod /mnt/usb/ext2.ko
+
+restore_time
+
+echo "Enabling audio"
+insmod /drivers/snd-rawmidi.ko
+insmod /drivers/snd-seq-midi.ko
+insmod /drivers/snd-usb-lib.ko
+insmod /drivers/snd-hwdep.ko
+insmod /drivers/snd-usb-audio.ko
+
+echo -n "Checking internal filesystems..." | $PRINT
+/mnt/usb/fsck.ext2 -y ${USER_DEV} | $PRINT
+echo "done." | $PRINT
+
+echo -n "Mounting internal filesystems..." | $PRINT
+
+mkdir -p $KISS
+mkdir -p $USER
+
+mount ${KISS_DEV} ${KISS} -t ext2 -o ro
+mount ${USER_DEV} ${USER} -t ext2
+
+save_time
+
+echo "done."
+
+echo "" | $PRINT --echo
+echo "Boot complete" | $PRINT --echo
+
+/mnt/kiss/startup.sh &
+
+exit

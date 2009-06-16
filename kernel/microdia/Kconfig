@@ -1,0 +1,15 @@
+config MICRODIA
+	tristate "sn9c20x based webcams"
+	depends on VIDEO_V4L2 && (VIDEO_V4L1 || VIDEO_V4L1_COMPAT)
+	---help---
+	  Say Y or M here if you want to use a sn9c20x webcam.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called microdia.
+
+
+config MICRODIA_DEBUGFS
+	bool "enable debugfs for sn9c20x webcams"
+	depends on MICRODIA
+	---help---
+	  Say Y here in order to enable debugfs for sn9c20x webcams
