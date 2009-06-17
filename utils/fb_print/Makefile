@@ -26,6 +26,4 @@ font.c: genfont
 	./genfont > font.c
 
 clean:
-	rm genfont
-	rm fb_print
-	rm font.c
+	rm -rf genfont fb_print font.c
