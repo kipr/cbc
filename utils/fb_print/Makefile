@@ -25,4 +25,7 @@ genfont: genfont.cpp
 font.c: genfont
 	./genfont > font.c
 
-
+clean:
+	rm genfont
+	rm fb_print
+	rm font.c
