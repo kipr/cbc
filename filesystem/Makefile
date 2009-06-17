@@ -32,4 +32,5 @@ install-help:
 	@echo
 
 clean:
-	rm -rf kiss-ext2 kiss-vfat 
+	make -C ext2 clean
+	make -C vfat clean
