@@ -36,7 +36,7 @@ sample_tracklib_client: sample_tracklib_client.c track.h libtrack.a shared_mem.o
 	$(GCC) -Wall sample_tracklib_client.c shared_mem.o -o sample_tracklib_client libtrack.a 
 
 clean:
-	rm -f *.o *.a
+	rm -f *.o *.a sample_tracklib_client
 
 install: libtrack.a track.h
 	scp libtrack.a root@$(CHUMBY_TARGET):/mnt/kiss/usercode/lib
