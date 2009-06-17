@@ -63,5 +63,8 @@ filesystem: gcc qt
 	rsync -a $(FIRMWARE_DIR)/cbcui $(DEST)
 
 clean:
-	rm -rf $(CBC_GCC) $(CBC_GCC_TARFILE) $(CBC_QT) $(CBC_QT_TARFILE) ../kiss-ext2
+	rm -rf ../kiss-ext2
+
+distclean:
+	rm -rf gcc qt $(CBC_GCC_TARFILE) $(CBC_QT_TARFILE)
 
