@@ -32,7 +32,7 @@ test_client: test_client.c libshared.a
 	$(GCC) -Wall -g test_client.c libshared.a -o test_client
 
 clean:
-	rm -f *.o TestServer TestClient test_server test_client
+	rm -f *.o TestServer TestClient test_server test_client libshared.a
 
 install: libshared.a
 	scp libshared.a root@$(CHUMBY_TARGET):/mnt/kiss/usercode/lib
