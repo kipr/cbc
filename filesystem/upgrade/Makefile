@@ -27,3 +27,8 @@ foo:
 filesystems:
 	make -C .. filesystems
 
+clean:
+	rm -rf vfat.tgz ext2.tgz userhook0 tmp
+
+distclean: clean
+	rm -rf FIRMWARE_VERSION fb_print ext2.ko mkfs.ext2 rcS block_probe mkdosfs ptable.bin
