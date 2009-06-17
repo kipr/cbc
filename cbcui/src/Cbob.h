@@ -21,7 +21,7 @@
 #ifndef __CBOB_H__
 #define __CBOB_H__
 
-#include "../../bob/firmware/bob_struct.h"
+#include "cbob_struct.h"
 #include <QThread>
 #include <QBuffer>
 #include <QMutexLocker>
