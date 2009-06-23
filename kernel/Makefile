@@ -6,16 +6,16 @@ KERNEL = $(KERNEL_DIR)/arch/arm/boot/zImage
 ZIPFILE = k1.bin.zip
 DOWNLOAD_ADDR = http://files.kipr.org/cbc/$(TARFILE)
 
-CBC_SPI_DIR = cbc_spi
-CBC_SPI_MODULE = $(CBC_SPI_DIR)/cbc_spi.ko
+CBOB_DIR = cbob
+CBOB_MODULE = $(CBOB_DIR)/cbob.ko
 
 MICRODIA_DIR = microdia
 MICRODIA_MODULE = $(MICRODIA_DIR)/microdia.ko
 
-all: $(ZIPFILE) $(MICRODIA_MODULE)
+all: $(ZIPFILE) $(MICRODIA_MODULE) $(CBOB_MODULE)
 
 kernel: $(KERNEL)
-cbc_spi: $(CBC_SPI_MODULE)
+cbc_spi: $(CBOB_MODULE)
 microdia: $(MICRODIA_MODULE)
 
 $(ZIPFILE): $(KERNEL)
@@ -24,8 +24,8 @@ $(ZIPFILE): $(KERNEL)
 $(MICRODIA_MODULE): $(KERNEL)
 	make -C $(MICRODIA_DIR) -f CBCMakefile
 
-$(CBC_SPI_MODULE): $(KERNEL)
-	make -C $(CBC_SPI_DIR)
+$(CBOB_MODULE): $(KERNEL)
+	make -C $(CBOB_DIR)
 
 $(KERNEL): $(KERNEL_DIR) $(COMPILER)
 	cp config $(KERNEL_DIR)/.config
