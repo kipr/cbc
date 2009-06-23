@@ -1,5 +1,5 @@
 /*
-       cbc_spi.c
+       cbob_spi.c
        
        Created from linux-2.6.16-chumby-1.6.0/drivers/char/chumby_accel.c
 
@@ -21,74 +21,25 @@
        Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-#include <linux/config.h>
-#include <linux/module.h>
-#include <linux/moduleparam.h>
-#include <linux/init.h>
-
-#include <linux/kernel.h>       /* printk() */
-#include <linux/slab.h>         /* kmalloc() */
-#include <linux/fs.h>           /* everything... */
-#include <linux/errno.h>        /* error codes */
-#include <linux/types.h>        /* size_t */
-#include <linux/proc_fs.h>
-#include <linux/fcntl.h>        /* O_ACCMODE */
-#include <linux/seq_file.h>
-#include <linux/cdev.h>
+#include "cbob_spi.h"
 
 #include <asm/io.h>
-#include <asm/system.h>         /* cli(), *_flags */
-#include <asm/uaccess.h>        /* copy_*_user */
-
-#include <linux/miscdevice.h>
-#include <linux/ioport.h>
-#include <linux/poll.h>
-#include <linux/sysctl.h>
-#include <linux/spinlock.h>
 #include <linux/delay.h>
-#include <linux/rtc.h>
-
-#include <linux/timer.h>
-
+#include <linux/errno.h>
+#include <linux/sched.h>
 #include <asm/arch/imx-regs.h>
 
-/*
- * basic parameters
+static struct semaphore cbob_spi;
+
+/* Most of the following code was taken from chumby_accel.c
+ * Thanks go to Chumby for providing this :)
  */
-
-int cbob_major = 0; // dynamic allocation
-int cbob_minor = 0;
-int cbob_nr_devs = 1;
-struct cdev *cbob_cdev = 0;
-int cbob_opened = 0;
-
-MODULE_AUTHOR("jorge@kipr.org");
-MODULE_LICENSE("GPL");
-
-
+ 
 #define CLK_DIVIDER  ((PCDR1 & PCDR1_PERDIV2_MASK) >> PCDR1_PERDIV2_POS)
 #define BASE_FREQ    350
 #define TARGET_FREQ  5
 
 #define SPI_CHAN 0
-
-static int cbob_open(struct inode *inode, struct file *file);
-static int cbob_release(struct inode *inode, struct file *file);
-
-static ssize_t cbob_read(struct file *file, char *buf, size_t count, loff_t *ppos);
-static ssize_t cbob_write(struct file *file, const unsigned char *buf, size_t count, loff_t *ppos );
-
-// map into the generic driver infrastructure
-static struct file_operations cbob_fops = {
-	owner:   THIS_MODULE,
-	read:    cbob_read,
-	write:   cbob_write,
-	open:    cbob_open,
-	release: cbob_release,
-};
-
-///////////// code /////////////
-/* Taken from chumby_accel.c by chumby */
 
 static int spi_tx_fifo_empty(void)
 { return (SSP_INT_REG(SPI_CHAN) & SSP_INT_TE);}
@@ -96,7 +47,9 @@ static int spi_tx_fifo_empty(void)
 static int spi_rx_fifo_data_ready(void)
 { return (SSP_INT_REG(SPI_CHAN) & SSP_INT_RR);}
 
-static unsigned int spi_exchange_data(unsigned int dataTx) {
+static unsigned int spi_exchange_data(unsigned int dataTx) 
+{
+  ////printk("spi_exchange_data\n");
   while(!spi_tx_fifo_empty());
 
   SSP_TX_REG(SPI_CHAN)   = dataTx;	     // transfer data
@@ -107,43 +60,7 @@ static unsigned int spi_exchange_data(unsigned int dataTx) {
   return SSP_RX_REG(SPI_CHAN);
 }
 
-static int cbob_release(struct inode *inode, struct file *file) {
-  return 0;
-}
-
-static int cbob_open(struct inode *inode, struct file *file) {
-  // make sure we're not opened twice
-  return(0);
-}
-
-/*static int cbob_read_block(char *buf, size_t len)
-{
-  
-}
-
-static int cbob_write_block(char *buf, size_t len)
-{
-
-}*/
-
-static int __init cbob_init(void) {
-  dev_t dev = 0;
-  int result, err;
-
-  cbob_cdev = cdev_alloc();
-
-  result = alloc_chrdev_region(&dev, cbob_minor, cbob_nr_devs, "cbob");
-  cbob_major = MAJOR(dev);
-
-  printk("Initting CBOB SPI Interface...\n");
-
-  cdev_init(cbob_cdev, &cbob_fops);
-  cbob_cdev->owner = THIS_MODULE;
-  cbob_cdev->ops = &cbob_fops;
-  err = cdev_add (cbob_cdev, dev, 1);
-  
-  printk("Got CBOB Major=%d\n", cbob_major);
-
+void cbob_spi_init(void) {
   // hardware init
   // map GPIO ports appropriately
   // CSPI1_SS1    F16    CSPI1_SS1 (GPIO   )     PD27  out 1  ** not controlled by CSPI 
@@ -189,58 +106,120 @@ static int __init cbob_init(void) {
   //     5 1     POL (active 1 idle)
   //   4-0 01111 BITCOUNT 16-bit transfer for Kionix
   SSP_CTRL_REG(SPI_CHAN) = 0;
-  SSP_CTRL_REG(SPI_CHAN) |= (SSP_MODE_MASTER | SSP_ENABLE | SSP_SS_PULSE | SSP_PHA1 | SSP_POL1 | SSP_WS(8) );
+  SSP_CTRL_REG(SPI_CHAN) |= (SSP_MODE_MASTER | SSP_ENABLE | SSP_SS_PULSE | SSP_PHA1 | SSP_POL1 | SSP_WS(16) );
   SSP_CTRL_REG(SPI_CHAN) |= (((BASE_FREQ/CLK_DIVIDER) / (TARGET_FREQ) >> 1) + 1) << 14;
   SSP_CTRL_REG(SPI_CHAN) &= ~SSP_MODE_MASTER;  // reset fifo
-  // printk( "accel clock init: base freq %d, clk_divider %d, target_freq %d, calc div %d\n", BASE_FREQ, CLK_DIVIDER, TARGET_FREQ, ((BASE_FREQ/CLK_DIVIDER) / (TARGET_FREQ) >> 1) + 1 );
+  // //printk( "accel clock init: base freq %d, clk_divider %d, target_freq %d, calc div %d\n", BASE_FREQ, CLK_DIVIDER, TARGET_FREQ, ((BASE_FREQ/CLK_DIVIDER) / (TARGET_FREQ) >> 1) + 1 );
 
   udelay(100);      //wait
   SSP_CTRL_REG(SPI_CHAN) &= 0xFFFFFFE0;
-  SSP_CTRL_REG(SPI_CHAN) |= SSP_WS(8);
+  SSP_CTRL_REG(SPI_CHAN) |= SSP_WS(16);
   SSP_CTRL_REG(SPI_CHAN) |= SSP_MODE_MASTER;  // reset fifo
-
-  return (0);
+  
+  sema_init(&cbob_spi, 1);
 }
 
-static ssize_t cbob_read(struct file *file, char *buf, size_t count, loff_t *ppos) 
+inline static int cbob_spi_wait_up(void)
 {
-  char *data;
   int i;
-  
-  if((data = kmalloc(count, GFP_KERNEL))==0)
-    return -ENOMEM;
-  
-  for(i = 0;i < count;i++)
-    data[i] = spi_exchange_data(0);
+  for(i = 0;i < CBC_DELAY_COUNT && !(imx_gpio_read(GPIO_PORTKP)&1);i++) 
+    udelay(CBC_DELAY);
     
-  copy_to_user(buf, data, count);
-  
-  return count;
+  return (imx_gpio_read(GPIO_PORTKP)&1);
 }
 
-static ssize_t cbob_write(struct file *file, const unsigned char *buf, size_t count, loff_t *ppos ) 
+inline static int cbob_spi_wait_down(void)
 {
-  char *data;
   int i;
-  
-  if((data = kmalloc(count, GFP_KERNEL)) == 0)
-    return -ENOMEM;
-   
-  copy_from_user(data, buf, count);
-  
-  for(i = 0;i < count;i++)
-    spi_exchange_data(data[i]);
+  for(i = 0;i < CBC_DELAY_COUNT && (imx_gpio_read(GPIO_PORTKP)&1);i++) 
+    udelay(CBC_DELAY);
     
-  return count;
+  return !(imx_gpio_read(GPIO_PORTKP)&1);
+}
+
+int cbob_spi_message(short cmd, short *outbuf, short outcount, short *inbuf, short incount)
+{
+  int i;
+  short header[3], replycount;
+  header[0] = 0xCB07;
+  header[1] = cmd;
+  header[2] = (outcount > 0 ? outcount : 1);
+  
+  if(down_interruptible(&cbob_spi))
+    return -EINTR;
+  
+  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+  //printk("wait_down\n");
+  if(!cbob_spi_wait_down()) {
+    //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+    //printk("cbc_spi: BOB Disconnected!\n");
+    up(&cbob_spi);
+    return -ETIMEDOUT;
+  }
+  
+  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+  //printk("writing cmd\n");
+  for(i = 0;i < 3;i++)
+    spi_exchange_data(header[i]);
+  
+  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+  //printk("wait up\n");
+  if(!cbob_spi_wait_up()) {
+    //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+    //printk("cbc_spi: BOB Disconnected!\n");
+    up(&cbob_spi);
+    return -ETIMEDOUT;
+  }
+  
+  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+  //printk("writing message\n");
+  if(outcount == 0) {
+    spi_exchange_data(0);
+  }
+  for(i = 0;i < outcount;i++)
+    spi_exchange_data(outbuf[i]);
+  
+  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+  //printk("wait_down\n");
+  if(!cbob_spi_wait_down()) {
+    //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+    //printk("cbc_spi: BOB Write Error!\n");
+    up(&cbob_spi);
+    return -ETIMEDOUT;
+  }
+  
+  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+  //printk("Reading reply\n");
+  
+  replycount = spi_exchange_data(0);
+  spi_exchange_data(0);
+  
+  //printk("Reply count=%d\n", replycount);
+  
+  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+  //printk("wait up\n");
+  if(!cbob_spi_wait_up()) {
+    //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+    //printk("cbc_spi: BOB Read Error!\n");
+    up(&cbob_spi);
+    return -ETIMEDOUT;
+  }
+  
+  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+  //printk("Reading reply\n");
+  for(i = 0;i < replycount;i++) {
+    //printk("\tword %d\n", i);
+    if(incount--) {
+      inbuf[i] = spi_exchange_data(0);
+    }
+    else spi_exchange_data(0);
+  }
+  
+  //printk("done!\n");
+  up(&cbob_spi);
+  
+  return (incount > replycount ? incount : replycount);
 }
 
 
-static void __exit cbob_exit(void) {
-  dev_t devno = MKDEV(cbob_major, cbob_minor);
-  cdev_del( cbob_cdev );
-  unregister_chrdev_region(devno, cbob_nr_devs);  
-}
 
-// entry and exit mappings
-module_init(cbob_init);
-module_exit(cbob_exit);

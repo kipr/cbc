@@ -1,9 +1,8 @@
 KERNEL_DIR=../linux-2.6.16-chumby-1.6.0
 
+obj-m += cbob.o
 
-cbc-objs := cbc_spi.o
-
-obj-m += cbc_spi.o
+cbob-objs := cbob_main.o cbob_spi.o cbob_digital.o cbob_analog.o cbob_pwm.o cbob_sensors.o
 
 all: build
 
