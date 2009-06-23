@@ -41,6 +41,7 @@ void Sensors::updateSensors()
 {
     if (isVisible()) {
 
+	    m_cbobData->updateSensors();
         ui_Digital0->setText(QString::number(m_cbobData->digital(0)));
         ui_Digital1->setText(QString::number(m_cbobData->digital(1)));
         ui_Digital2->setText(QString::number(m_cbobData->digital(2)));

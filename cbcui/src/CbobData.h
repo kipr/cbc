@@ -46,8 +46,10 @@ public:
     int motorVelocity(int motor);
     int motorPWM(int motor);
 
+    void updateSensors();
 private:
-    SharedMem<cbc_data> m_cbobData;
+    int m_sensors;
+    short m_sensorData[9];
 
 };
 

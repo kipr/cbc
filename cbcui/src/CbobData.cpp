@@ -20,62 +20,71 @@
 
 #include "CbobData.h"
 
-CbobData::CbobData() : m_cbobData("/tmp/cbc_data")
+CbobData::CbobData()
 {
+    m_sensors = open("/dev/cbc/sensors", O_RDONLY);
 }
 
 CbobData::~CbobData()
 {
+    close(m_sensors);
 }
 
 int CbobData::analog(int port)
 {
-    return m_cbobData.shared().analogs[port];
+    return m_sensorData[port+1];
 }
 
 int CbobData::digital(int port)
 {
-    return (m_cbobData.shared().digitals & (1<<port) && 1);
+    return (m_sensorData[0]&(1<<port)) && 1;
 }
 
 int CbobData::accelerometerX()
 {
-    return m_cbobData.shared().acc_x;
+    return 0;
 }
 
 int CbobData::accelerometerY()
 {
-    return m_cbobData.shared().acc_y;
+    return 0;
 }
 
 int CbobData::accelerometerZ()
 {
-    return m_cbobData.shared().acc_z;
+    return 0;
 }
 
 float CbobData::batteryVoltage()
 {
-    float volts = m_cbobData.shared().volts;
+    //float volts = m_cbobData.shared().volts;
     
-    volts /= 4095.0;
-    volts *= 8.4;
+    //volts /= 4095.0;cpp
     
-    return volts;
+    //volts *= 8.4;
+    
+    return 0;
 }
 
 int CbobData::motorVelocity(int motor)
 {
-    return m_cbobData.shared().motor_tps[motor];
+    return 0;
 }
 
 int CbobData::motorPosition(int motor)
 {
-    return m_cbobData.shared().motor_counter[motor];
+    return 0;
 }
 
 
 int CbobData::motorPWM(int motor)
 {
-    return m_cbobData.shared().motor_pwm[motor];
+    return 0;
 }
+
+void CbobData::updateSensors()
+{
+    read(m_sensors, m_sensorData, 18);
+}
+
 

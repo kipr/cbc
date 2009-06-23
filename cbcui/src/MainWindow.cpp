@@ -45,9 +45,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_settings.close();
     m_sensors.close();
     
-    m_cbob.start();
-    usleep(5000);
-    m_serialServer.start();
+    //m_cbob.start();
+    //usleep(5000);
+    //m_serialServer.start();
 
     ui_VersionLabel->setText("CBC Firmware Version " + QApplication::applicationVersion());
 
