@@ -1,0 +1,23 @@
+init
+reset halt
+
+sleep 1000
+
+armv4_5 core_state arm				# select the core state
+
+mww 0xffffff60 0x00480100			# set flash wait state (AT91C_MC_FMR)
+mww 0xfffffd44 0xa0008000			# watchdog disable (AT91C_WDTC_WDMR)
+mww 0xfffffc20 0xa0000601			# enable main oscillator (AT91C_PMC_MOR)
+sleep 100							# wait 100 ms
+mww 0xfffffc2c 0x00480a0e			# set PLL register (AT91C_PMC_PLLR)
+sleep 200							# wait 200 ms
+mww 0xfffffc30 0x7					# set master clock to PLL (AT91C_PMC_MCKR)
+sleep 100							# wait 100 ms
+mww 0xfffffd08 0xa5000401			# enable user reset AT91C_RSTC_RMR
+flash protect 0 0 0 off
+sleep 100
+mww 0xffffff60 0x00320100
+sleep 100
+flash write_bank 0 main.bin 0			# program the onchip flash
+sleep 100
+reset run
