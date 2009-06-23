@@ -4,7 +4,7 @@ DEST = $(CURDIR)/../kiss-vfat
 
 filesystem:
 	mkdir -p $(DEST)
-	(cd files; rsync -a userhook0 ext2.ko cbob_spi.ko microdia.ko FIRMWARE_VERSION videodev.ko $(DEST))
+	(cd files; rsync -a userhook0 ext2.ko cbob.ko microdia.ko FIRMWARE_VERSION videodev.ko $(DEST))
 	(cd files; rsync -a rcS mkfs.ext2 fsck.ext2 $(DEST))
 	mkdir -p $(DEST)/update2
 	(cd files; rsync -a k1.bin.zip $(DEST)/update2)
