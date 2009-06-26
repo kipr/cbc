@@ -12,9 +12,9 @@ static int cbob_sensors_major = CBOB_SENSORS_MAJOR;
 
 /* File Ops */
 
-static ssize_t cbob_sensors_read(struct file *filp, char *buf, size_t count, loff_t *ppos);
-static int     cbob_sensors_open(struct inode *inode, struct file *filp);
-static int     cbob_sensors_release(struct inode *inode, struct file *filp);
+static ssize_t cbob_sensors_read(struct file *file, char *buf, size_t count, loff_t *ppos);
+static int     cbob_sensors_open(struct inode *inode, struct file *file);
+static int     cbob_sensors_release(struct inode *inode, struct file *file);
 
 static struct file_operations cbob_sensors_fops = {
 	owner:   THIS_MODULE,
@@ -23,17 +23,17 @@ static struct file_operations cbob_sensors_fops = {
 	read:    cbob_sensors_read
 };
 
-static int cbob_sensors_open(struct inode *inode, struct file *filp)
+static int cbob_sensors_open(struct inode *inode, struct file *file)
 {
   return 0;
 }
 
-static int cbob_sensors_release(struct inode *inode, struct file *filp)
+static int cbob_sensors_release(struct inode *inode, struct file *file)
 {
   return 0;
 }
 
-static ssize_t cbob_sensors_read(struct file *filp, char *buf, size_t count, loff_t *ppos) 
+static ssize_t cbob_sensors_read(struct file *file, char *buf, size_t count, loff_t *ppos) 
 {
   short data[9];
   int error;

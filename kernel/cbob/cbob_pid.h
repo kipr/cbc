@@ -1,15 +1,15 @@
-#ifndef __CBC_DIGITAL_H__
-#define __CBC_DIGITAL_H__
+#ifndef __CBC_PID_H__
+#define __CBC_PID_H__
 
 #include "cbob.h"
 
-#define CBOB_DIGITAL_NAME  "cbob_digital"
+#define CBOB_PID_NAME  "cbob_pid"
 
-struct digital_port {
+struct pid_port {
   short port;
 };
 
-int  cbob_digital_init(void);
-void cbob_digital_exit(void);
+int  cbob_pid_init(void);
+void cbob_pid_exit(void);
 
 #endif

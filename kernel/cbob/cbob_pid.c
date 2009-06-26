@@ -1,4 +1,4 @@
-#include "cbob_digital.h"
+#include "cbob_pid.h"
 #include "cbob_spi.h"
 #include "cbob_cmd.h"
 
@@ -8,85 +8,96 @@
 #include <asm/semaphore.h>
 #include <asm/uaccess.h>
 
-static int cbob_digital_major = CBOB_DIGITAL_MAJOR;
+static int cbob_pid_major = CBOB_PID_MAJOR;
 
 /* File Ops */
 
-static ssize_t cbob_digital_read(struct file *file, char *buf, size_t count, loff_t *ppos);
-static int     cbob_digital_open(struct inode *inode, struct file *file);
-static int     cbob_digital_release(struct inode *inode, struct file *file);
+static ssize_t cbob_pid_read(struct file *file, char *buf, size_t count, loff_t *ppos);
+static ssize_t cbob_pid_write(struct file *file, const char *buf, size_t count, loff_t *ppos);
+static int     cbob_pid_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param);
+static int     cbob_pid_open(struct inode *inode, struct file *file);
+static int     cbob_pid_release(struct inode *inode, struct file *file);
 
-static struct file_operations cbob_digital_fops = {
+static struct file_operations cbob_pid_fops = {
 	owner:   THIS_MODULE,
-	open:    cbob_digital_open,
-	release: cbob_digital_release,
-	read:    cbob_digital_read
+	open:    cbob_pid_open,
+	release: cbob_pid_release,
+	read:    cbob_pid_read,
+	write:   cbob_pid_write,
+	ioctl:   cbob_pid_ioctl
 };
 
-static int cbob_digital_open(struct inode *inode, struct file *file)
+static int cbob_pid_open(struct inode *inode, struct file *file)
 {
-  struct digital_port *digital;
+  struct pid_port *pid;
   
-  if(iminor(inode) > 9)
-    return -ENXIO;
+  pid = kmalloc(sizeof(struct pid_port), GFP_KERNEL);
   
-  digital = kmalloc(sizeof(struct digital_port), GFP_KERNEL);
-  
-  if(digital == 0)
+  if(pid == 0)
     return -ENOMEM;
     
-  digital->port = (iminor(inode) < 9 ? iminor(inode) : -1);
+  pid->port = iminor(inode);
   
-  file->private_data = digital;
+  file->private_data = pid;
   
   
   return 0;
 }
 
-static int cbob_digital_release(struct inode *inode, struct file *file)
+static int cbob_pid_release(struct inode *inode, struct file *file)
 {
   kfree(file->private_data);
   return 0;
 }
 
-static ssize_t cbob_digital_read(struct file *file, char *buf, size_t count, loff_t *ppos) 
+static ssize_t cbob_pid_read(struct file *file, char *buf, size_t count, loff_t *ppos) 
 {
-  struct digital_port *digital = file->private_data;
-  short data;
+  struct pid_port *pid = file->private_data;
+  int data[4] = {0,0,0,0};
   int error;
   
-  if((error = cbob_spi_message(CBOB_CMD_DIGITAL_READ, &(digital->port), 1, &data, 1)) < 0)
+  if((error = cbob_spi_message(CBOB_CMD_PID_READ, &(pid->port), 1, (short*)data, 8)) < 0)
     return error;
   
-  if(count > 2)
-    count = 2;
+  if(count > 16)
+    count = 16;
   
   copy_to_user(buf, (char*)&data, count);
   
   return count;
 }
 
+static ssize_t cbob_pid_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
+{
+  return 0;
+}
+
+static int cbob_pid_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param)
+{
+  return 0;
+}
+
 /* init and exit */
-int cbob_digital_init(void)
+int cbob_pid_init(void)
 {
   int error;
   
-  error = register_chrdev(cbob_digital_major, CBOB_DIGITAL_NAME, &cbob_digital_fops);
+  error = register_chrdev(cbob_pid_major, CBOB_PID_NAME, &cbob_pid_fops);
   
   if(error < 0) {
-    printk(KERN_ALERT "Failed to register cbob_digital char device with error: %d\n", error);
+    printk(KERN_ALERT "Failed to register cbob_pid char device with error: %d\n", error);
     return error;
   }
   
   return 0;
 }
 
-void cbob_digital_exit(void)
+void cbob_pid_exit(void)
 {
   int error;
   
-  error = unregister_chrdev(cbob_digital_major, CBOB_DIGITAL_NAME);
+  error = unregister_chrdev(cbob_pid_major, CBOB_PID_NAME);
   if(error < 0) {
-    printk(KERN_ALERT "Failed to unregister cbob_digital char device with error: %d\n", error);
+    printk(KERN_ALERT "Failed to unregister cbob_pid char device with error: %d\n", error);
   }
 }

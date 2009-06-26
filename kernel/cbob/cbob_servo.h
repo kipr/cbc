@@ -1,14 +1,15 @@
-#ifndef __CBC_DIGITAL_H__
-#define __CBC_DIGITAL_H__
+#ifndef __CBC_SERVO_H__
+#define __CBC_SERVO_H__
 
-#define CBOB_DIGITAL_MAJOR 220
-#define CBOB_DIGITAL_NAME  "cbob_digital"
+#include "cbob.h"
 
-struct digital_port {
+#define CBOB_SERVO_NAME  "cbob_servo"
+
+struct servo_port {
   short port;
 };
 
-int  cbob_digital_init(void);
-void cbob_digital_exit(void);
+int  cbob_servo_init(void);
+void cbob_servo_exit(void);
 
 #endif

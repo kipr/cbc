@@ -12,9 +12,9 @@ static int cbob_analog_major = CBOB_ANALOG_MAJOR;
 
 /* File Ops */
 
-static ssize_t cbob_analog_read(struct file *filp, char *buf, size_t count, loff_t *ppos);
-static int     cbob_analog_open(struct inode *inode, struct file *filp);
-static int     cbob_analog_release(struct inode *inode, struct file *filp);
+static ssize_t cbob_analog_read(struct file *file, char *buf, size_t count, loff_t *ppos);
+static int     cbob_analog_open(struct inode *inode, struct file *file);
+static int     cbob_analog_release(struct inode *inode, struct file *file);
 
 static struct file_operations cbob_analog_fops = {
 	owner:   THIS_MODULE,
@@ -23,12 +23,9 @@ static struct file_operations cbob_analog_fops = {
 	read:    cbob_analog_read
 };
 
-static int cbob_analog_open(struct inode *inode, struct file *filp)
+static int cbob_analog_open(struct inode *inode, struct file *file)
 {
   struct analog_port *analog;
-  
-  if(iminor(inode) > 7)
-    return -ENXIO;
   
   analog = kmalloc(sizeof(struct analog_port), GFP_KERNEL);
   
@@ -37,28 +34,28 @@ static int cbob_analog_open(struct inode *inode, struct file *filp)
     
   analog->port = iminor(inode);
   
-  filp->private_data = analog;
+  file->private_data = analog;
   
   return 0;
 }
 
-static int cbob_analog_release(struct inode *inode, struct file *filp)
+static int cbob_analog_release(struct inode *inode, struct file *file)
 {
-  kfree(filp->private_data);
+  kfree(file->private_data);
   return 0;
 }
 
-static ssize_t cbob_analog_read(struct file *filp, char *buf, size_t count, loff_t *ppos) 
+static ssize_t cbob_analog_read(struct file *file, char *buf, size_t count, loff_t *ppos) 
 {
-  struct analog_port *analog = filp->private_data;
-  short data;
+  struct analog_port *analog = file->private_data;
+  short data[8] = {0,0,0,0,0,0,0,0};
   int error;
   
-  if((error = cbob_spi_message(CBOB_CMD_ANALOG_READ, &(analog->port), 1, &data, 1)) < 0)
+  if((error = cbob_spi_message(CBOB_CMD_ANALOG_READ, &(analog->port), 1, data, 8)) < 0)
     return error;
   
-  if(count > 2)
-    count = 2;
+  if(count > 16)
+    count = 16; 
   
   copy_to_user(buf, (char*)&data, count);
   

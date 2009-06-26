@@ -12,20 +12,22 @@ static int cbob_pwm_major = CBOB_PWM_MAJOR;
 
 /* File Ops */
 
-static ssize_t cbob_pwm_write(struct file *filp, const char *buf, size_t count, loff_t *ppos);
-static ssize_t cbob_pwm_read(struct file *filp, char *buf, size_t count, loff_t *ppos);
-static int     cbob_pwm_open(struct inode *inode, struct file *filp);
-static int     cbob_pwm_release(struct inode *inode, struct file *filp);
+static ssize_t cbob_pwm_write(struct file *file, const char *buf, size_t count, loff_t *ppos);
+static ssize_t cbob_pwm_read(struct file *file, char *buf, size_t count, loff_t *ppos);
+static int     cbob_pwm_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param);
+static int     cbob_pwm_open(struct inode *inode, struct file *file);
+static int     cbob_pwm_release(struct inode *inode, struct file *file);
 
 static struct file_operations cbob_pwm_fops = {
 	owner:   THIS_MODULE,
 	open:    cbob_pwm_open,
 	release: cbob_pwm_release,
 	read:    cbob_pwm_read,
-	write:   cbob_pwm_write
+	write:   cbob_pwm_write,
+	ioctl:   cbob_pwm_ioctl
 };
 
-static int cbob_pwm_open(struct inode *inode, struct file *filp)
+static int cbob_pwm_open(struct inode *inode, struct file *file)
 {
   struct motor_pwm *pwm;
   
@@ -36,38 +38,38 @@ static int cbob_pwm_open(struct inode *inode, struct file *filp)
     
   pwm->port = iminor(inode);
   
-  filp->private_data = pwm;
+  file->private_data = pwm;
   
   
   return 0;
 }
 
-static int cbob_pwm_release(struct inode *inode, struct file *filp)
+static int cbob_pwm_release(struct inode *inode, struct file *file)
 {
-  kfree(filp->private_data);
+  kfree(file->private_data);
   return 0;
 }
 
-static ssize_t cbob_pwm_read(struct file *filp, char *buf, size_t count, loff_t *ppos) 
+static ssize_t cbob_pwm_read(struct file *file, char *buf, size_t count, loff_t *ppos) 
 {
-  struct motor_pwm *pwm = filp->private_data;
-  short data[2];
+  struct motor_pwm *pwm = file->private_data;
+  short data[4] = {0,0,0,0};
   int error;
   
-  if((error = cbob_spi_message(CBOB_CMD_PWM_READ, &(pwm->port), 1, data, 2)) < 0)
+  if((error = cbob_spi_message(CBOB_CMD_PWM_READ, &(pwm->port), 1, data, 4)) < 0)
     return error;
   
-  if(count > 4)
-    count = 4;
+  if(count > 8)
+    count = 8;
   
   copy_to_user(buf, (char*)&data, count);
   
   return count;
 }
 
-static ssize_t cbob_pwm_write(struct file *filp, const char *buf, size_t count, loff_t *ppos)
+static ssize_t cbob_pwm_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
 {
-  struct motor_pwm *pwm = filp->private_data;
+  struct motor_pwm *pwm = file->private_data;
   short data[3];
   char user_data[4] = {0,0,0,0};
   int error;
@@ -86,6 +88,11 @@ static ssize_t cbob_pwm_write(struct file *filp, const char *buf, size_t count, 
   if((error = cbob_spi_message(CBOB_CMD_PWM_WRITE, data, 3, 0, 0)) < 0)
     return error;
   
+  return 0;
+}
+
+static int cbob_pwm_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param)
+{
   return 0;
 }
 

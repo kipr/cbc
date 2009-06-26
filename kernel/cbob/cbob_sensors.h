@@ -1,7 +1,7 @@
 #ifndef __CBC_SENSORS_H__
 #define __CBC_SENSORS_H__
 
-#define CBOB_SENSORS_MAJOR 222
+#include "cbob.h"
 #define CBOB_SENSORS_NAME  "cbob_sensors"
 
 int  cbob_sensors_init(void);

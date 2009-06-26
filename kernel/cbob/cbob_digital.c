@@ -12,18 +12,22 @@ static int cbob_digital_major = CBOB_DIGITAL_MAJOR;
 
 /* File Ops */
 
-static ssize_t cbob_digital_read(struct file *filp, char *buf, size_t count, loff_t *ppos);
-static int     cbob_digital_open(struct inode *inode, struct file *filp);
-static int     cbob_digital_release(struct inode *inode, struct file *filp);
+static ssize_t cbob_digital_read(struct file *file, char *buf, size_t count, loff_t *ppos);
+static ssize_t cbob_digital_write(struct file *file, const char *buf, size_t count, loff_t *ppos);
+static int     cbob_digital_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param);
+static int     cbob_digital_open(struct inode *inode, struct file *file);
+static int     cbob_digital_release(struct inode *inode, struct file *file);
 
 static struct file_operations cbob_digital_fops = {
 	owner:   THIS_MODULE,
 	open:    cbob_digital_open,
 	release: cbob_digital_release,
-	read:    cbob_digital_read
+	read:    cbob_digital_read,
+	write:   cbob_digital_write,
+	ioctl:   cbob_digital_ioctl
 };
 
-static int cbob_digital_open(struct inode *inode, struct file *filp)
+static int cbob_digital_open(struct inode *inode, struct file *file)
 {
   struct digital_port *digital;
   
@@ -34,21 +38,21 @@ static int cbob_digital_open(struct inode *inode, struct file *filp)
     
   digital->port = iminor(inode);
   
-  filp->private_data = digital;
+  file->private_data = digital;
   
   
   return 0;
 }
 
-static int cbob_digital_release(struct inode *inode, struct file *filp)
+static int cbob_digital_release(struct inode *inode, struct file *file)
 {
-  kfree(filp->private_data);
+  kfree(file->private_data);
   return 0;
 }
 
-static ssize_t cbob_digital_read(struct file *filp, char *buf, size_t count, loff_t *ppos) 
+static ssize_t cbob_digital_read(struct file *file, char *buf, size_t count, loff_t *ppos) 
 {
-  struct digital_port *digital = filp->private_data;
+  struct digital_port *digital = file->private_data;
   short data;
   int error;
   
@@ -61,6 +65,31 @@ static ssize_t cbob_digital_read(struct file *filp, char *buf, size_t count, lof
   copy_to_user(buf, (char*)&data, count);
   
   return count;
+
+}
+
+static ssize_t cbob_digital_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
+{
+	struct digital_port *digital = file->private_data;
+	char kbuf;
+	short data;
+	int error;
+	
+	if(count == 0)
+		return 0;
+	
+	copy_from_user(&kbuf, buf, 1);
+	data = kbuf;
+	
+	if((error = cbob_spi_message(CBOB_CMD_DIGITAL_WRITE, &(digital->port), 1, &data, 1)) < 0)
+		return error;
+	
+  return 1;
+}
+
+static int cbob_digital_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param)
+{
+  return 0;
 }
 
 /* init and exit */
