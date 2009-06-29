@@ -119,8 +119,7 @@ echo 0 > /proc/chumby/touchscreen/touchclick
 
 echo "Loading CBOB SPI module"
 insmod /mnt/usb/cbob.ko
-mkdir -p /dev/cbc
-mknod /dev/cbc/sensors c 222 0
+sh /mnt/usb/mkdev.sh
 
 KISS=/mnt/kiss
 USER=/mnt/user
