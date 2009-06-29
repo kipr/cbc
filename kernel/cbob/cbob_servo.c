@@ -82,7 +82,7 @@ static ssize_t cbob_servo_write(struct file *file, const char *buf, size_t count
 	copy_from_user(kbuf+2, buf, count);
 	memcpy(kbuf, &(servo->port), 2);
 	
-	if((error = cbob_spi_message(CBOB_CMD_SERVO_write, kbuf, (count>>1)+1, 0, 0)) < 0)
+	if((error = cbob_spi_message(CBOB_CMD_SERVO_WRITE, (short*)kbuf, (count>>1)+1, 0, 0)) < 0)
 		return error;
 	
 	
