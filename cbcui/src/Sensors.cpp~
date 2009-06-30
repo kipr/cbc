@@ -30,7 +30,7 @@ Sensors::Sensors(CbobData *cbobData, QWidget *parent) : QDialog(parent), m_cbobD
 
     QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateSensors()));
 
-    m_timer.start(100);
+    m_timer.start(200);
 }
 
 Sensors::~Sensors()

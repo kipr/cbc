@@ -49,7 +49,11 @@ public:
     void updateSensors();
 private:
     int m_sensors;
-    short m_sensorData[9];
+    int m_pid;
+    int m_pwm;
+    short m_sensorData[13];
+    int   m_pidData[4];
+    signed char   m_pwmData[4];
 
 };
 

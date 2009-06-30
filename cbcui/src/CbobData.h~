@@ -18,86 +18,43 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#include "CbobData.h"
+#ifndef __CBOB_DATA_H__
+#define __CBOB_DATA_H__
 
-CbobData::CbobData()
+#include <QObject>
+#include "SharedMem.h"
+#include "cbc_data.h"
+
+class CbobData : public QObject
 {
-    m_sensors = open("/dev/cbc/sensors", O_RDONLY);
-    m_pid = open("/dev/cbc/pid", O_RDONLY);
-    m_pwm = open("/dev/cbc/pwm", O_RDONLY);
-}
+    Q_OBJECT
 
-CbobData::~CbobData()
-{
-    close(m_pid);
-    close(m_sensors);
-    close(m_pwm);
-}
+public:
+    CbobData();
+    ~CbobData();
 
-int CbobData::analog(int port)
-{
-    return m_sensorData[port+1];
-}
+    /* Sensor inputs */
+    int analog(int port);
+    int digital(int port);
+    int accelerometerX();
+    int accelerometerY();
+    int accelerometerZ();
 
-int CbobData::digital(int port)
-{
-    return (m_sensorData[0]&(1<<port)) && 1;
-}
+    float batteryVoltage();
 
-int CbobData::accelerometerX()
-{
-    return m_sensorData[10];
-}
+    int motorPosition(int motor);
+    int motorVelocity(int motor);
+    int motorPWM(int motor);
 
-int CbobData::accelerometerY()
-{
-    return m_sensorData[11];
-}
+    void updateSensors();
+private:
+    int m_sensors;
+    int m_pid;
+    int m_pwm;
+    short m_sensorData[12];
+    int   m_pidData[4];
+    char   m_pwmData[4];
 
-int CbobData::accelerometerZ()
-{
-    return m_sensorData[12];
-}
+};
 
-float CbobData::batteryVoltage()
-{
-    //float volts = m_cbobData.shared().volts;
-    
-    //volts /= 4095.0;cpp
-    
-    //volts *= 8.4;
-   return m_sensorData[9]; 
-}
-
-int CbobData::motorVelocity(int motor)
-{
-    return 0;
-}
-
-int CbobData::motorPosition(int motor)
-{
-    if(motor >= 0 && motor <= 3)
-      return m_pidData[motor];
-    return 0;
-}
-
-
-int CbobData::motorPWM(int motor)
-{
-	if(motor >= 0 && motor < 4)
-		return m_pwmData[motor];
-	return 0;
-}
-
-void CbobData::updateSensors()
-{
-    int error;
-    error = read(m_sensors, m_sensorData, 26);
-    if(error < 0) perror("Got an error reading the sensor data");
-    error = read(m_pid, m_pidData, 16);
-    if(error < 0) perror("Got an error reading the motor counters");
-    error = read(m_pwm, m_pwmData, 4);
-    if(error < 0) perror("Got an error reading the motor pwm values");
-}
-
-
+#endif
