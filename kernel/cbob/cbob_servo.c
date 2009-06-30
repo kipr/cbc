@@ -71,21 +71,16 @@ static ssize_t cbob_servo_write(struct file *file, const char *buf, size_t count
 {
 	struct servo_port *servo = file->private_data;
 	int error;
-	char *kbuf;
+	short outdata[2] = {0,0};
 	
-	if(count > 8)
-		count = 8;
+	if(count > 2) count = 2;
 	
-	if((kbuf = kmalloc(count+2, GFP_KERNEL)) == 0)
-		return -ENOMEM;
+	copy_from_user(((void*)outdata)+2, buf, count);
+	outdata[0] = servo->port;
 	
-	copy_from_user(kbuf+2, buf, count);
-	memcpy(kbuf, &(servo->port), 2);
-	
-	if((error = cbob_spi_message(CBOB_CMD_SERVO_WRITE, (short*)kbuf, (count>>1)+1, 0, 0)) < 0)
+	if((error = cbob_spi_message(CBOB_CMD_SERVO_WRITE, outdata, 2, 0, 0)) < 0)
 		return error;
-	
-	
+		
 	return count;
 }
 

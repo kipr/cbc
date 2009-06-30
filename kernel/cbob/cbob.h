@@ -8,5 +8,6 @@
 #define CBOB_PID_MAJOR     224
 #define CBOB_SERVO_MAJOR   225
 #define CBOB_ACCEL_MAJOR   226
+#define CBOB_UART_MAJOR    227
 
 #endif

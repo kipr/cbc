@@ -69,6 +69,18 @@ static ssize_t cbob_pid_read(struct file *file, char *buf, size_t count, loff_t 
 
 static ssize_t cbob_pid_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
 {
+	struct pid_port *pid = file->private_data;
+	short data[4];
+	int error;
+	
+	if(count > 6) count = 6;
+	
+	copy_from_user(((void*)data)+2, buf, count);
+	data[0] = pid->port;
+	
+	if((error = cbob_spi_message(CBOB_CMD_PID_WRITE, data, (count>>1)+1, 0, 0)) < 0)
+		return error;
+	
   return 0;
 }
 

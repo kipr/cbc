@@ -40,7 +40,6 @@ static int cbob_pwm_open(struct inode *inode, struct file *file)
   
   file->private_data = pwm;
   
-  
   return 0;
 }
 
@@ -54,15 +53,19 @@ static ssize_t cbob_pwm_read(struct file *file, char *buf, size_t count, loff_t 
 {
   struct motor_pwm *pwm = file->private_data;
   short data[4] = {0,0,0,0};
-  int error;
+  signed char outdata[4] = {0,0,0,0};
+  int i, error;
   
   if((error = cbob_spi_message(CBOB_CMD_PWM_READ, &(pwm->port), 1, data, 4)) < 0)
     return error;
   
-  if(count > 8)
-    count = 8;
-  
-  copy_to_user(buf, (char*)&data, count);
+  for(i = 0;i < 4;i++)
+	  outdata[i] = data[i];
+
+  if(count > 4)
+    count = 4;
+ 
+  copy_to_user(buf, (char*)&outdata, count);
   
   return count;
 }
@@ -70,9 +73,9 @@ static ssize_t cbob_pwm_read(struct file *file, char *buf, size_t count, loff_t 
 static ssize_t cbob_pwm_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
 {
   struct motor_pwm *pwm = file->private_data;
-  short data[3];
+  short data[5] = {0,0,0,0,0};
   char user_data[4] = {0,0,0,0};
-  int error;
+  int i, error;
   
   if(count == 0) return 0;
   
@@ -80,12 +83,10 @@ static ssize_t cbob_pwm_write(struct file *file, const char *buf, size_t count, 
   
   data[0] = pwm->port;
   
-  if(pwm->port >= 0 && pwm->port <= 3)
-    data[1] = (short)user_data[0];
-  else
-    memcpy(data+2, user_data, 4);
+  for(i = 0;i < count;i++)
+    data[i+1] = (signed char)user_data[i];
   
-  if((error = cbob_spi_message(CBOB_CMD_PWM_WRITE, data, 3, 0, 0)) < 0)
+  if((error = cbob_spi_message(CBOB_CMD_PWM_WRITE, data, 1 + count, 0, 0)) < 0)
     return error;
   
   return 0;

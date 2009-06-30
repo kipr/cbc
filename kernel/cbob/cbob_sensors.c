@@ -35,18 +35,18 @@ static int cbob_sensors_release(struct inode *inode, struct file *file)
 
 static ssize_t cbob_sensors_read(struct file *file, char *buf, size_t count, loff_t *ppos) 
 {
-  short data[9];
+  short data[13] = {0,0,0,0,0,0,0,0,0,0,0,0};
   int error;
   
-  if((error = cbob_spi_message(CBOB_CMD_SENSORS_READ, 0, 0, data, 9)) < 0)
+  if((error = cbob_spi_message(CBOB_CMD_SENSORS_READ, 0, 0, data, 13)) < 0)
     return error;
   
-  if(count > 18)
-    count = 18;
+  if(count > 26)
+    count = 26;
   
   copy_to_user(buf, data, count);
   
-  return count;
+  return 0;
 }
 
 /* init and exit */

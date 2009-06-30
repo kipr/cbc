@@ -140,7 +140,7 @@ inline static int cbob_spi_wait_down(void)
 int cbob_spi_message(short cmd, short *outbuf, short outcount, short *inbuf, short incount)
 {
   int i;
-  short header[3], replycount;
+  short header[3], replycount = 0;
   header[0] = 0xCB07;
   header[1] = cmd;
   header[2] = (outcount > 0 ? outcount : 1);
@@ -218,7 +218,7 @@ int cbob_spi_message(short cmd, short *outbuf, short outcount, short *inbuf, sho
   //printk("done!\n");
   up(&cbob_spi);
   
-  return (incount > replycount ? incount : replycount);
+  return 1;
 }
 
 

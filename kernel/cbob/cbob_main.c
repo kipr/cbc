@@ -7,6 +7,9 @@
 #include "cbob_digital.h"
 #include "cbob_analog.h"
 #include "cbob_sensors.h"
+#include "cbob_pid.h"
+#include "cbob_pwm.h"
+#include "cbob_servo.h"
 
 MODULE_AUTHOR("jorge@kipr.org");
 MODULE_LICENSE("GPL");
@@ -31,6 +34,9 @@ static int __init cbob_init(void)
   else cbob_analog_initted = 1;
   
   cbob_sensors_init();
+  cbob_pid_init();
+  cbob_pwm_init();
+  cbob_servo_init();
   
   return (0);
 }
@@ -39,6 +45,9 @@ static void __exit cbob_exit(void) {
   if(cbob_digital_initted) cbob_digital_exit();
   if(cbob_analog_initted)  cbob_analog_exit();
   cbob_sensors_exit();
+  cbob_pid_exit();
+  cbob_pwm_exit();
+  cbob_servo_exit();
 }
 
 // entry and exit mappings
