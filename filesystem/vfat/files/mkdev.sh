@@ -1,5 +1,6 @@
 #!/bin/sh
 
+rm -rf /dev/cbc
 mkdir -p /dev/cbc
 
 # Digital ports
@@ -23,7 +24,8 @@ mknod /dev/cbc/analog4 c 221 4
 mknod /dev/cbc/analog5 c 221 5
 mknod /dev/cbc/analog6 c 221 6
 mknod /dev/cbc/analog7 c 221 7
-mknod /dev/cbc/analog  c 221 8
+mknod /dev/cbc/battery c 221 8
+mknod /dev/cbc/analog  c 221 9
 
 # Generic sensor poll
 mknod /dev/cbc/sensors c 222 0
