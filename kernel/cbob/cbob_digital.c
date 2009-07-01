@@ -89,6 +89,30 @@ static ssize_t cbob_digital_write(struct file *file, const char *buf, size_t cou
 
 static int cbob_digital_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param)
 {
+	struct digital_port *digital = file->private_data;
+	short request[3];
+	short result;
+	int arg, error;
+	
+	copy_from_user(&arg, (void*)ioctl_param, sizeof(int));
+	
+	switch(ioctl_num) {
+		case CBOB_DIGITAL_SET_DIR:
+			request[0] = 0;
+			request[1] = digital->port;
+			request[2] = arg;
+			if((error = cbob_spi_message(CBOB_CMD_DIGITAL_CONFIG, request, 3, 0,0)) < 0)
+				return error;
+			break;
+		case CBOB_DIGITAL_GET_DIR:
+			request[0] = 1;
+			request[1] = digital->port;
+			if((error = cbob_spi_message(CBOB_CMD_DIGITAL_CONFIG, request, 3, &result, 1)) < 0)
+				return error;
+			arg = result;
+			copy_to_user((void*)ioctl_param, &arg, sizeof(int));
+			break;
+	}
   return 0;
 }
 

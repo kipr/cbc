@@ -10,6 +10,7 @@
 #include "cbob_pid.h"
 #include "cbob_pwm.h"
 #include "cbob_servo.h"
+#include "cbob_uart.h"
 
 MODULE_AUTHOR("jorge@kipr.org");
 MODULE_LICENSE("GPL");
@@ -37,6 +38,7 @@ static int __init cbob_init(void)
   cbob_pid_init();
   cbob_pwm_init();
   cbob_servo_init();
+  cbob_uart_init();
   
   return (0);
 }
@@ -48,6 +50,7 @@ static void __exit cbob_exit(void) {
   cbob_pid_exit();
   cbob_pwm_exit();
   cbob_servo_exit();
+  cbob_uart_exit();
 }
 
 // entry and exit mappings

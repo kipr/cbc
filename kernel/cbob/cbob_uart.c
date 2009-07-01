@@ -53,24 +53,34 @@ static int cbob_uart_release(struct inode *inode, struct file *file)
 static ssize_t cbob_uart_read(struct file *file, char *buf, size_t count, loff_t *ppos) 
 {
   struct uart_port *uart = file->private_data;
-  short data;
+  short *data;
+  short request;
   int error;
   
-  if((error = cbob_spi_message(CBOB_CMD_UART_READ, &(uart->port), 1, &data, 1)) < 0)
+  if(count > 254) count = 254;
+  if(count % 2) count++;
+  
+  data = kmalloc(count, GFP_KERNEL);
+  
+  if(!data)
+  	return -ENOMEM;
+  	
+  request = ((uart->port)<<8) | (count&0xff);
+  
+  if((error = cbob_spi_message(CBOB_CMD_UART_READ, &request, 1, data, count>>1)) < 0)
     return error;
   
-  if(count > 2)
-    count = 2;
+  copy_to_user(buf, (char*)(&(data[1])), data[0]);
   
-  copy_to_user(buf, (char*)&data, count);
+  kfree(data);
   
-  return count;
+  return data[0];
 
 }
 
 static ssize_t cbob_uart_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
 {
-	struct uart_port *uart = file->private_data;
+	/*struct uart_port *uart = file->private_data;
 	char kbuf;
 	short data;
 	int error;
@@ -84,7 +94,8 @@ static ssize_t cbob_uart_write(struct file *file, const char *buf, size_t count,
 	if((error = cbob_spi_message(CBOB_CMD_UART_WRITE, &(uart->port), 1, &data, 1)) < 0)
 		return error;
 	
-  return 1;
+  return 1;*/
+  return 0;
 }
 
 static int cbob_uart_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param)
