@@ -23,8 +23,10 @@
 ////////////////////////////////////////////
 
 #include <stdio.h>
+#include "../libcbc/src/cbc.h"
 
 void init() __attribute__ ((constructor));
 void init() {
   setvbuf(stdout, NULL, _IONBF, 0);
+  libcbc_init();
 }

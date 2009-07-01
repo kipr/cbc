@@ -35,6 +35,9 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdlib.h>
+
+#include "../../../kernel/cbob/cbob.h"
 
 int __pid_defaults[6]={30,0,-30,70,1,51};
 int __position_threshold=2000;
@@ -45,6 +48,7 @@ void kissSimEnablePause(){}
 void kissSimPause(){}
 int kissSimActive(){return 1;}
 
+static int g_cbc_initted = 0;
 static int g_digital;
 static int g_analog[8];
 static int g_battery;
@@ -53,10 +57,13 @@ static int g_pwm[4];
 static int g_servo[4];
 static int g_accX, g_accY, g_accZ;
 
-void __attribute__((constructor)) libcbc_init()
+void libcbc_init()
 {
 	char devname[32];
 	int i;
+	
+	if(g_cbc_initted) return;
+	g_cbc_initted = 1;
 	
 	g_digital = open("/dev/cbc/digital", O_RDWR);
 	
@@ -79,11 +86,13 @@ void __attribute__((constructor)) libcbc_init()
 	g_accX = open("/dev/cbc/accX", O_RDONLY);
 	g_accY = open("/dev/cbc/accY", O_RDONLY);
 	g_accZ = open("/dev/cbc/accZ", O_RDONLY);
+	
+	atexit(libcbc_exit);
 }
 
-void __attribute__((destructor)) libcbc_fini()
+void libcbc_exit()
 {
-	int i;
+int i;
 	
 	close(g_digital);
 	close(g_battery);
@@ -100,6 +109,7 @@ void __attribute__((destructor)) libcbc_fini()
 	close(g_accX);
 	close(g_accY);
 	close(g_accZ);
+	
 }
 
 /////////////////////////////////////////////////////////////
@@ -155,6 +165,10 @@ int set_digital_output_value(int port, int value)
 	}
 	printf("Digital must be between 8 and 15\n");
 	return -1;*/
+}
+
+int set_digital_port_direction(int port, int direction)
+{
 }
 
 int analog10(int port)
@@ -249,12 +263,20 @@ float power_level()
 // Servo Functions
 void enable_servos()
 {
-	PENDING("enable_servos");
+	int i;
+	
+	for(i = 0;i < 4;i++) {
+		if(get_servo_position(i) == -1)
+			set_servo_position(i, 1024);
+	}
 }
 
 void disable_servos()
 {
-	PENDING("disable_servos");
+	int i;
+	
+	for(i = 0;i < 4;i++)
+		set_servo_position(i, -1);
 }
 
 int set_servo_position(int servo, int pos)
@@ -319,26 +341,12 @@ int get_motor_position_counter(int motor)
 
 int clear_motor_position_counter(int motor)
 {
-	PENDING("clear_motor_position_counter");
-	return 0;
-	/*
-  cbc_data *cbc = cbc_data_ptr();
-  
-	if(motor <0 || motor>3) {
-		printf("Motors are 0 to 3\n");
+	if(motor < 0 || motor > 3) {
+		printf("Motor must be 0..3\n");
 		return -1;
 	}
-	off(motor);//turn off anything running on this channel
-        cbc->clear_motor_counters = (1 << motor); // set the bit to clear that counter
-        cbc->motor_tps[motor]=0;
-        msleep(20);
-
-        cbc->motor_counter_targets[motor]=0;//if the motor is moving to a position, zero that position & stop motor
-        cbc->clear_motor_counters = 0;
-	msleep(20);// make sure this gets done before next user command is issued
-	off(motor);//again, insure that nothing is running until after motor counter is reset.
-
-        return 0;*/
+	
+	return ioctl(g_pid[motor], CBOB_PID_CLEAR_COUNTER);
 }
 
 
@@ -409,51 +417,62 @@ int freeze(int motor)
 	return move_to_position(motor, 500, get_motor_position_counter(motor));
 }
 
-void set_pid_gains(int motor, int p, int i, int d, int pd, int id, int dd)
+void set_pid_gains(int p, int i, int d, int pd, int id, int dd)
 {
-	PENDING("set_pid_gains");
-  /*cbc_data *cbc = cbc_data_ptr();
-  
-	if(motor <0 || motor>3) {
-		printf("Motors are 0 to 3\n");
-	}
-	cbc->pid_gains[motor][0]=p;
-	cbc->pid_gains[motor][1]=i;
-	cbc->pid_gains[motor][2]=d;
-	cbc->pid_gains[motor][3]=pd;
-	cbc->pid_gains[motor][4]=id;
-	cbc->pid_gains[motor][5]=dd;*/
+	short gains[6];
+	
+	gains[0] = p;
+	gains[1] = i;
+	gains[2] = d;
+	gains[3] = pd;
+	gains[4] = id;
+	gains[5] = dd;
+	
+	ioctl(g_pid[0], CBOB_PID_SET_GAINS, gains);
 }
 
+void get_pid_gains(int *p, int *i, int *d, int *pd, int *id, int *dd)
+{
+	short gains[6];
+	
+	ioctl(g_pid[0], CBOB_PID_GET_GAINS, gains);
+	
+	*p = gains[0];
+	*i = gains[1];
+	*d = gains[2];
+	*pd = gains[3];
+	*id = gains[4];
+	*dd = gains[5];
+}
 
 //returns 0 if motor is in motion and 1 if it has reached its target position
 int get_motor_done(int motor)
 {
-	PENDING("get_motor_done");
-/*  cbc_data *cbc = cbc_data_ptr();
-  
-	if(motor <0 || motor>3) {
-		printf("Motors are 0 to 3\n");
+	int done;
+	
+	if(motor < 0 || motor > 3) {
+		printf("Motor must be 0..3\n");
 		return -1;
 	}
-        //return(!(1 & (cbc->motor_in_motion >> motor)));
-        if(cbc->motor_counter[motor] > (cbc->motor_counter_targets[motor]-cbc->motor_thresholds[0]) &&
-           cbc->motor_counter[motor] < (cbc->motor_counter_targets[motor]+cbc->motor_thresholds[0])) return 1;
-        else return 0;*/
+	
+	ioctl(g_pid[motor], CBOB_PID_GET_DONE, &done);
+	
+	return done;
 }
 
 void bmd(int motor)
 {
-	PENDING("bmd");
-/*	//loop doing nothing while motor position move is in progress
-	while(!get_motor_done(motor)){msleep(10);}*/
+	block_motor_done(motor);
 }
 
 void block_motor_done(int motor)
 {
-	PENDING("block_motor_done");
+	if(motor < 0 || motor > 3) {
+		printf("Motor must be 0..3\n");
+		return;
+	}
 	//loop doing nothing while motor position move is in progress
-	//while(!get_motor_done(motor)){msleep(10);}
+	while(!get_motor_done(motor)){msleep(10);}
 }
 
 int setpwm(int motor, int pwm)
@@ -557,7 +576,7 @@ int black_button()
 {
 	short data;
 	
-	read(g_digital, &data, 0);
+	read(g_digital, &data, 2);
 	
 	return (data>>8)&1;
 }
