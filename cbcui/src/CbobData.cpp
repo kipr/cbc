@@ -66,7 +66,7 @@ float CbobData::batteryVoltage()
     //volts /= 4095.0;cpp
     
     //volts *= 8.4;
-   return m_sensorData[9]; 
+   return ((float)m_sensorData[9])/1000.0; 
 }
 
 int CbobData::motorVelocity(int motor)

@@ -1,4 +1,4 @@
-CBC_IP=192.168.123.192
+CBC_IP=192.168.123.191
 make &&
 ssh root@$CBC_IP killall cbcui
 scp cbcui root@$CBC_IP:/tmp/cbcui &&
