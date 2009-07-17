@@ -1,6 +1,6 @@
 COMPILER = /usr/bin/arm-linux-gcc
 
-TARFILE = linux-2.6.16-chumby-1.6.0.tar.gz
+TARFILE = linux-2.6.16-chumby-1.7.0.tar.gz
 KERNEL_DIR = linux-2.6.16-chumby-1.6.0
 KERNEL = $(KERNEL_DIR)/arch/arm/boot/zImage
 ZIPFILE = k1.bin.zip
@@ -28,12 +28,13 @@ $(CBOB_MODULE): $(KERNEL)
 	make -C $(CBOB_DIR)
 
 $(KERNEL): $(KERNEL_DIR) $(COMPILER)
-	cp config $(KERNEL_DIR)/.config
 	ARCH=arm BOARD=mx21ads CROSS_COMPILE=arm-linux- make -C $(KERNEL_DIR)
 
 $(KERNEL_DIR): $(TARFILE)
 	tar xvfz $(TARFILE)
 	touch $(KERNEL_DIR)
+	rm -rf $(KERNEL_DIR)/scripts/setlocalversion
+	echo "#!/bin/sh" > $(KERNEL_DIR)/scripts/setlocalversion
 
 $(TARFILE):
 ifneq ($(wildcard ../../files/$(TARFILE)), ../../files/$(TARFILE))
