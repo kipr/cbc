@@ -164,9 +164,9 @@ mkdir -p $BOOT $KISS $USER
 $EXTRACT_ext2_ko >/tmp/ext2.ko
 insmod /tmp/ext2.ko
 
-mount $BOOT_DEV $BOOT -t vfat
-mount $KISS_DEV $KISS -t ext2
-mount $USER_DEV $USER -t ext2
+mount $BOOT_DEV $BOOT -t vfat 
+mount $KISS_DEV $KISS -t ext2 
+mount $USER_DEV $USER -t ext2 
 
 df $BOOT_DEV $KISS_DEV $USER_DEV | $PRINT
 $EXTRACT_vfat_tgz | tar -xvzf - -C $BOOT | $PRINT

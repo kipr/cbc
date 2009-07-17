@@ -1,4 +1,4 @@
-CBC_GCC=CBC_GCC-4.1.1-Mini
+CBC_GCC=CBC_GCC-4.3.2-Mini
 CBC_GCC_TARFILE=$(CBC_GCC).tar.bz2
 SHARED_DIR=../../utils/shared_mem
 FIRMWARE_DIR=../../cbcui
@@ -6,7 +6,7 @@ TRACK_DIR=../../userlib/tracklib
 LIBCBC_DIR=../../userlib/libcbc
 INIT_DIR=../../userlib/init
 
-CBC_QT=CBC_Qt-4.4.3-Mini
+CBC_QT=CBC_Qt-4.5.2-Mini
 CBC_QT_TARFILE=$(CBC_QT).tar.bz2
 
 WGET=wget

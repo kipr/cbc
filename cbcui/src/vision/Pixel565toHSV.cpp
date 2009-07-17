@@ -27,6 +27,8 @@
 // Self
 #include "Pixel565toHSV.h"
 
+#include <cstdio>
+
 HSV Pixel565toHSV::pixel565_to_hsv_lut[Pixel565::MAXVAL+1];
 bool Pixel565toHSV::pixel565_to_hsv_lut_valid;
 

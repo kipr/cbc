@@ -1,4 +1,4 @@
-KERNEL_DIR=../linux-2.6.16-chumby-1.6.0
+KERNEL_DIR=../linux-2.6.16-chumby-1.7.0
 
 obj-m += cbob.o
 
