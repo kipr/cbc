@@ -71,7 +71,8 @@ void cbob_spi_init(void) {
   // ** note that SS0,1 is decoded on the sensor card to 4 individual chipselects
   //    so these values have to be manually controlled by the software
   
-  //imx_gpio_mode( GPIO_PORTD | 27 | GPIO_OUT | GPIO_PF );
+  //imx_gpio_request_irq(CBOB_SERIAL_PIN, cbob_serial_handler, 0);
+  imx_gpio_mode( GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO | GPIO_IRQ_MASK | GPIO_IRQ_RISING | GPIO_IRQ_HIGH );
   imx_gpio_mode( GPIO_PORTD | 28 | GPIO_OUT | GPIO_PF );
 
   imx_gpio_mode( GPIO_PORTD | 29 | GPIO_OUT | GPIO_PF );
@@ -121,19 +122,21 @@ void cbob_spi_init(void) {
 
 inline static int cbob_spi_wait_up(void)
 {
-  int i;
-  for(i = 0;i < CBC_DELAY_COUNT && !(imx_gpio_read(GPIO_PORTKP)&1);i++) 
-    udelay(CBC_DELAY);
-    
+  //int i;
+  /*for(i = 0;i < CBC_DELAY_COUNT && !(imx_gpio_read(GPIO_PORTKP)&1);i++) 
+    udelay(CBC_DELAY);*/
+
+  while(!(imx_gpio_read(GPIO_PORTKP)&1));
   return (imx_gpio_read(GPIO_PORTKP)&1);
 }
 
 inline static int cbob_spi_wait_down(void)
 {
-  int i;
+  /*int i;
   for(i = 0;i < CBC_DELAY_COUNT && (imx_gpio_read(GPIO_PORTKP)&1);i++) 
-    udelay(CBC_DELAY);
-    
+    udelay(CBC_DELAY);*/
+  
+  while(imx_gpio_read(GPIO_PORTKP)&1);
   return !(imx_gpio_read(GPIO_PORTKP)&1);
 }
 
