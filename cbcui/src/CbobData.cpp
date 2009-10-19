@@ -19,6 +19,9 @@
  **************************************************************************/
 
 #include "CbobData.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 CbobData::CbobData()
 {
@@ -32,6 +35,13 @@ CbobData::~CbobData()
     close(m_pid);
     close(m_sensors);
     close(m_pwm);
+}
+
+CbobData *CbobData::instance()
+{
+    static CbobData cbob_data;
+    
+    return &cbob_data;
 }
 
 int CbobData::analog(int port)

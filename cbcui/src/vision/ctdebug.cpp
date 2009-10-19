@@ -48,7 +48,7 @@ void ctabort()
 #ifdef HAS_MCHECK  
 void check_heap_error_detected(enum mcheck_status status)
 {
-  printf("mcheck error detection handler: detected (%d)\n", status);
+  ::printf("mcheck error detection handler: detected (%d)\n", status);
   ctabort();
   check_heap_failed = true;
 }
@@ -60,7 +60,7 @@ void check_heap_initialize()
 {
   check_heap_initialized = true;
   int ret = mcheck(check_heap_error_detected);
-  printf("mcheck called, ret=%d\n", ret);
+  ::printf("mcheck called, ret=%d\n", ret);
 }
 #endif  
 #endif
@@ -72,7 +72,7 @@ void check_heap()
   if (!check_heap_initialized) check_heap_initialize();
   mcheck_check_all();
   if (check_heap_failed) {
-    printf("in check_heap:  aborting\n");
+    ::printf("in check_heap:  aborting\n");
     ctabort();
   }
 #endif

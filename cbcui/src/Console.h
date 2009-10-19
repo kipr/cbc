@@ -22,16 +22,12 @@
 #define __CONSOLE_H__
 
 #include "ui_Console.h"
-#include <QDialog>
-
-#include <QProcess>
-
-#include "cbc_data.h"
-#include "SharedMem.h"
+#include "Page.h"
+#include <QString>
 
 #define CONSOLE_MAX_LENGTH 5000
 
-class Console : public QDialog, private Ui::Console
+class Console : public Page, private Ui::Console
 {
     Q_OBJECT
 
@@ -40,34 +36,11 @@ public:
     ~Console();
 
 public slots:
-    void on_ui_RunButton_clicked(bool checked = false);
-    void on_ui_StopButton_clicked(bool checked = false);
+   void updateText(QString text);
 
-    void on_ui_UpButton_pressed();
-    void on_ui_UpButton_released();
-    void on_ui_DownButton_pressed();
-    void on_ui_DownButton_released();
-    void on_ui_LeftButton_pressed();
-    void on_ui_LeftButton_released();
-    void on_ui_RightButton_pressed();
-    void on_ui_RightButton_released();
-    void on_ui_AButton_pressed();
-    void on_ui_AButton_released();
-    void on_ui_BButton_pressed();
-    void on_ui_BButton_released();
-
-    void readStandardError();
-    void readStandardOutput();
-
-    void userProgramFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    
-    void updateText(QString string);
-    void clearText();
 private:
-    QProcess m_userProgram;
-    QString m_consoleData;
+   QString m_consoleData;
 
-    SharedMem<cbc_data> m_data;
 };
 
 #endif

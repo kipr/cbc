@@ -22,16 +22,14 @@
 #define __CBOB_DATA_H__
 
 #include <QObject>
-#include "SharedMem.h"
-#include "cbc_data.h"
 
 class CbobData : public QObject
 {
     Q_OBJECT
 
 public:
-    CbobData();
-    ~CbobData();
+
+    static CbobData *instance();
 
     /* Sensor inputs */
     int analog(int port);
@@ -47,6 +45,11 @@ public:
     int motorPWM(int motor);
 
     void updateSensors();
+
+protected:
+    CbobData();
+    ~CbobData();
+
 private:
     int m_sensors;
     int m_pid;
@@ -54,6 +57,8 @@ private:
     short m_sensorData[13];
     int   m_pidData[4];
     signed char   m_pwmData[4];
+
+    //static CbobData *inst;
 
 };
 

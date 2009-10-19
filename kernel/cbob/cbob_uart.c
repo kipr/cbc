@@ -134,6 +134,8 @@ static ssize_t cbob_uart_write(struct tty_struct *tty, const unsigned char *buf,
 	kfree(data);
 	
 	up(&uart->sem);
+	
+	printk("cbob_uart:wrote %d bytes\n", written);
 	return written;
 }
 
@@ -198,6 +200,8 @@ int cbob_uart_init(void)
   cbob_uart_tty_driver->init_termios.c_oflag = 0;
   cbob_uart_tty_driver->init_termios.c_cflag = B115200 | CS8 | CREAD | CLOCAL;
   cbob_uart_tty_driver->init_termios.c_lflag = 0;
+  cbob_uart_tty_driver->init_termios.c_cc[VMIN] = 1;
+  cbob_uart_tty_driver->init_termios.c_cc[VTIME] = 0;
   tty_set_operations(cbob_uart_tty_driver, &cbob_uart_ops);
   
   error = tty_register_driver(cbob_uart_tty_driver);

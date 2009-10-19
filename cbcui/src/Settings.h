@@ -22,15 +22,9 @@
 #define __SETTINGS_H__
 
 #include "ui_Settings.h"
-#include <QDialog>
+#include "Page.h"
 
-#include <QProcess>
-
-#include "cbc_data.h"
-#include "SharedMem.h"
-
-
-class Settings : public QDialog, private Ui::Settings
+class Settings : public Page, private Ui::Settings
 {
     Q_OBJECT
 
@@ -38,13 +32,6 @@ public:
     Settings(QWidget *parent = 0);
     ~Settings();
 
-    void checkLength();
-
-public slots:
-    void on_ui_enableDownloads_clicked(bool checked = false);
-
-signals:
-    void downloadsToggled(bool enabled);
 };
 
 #endif

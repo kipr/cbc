@@ -23,13 +23,11 @@
 #include <QFileInfo>
 #include <QScrollBar>
 
-Compiler::Compiler(QWidget *parent) : QDialog(parent)
+#include "UserProgram.h"
+
+Compiler::Compiler(QWidget *parent) : Page(parent)
 {
     setupUi(this);
-
-#ifdef QT_ARCH_ARM
-    setWindowState(windowState() | Qt::WindowFullScreen);
-#endif
 
     QObject::connect(&m_compiler, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));
     QObject::connect(&m_compiler, SIGNAL(readyReadStandardOutput()), this, SLOT(readStandardOutput()));
@@ -42,35 +40,32 @@ Compiler::~Compiler()
 void Compiler::compileFromUSB()
 {
     if(m_compiler.state() == QProcess::NotRunning) {
-        emit stop();
+        qWarning("compile from usb");
+        UserProgram::instance()->stop();
         ui_output->clear();
         m_compiler.start("/mnt/kiss/usercode/compile-usb");
     }
 }
 
-void Compiler::on_ui_runButton_clicked(bool)
-{
-    qWarning("run...");
-    emit run();
-    close();
-}
-
 void Compiler::readStandardError()
 {
+    qWarning("readStandardError");
     ui_output->insertPlainText(QString(m_compiler.readAllStandardError()));
     ui_output->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }
 
 void Compiler::readStandardOutput()
 {
+    qWarning("readStandardOutput()");
     ui_output->insertPlainText(QString(m_compiler.readAllStandardOutput()));
     ui_output->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }
 
 void Compiler::compileFile(QString filename)
 {
+    qWarning("compileFile");
     if(m_compiler.state() == QProcess::NotRunning) {
-        emit stop();
+        UserProgram::instance()->stop();
         ui_output->clear();
         m_compiler.start("/mnt/kiss/usercode/compile", QStringList() << filename);
     }

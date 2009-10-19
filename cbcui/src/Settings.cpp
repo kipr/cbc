@@ -20,23 +20,15 @@
 
 #include "Settings.h"
 
-#include <QFileInfo>
-#include <QScrollBar>
-
-Settings::Settings(QWidget *parent) : QDialog(parent)
+Settings::Settings(QWidget *parent) : Page(parent)
 {
     setupUi(this);
-
-#ifdef QT_ARCH_ARM
-    setWindowState(windowState() | Qt::WindowFullScreen);
-#endif
+    
 }
 
 Settings::~Settings()
 {
 }
 
-void Settings::on_ui_enableDownloads_clicked(bool checked)
-{
-    emit downloadsToggled(checked);
-}
+
+
