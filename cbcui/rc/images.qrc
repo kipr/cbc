@@ -1,0 +1,12 @@
+<RCC>
+  <qresource prefix="/" >
+    <file>background-inverted.png</file>
+    <file>background.png</file>
+  </qresource>
+  <qresource prefix="/actions" >
+    <file>back-wide.png</file>
+    <file>close-wide.png</file>
+    <file>back.png</file>
+    <file>close.png</file>
+  </qresource>
+</RCC>

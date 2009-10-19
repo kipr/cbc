@@ -1,0 +1,39 @@
+<ui version="4.0" >
+ <class>CreateStatus</class>
+ <widget class="QWidget" name="CreateStatus" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>320</width>
+    <height>213</height>
+   </rect>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>320</width>
+    <height>213</height>
+   </size>
+  </property>
+  <property name="maximumSize" >
+   <size>
+    <width>320</width>
+    <height>213</height>
+   </size>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" >
+   <item>
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Create Status Widget</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
