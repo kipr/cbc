@@ -163,7 +163,7 @@ void MicrodiaCamera::backgroundLoop()
       } else {
         check_heap();
         m_processOneFrame = false;
-        printf("Got frame from camera, len=%d\n", len);
+        //printf("Got frame from camera, len=%d\n", len);
         // Copy to image
         Pixel565 *out = image.scanLine(0);
         unsigned char *in = buffer;

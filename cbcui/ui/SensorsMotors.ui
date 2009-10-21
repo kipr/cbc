@@ -28,7 +28,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QPushButton" name="ui_accelerometerButton">
+    <widget class="QPushButton" name="ui_graphButton">
      <property name="maximumSize">
       <size>
        <width>90</width>
@@ -36,7 +36,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Accelerometer</string>
+      <string>Graph</string>
      </property>
     </widget>
    </item>

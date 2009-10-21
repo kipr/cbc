@@ -18,27 +18,41 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#ifndef __VISION_SELECT_H__
-#define __VISION_SELECT_H__
+#ifndef __GRAPHWIDGET_H__
+#define __GRAPHWIDGET_H__
 
-#include "ui_VisionSelect.h"
-#include "Page.h"
+#include <QWidget>
+#include <QPoint>
 
-#include "VisionTracking.h"
-#include "Vision.h"
-
-class VisionSelect : public Page, private Ui::VisionSelect
+class GraphWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    VisionSelect(QWidget *parent = 0);
-    ~VisionSelect();
+    GraphWidget(QWidget *parent = 0);
+    ~GraphWidget();
+    
+    void setXScale(int scale);
+    void setYScale(int scale);
+    void setZScale(int scale);
+    void setScale(int xScale, int yScale, int zScale);
+
+public slots:
+    void addValues(int x, int y, int z);
+
+protected:
+    void paintEvent(QPaintEvent *event);
 
 private:
-   Vision m_vision;
-   VisionTracking m_tracking;
-
+    int scan_index;
+    
+    int m_xScale;
+    int m_yScale;
+    int m_zScale;
+    
+    QPoint pointsX[100];
+    QPoint pointsY[100];
+    QPoint pointsZ[100];
 };
 
 #endif

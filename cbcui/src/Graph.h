@@ -18,39 +18,39 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#ifndef __ACCELEROMETER_H__
-#define __ACCELEROMETER_H__
+#ifndef __GRAPH_H__
+#define __GRAPH_H__
 
-#include "ui_Accelerometer.h"
+#include "ui_Graph.h"
 #include "Page.h"
 #include "CbobData.h"
+#include "GraphWidget.h"
 
 #include <QTimer>
 
 
-class Accelerometer : public Page, private Ui::Accelerometer
+class Graph : public Page, private Ui::Graph
 {
     Q_OBJECT
 
 public:
-    Accelerometer(QWidget *parent = 0);
-    ~Accelerometer();
+    Graph(QWidget *parent = 0);
+    ~Graph();
 
 public slots:
+    void updateGraph();
     void show();
     void hide();
-    void updateAccel();
-
-protected:
-    void paintEvent(QPaintEvent *event);
 
 private:
+    
+    // gets a valid sensor value/scale for a specific combo box index
+    int getValue(int index);
+    int getScale(int index);
+    
     CbobData *m_cbobData;
     QTimer m_timer;
-    int scan_index;
-    QPoint pointsX[100];
-    QPoint pointsY[100];
-    QPoint pointsZ[100];
+    GraphWidget *m_graph;
 };
 
 #endif

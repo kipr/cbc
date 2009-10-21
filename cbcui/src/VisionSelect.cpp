@@ -20,10 +20,11 @@
 
 #include "VisionSelect.h"
 
-VisionSelect::VisionSelect(QWidget *parent) : Page(parent)
+VisionSelect::VisionSelect(QWidget *parent) : Page(parent), m_tracking(parent, &m_vision.m_colorTracker)
 {
     setupUi(this);
     
+    QObject::connect(ui_trackingButton, SIGNAL(clicked()), &m_tracking, SLOT(raisePage()));
 }
 
 VisionSelect::~VisionSelect()

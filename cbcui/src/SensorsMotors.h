@@ -27,7 +27,7 @@
 #include "Servos.h"
 #include "SensorPorts.h"
 #include "Motors.h"
-#include "Accelerometer.h"
+#include "Graph.h"
 
 class SensorsMotors : public Page, private Ui::SensorsMotors
 {
@@ -41,7 +41,7 @@ private:
    Servos m_servos;
    SensorPorts m_sensorPorts;
    Motors m_motors;
-   Accelerometer m_accelerometer;
+   Graph m_graph;
 
 };
 

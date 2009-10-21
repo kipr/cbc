@@ -20,14 +20,14 @@
 
 #include "SensorsMotors.h"
 
-SensorsMotors::SensorsMotors(QWidget *parent) : Page(parent), m_servos(parent), m_sensorPorts(parent), m_motors(parent), m_accelerometer(parent)
+SensorsMotors::SensorsMotors(QWidget *parent) : Page(parent), m_servos(parent), m_sensorPorts(parent), m_motors(parent), m_graph(parent)
 {
     setupUi(this);
     
     QObject::connect(ui_servosButton, SIGNAL(clicked()), &m_servos, SLOT(raisePage()));
     QObject::connect(ui_sensorPortsButton, SIGNAL(clicked()), &m_sensorPorts, SLOT(raisePage()));
     QObject::connect(ui_motorsButton, SIGNAL(clicked()), &m_motors, SLOT(raisePage()));
-    QObject::connect(ui_accelerometerButton, SIGNAL(clicked()), &m_accelerometer, SLOT(raisePage()));
+    QObject::connect(ui_graphButton, SIGNAL(clicked()), &m_graph, SLOT(raisePage()));
 }
 
 SensorsMotors::~SensorsMotors()

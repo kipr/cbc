@@ -18,7 +18,7 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#include "Accelerometer.h"
+#include "GraphWidget.h"
 
 #include <QPoint>
 #include <QPainter>
@@ -27,15 +27,10 @@
 #define ACCSCALE8BIT    127
 #define ACCSCALE16BIT   32768
 
-Accelerometer::Accelerometer(QWidget *parent) : Page(parent)
+GraphWidget::GraphWidget(QWidget *parent) : QWidget(parent), m_xScale(0), m_yScale(0), m_zScale(0)
 {
     int i;
 
-    setupUi(this);
-
-    QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateAccel()));
-
-    m_timer.start(100);
     scan_index = 0;
     for(i=0;i<100;i++){
         pointsX[i] = QPoint(i,0);
@@ -43,70 +38,81 @@ Accelerometer::Accelerometer(QWidget *parent) : Page(parent)
         pointsZ[i] = QPoint(i,0);
     }
     
-    m_cbobData = CbobData::instance();
+    setFixedWidth(280);
+    setFixedHeight(160);
 }
 
-Accelerometer::~Accelerometer()
+GraphWidget::~GraphWidget()
 {
 }
 
-void Accelerometer::show()
+void GraphWidget::setXScale(int scale)
 {
-    m_timer.start();
-    Page::show();
+    if(scale) m_xScale = scale;
 }
 
-void Accelerometer::hide()
+void GraphWidget::setYScale(int scale)
 {
-    m_timer.stop();
-    Page::hide();
+    if(scale) m_yScale = scale;
 }
 
-void Accelerometer::updateAccel()
+void GraphWidget::setZScale(int scale)
 {
-    if (isVisible()) {
-        m_cbobData->updateSensors();
-        ui_AccelerationX->setText(QString::number(m_cbobData->accelerometerX()));
-        ui_AccelerationY->setText(QString::number(m_cbobData->accelerometerY()));
-        ui_AccelerationZ->setText(QString::number(m_cbobData->accelerometerZ()));
-    }
+    if(scale) m_zScale = scale;
+}
+
+void GraphWidget::setScale(int xScale, int yScale, int zScale)
+{
+    setXScale(xScale);
+    setYScale(yScale);
+    setZScale(zScale);
+}
+
+void GraphWidget::addValues(int x, int y, int z)
+{
     scan_index++;
-    if(scan_index>99)scan_index=0;
-    pointsX[scan_index] = QPoint(scan_index,-50*m_cbobData->accelerometerX()/ACCSCALE16BIT);
-    pointsY[scan_index] = QPoint(scan_index,-50*m_cbobData->accelerometerY()/ACCSCALE16BIT);
-    pointsZ[scan_index] = QPoint(scan_index,-50*m_cbobData->accelerometerZ()/ACCSCALE16BIT);
+    if(scan_index>99) scan_index = 0;
+    
+    if(m_xScale) pointsX[scan_index] = QPoint(scan_index, -50*x/m_xScale);
+    else         pointsX[scan_index] = QPoint(scan_index, 0);
+    
+    if(m_yScale) pointsY[scan_index] = QPoint(scan_index, -50*y/m_yScale);
+    else         pointsY[scan_index] = QPoint(scan_index, 0);
+    
+    if(m_zScale) pointsZ[scan_index] = QPoint(scan_index, -50*z/m_zScale);
+    else         pointsZ[scan_index] = QPoint(scan_index, 0);
     update();
 }
 
-void Accelerometer::paintEvent(QPaintEvent *)
+void GraphWidget::paintEvent(QPaintEvent *)
 {
     QPainter sketcher(this);
-    QRect rect(-1,0,101,100);
+    QRect rect(0,0,100,100);
     sketcher.setPen(QPen(Qt::darkGray,1));
     sketcher.setBrush(QBrush(Qt::black));
-    sketcher.translate(20,70);
+    //sketcher.translate(20,70);
     sketcher.scale(2.8,1.6);
     sketcher.drawRect(rect);
     sketcher.translate(0,50);
-    sketcher.setPen(QPen(Qt::darkGray,0));
-    sketcher.setFont(QFont("Arial",6));
-    sketcher.drawText(99,25,QString::QString(" -g"));
-    sketcher.drawText(99,-25,QString::QString("  g"));
+    //sketcher.setPen(QPen(Qt::darkGray,0));
+    //sketcher.setFont(QFont("Arial",6));
+    //sketcher.drawText(99,25,QString::QString(" -g"));
+    //sketcher.drawText(99,-25,QString::QString("  g"));
     sketcher.drawLine(1,25,99,25);
     sketcher.drawLine(1,0,99,0);
     sketcher.drawLine(0,-25,99,-25);
     sketcher.setPen(QPen(Qt::white,0));
     sketcher.drawLine(scan_index,50,scan_index,-50);
 
-    if(ui_checkX->isChecked()){
+    if(m_xScale){
         sketcher.setPen(QPen(Qt::green,0));
         sketcher.drawPolyline(pointsX,100);
     }
-    if(ui_checkY->isChecked()){
+    if(m_yScale){
         sketcher.setPen(QPen(Qt::yellow,0));
         sketcher.drawPolyline(pointsY,100);
     }
-    if(ui_checkZ->isChecked()){
+    if(m_zScale){
         sketcher.setPen(QPen(Qt::red,0));
         sketcher.drawPolyline(pointsZ,100);
     }

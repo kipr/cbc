@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent), m_mainMenu(0)
     QObject::connect(ui_runstopButton, SIGNAL(clicked()), UserProgram::instance(), SLOT(toggleState()));
     QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateBatteryDisplay()));
     
-    m_timer.start(10000);
+    m_timer.start(500);
     
     updateBatteryDisplay();
 }

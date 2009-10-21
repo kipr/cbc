@@ -105,7 +105,7 @@ static int mtime()
 void ColorTracker::processFrame(const Image &image) {
   int thisFrameTime= mtime();
   m_frameNumber++;
-  printf("ColorTracker::processFrame begin\n");
+  //printf("ColorTracker::processFrame begin\n");
   check_heap();
 //  FILE *out = fopen("/mnt/usb/frame.raw","w");
 //  fwrite(image.scanLine(0), 160*120*2, 1, out);
@@ -129,7 +129,7 @@ void ColorTracker::processFrame(const Image &image) {
   }
   if (display) m_displayImage->update();
   check_heap();
-  printf("ColorTracker::processFrame end\n");
+  //printf("ColorTracker::processFrame end\n");
   
   updateSharedResults(thisFrameTime);
   m_lastFrameTime = thisFrameTime;

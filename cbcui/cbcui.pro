@@ -27,7 +27,7 @@ HEADERS += src/MainWindow.h \
            src/About.h \
            src/SensorsMotors.h \
            src/Utilities.h \
-           src/Accelerometer.h \
+           src/Graph.h \
            src/Console.h \
            src/FileManager.h \
            src/Motors.h \
@@ -42,7 +42,8 @@ HEADERS += src/MainWindow.h \
            src/SharedMem.h \
            src/VisionSelect.h \
            src/UserProgram.h \
-           src/Compiler.h
+           src/Compiler.h \
+           src/GraphWidget.h
      	      
 FORMS += ui/MainWindow.ui \
          ui/MainMenu.ui \
@@ -51,7 +52,7 @@ FORMS += ui/MainWindow.ui \
          ui/SensorsMotors.ui \
          ui/Utilities.ui \
          ui/VisionSelect.ui \
-         ui/Accelerometer.ui \
+         ui/Graph.ui \
          ui/Console.ui \
          ui/FileManager.ui \
          ui/Motors.ui \
@@ -72,7 +73,7 @@ SOURCES += src/main.cpp \
            src/About.cpp \
            src/SensorsMotors.cpp \
            src/Utilities.cpp \
-           src/Accelerometer.cpp \
+           src/Graph.cpp \
            src/Console.cpp \
            src/FileManager.cpp \
            src/Motors.cpp \
@@ -86,7 +87,8 @@ SOURCES += src/main.cpp \
            src/CbobData.cpp \
            src/VisionSelect.cpp \
            src/UserProgram.cpp \
-           src/Compiler.cpp
+           src/Compiler.cpp \
+           src/GraphWidget.cpp
 
 # Vision
 FORMS   += src/vision/AdjustColorWidget.ui

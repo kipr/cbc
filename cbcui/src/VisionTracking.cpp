@@ -30,26 +30,37 @@ VisionTracking::VisionTracking(QWidget *parent, ColorTracker *colorTracker) : Pa
   m_HSVRangeDisplay = new HSVRangeDisplay();
   hsv->addWidget(m_HSVRangeDisplay);
 
+  qWarning("setting display model 0");
   displayModel(0);
+  
+  qWarning("setting up model buttons");
 
   m_modelGroup.addButton(Model0Button);
   m_modelGroup.addButton(Model1Button);
   m_modelGroup.addButton(Model2Button);
   m_modelGroup.addButton(Model3Button);
   Model0Button->click();
-
+  
+  qWarning("Setting up track button");
   m_modeGroup.addButton(RawButton);
   m_modeGroup.addButton(MatchButton);
   m_modeGroup.addButton(TrackButton);
   TrackButton->click();
+  
 
+  qWarning("setting up other buttons");
   m_tlbrGroup.addButton(TopLeftButton);
   m_tlbrGroup.addButton(BottomRightButton);
   TopLeftButton->click();
+  
+  qWarning("loading models");
 
   if (!loadModels()) {
     loadDefaultModels();
   }
+  
+  qWarning("VisionTracking initted\n");
+  
 }
 
 VisionTracking::~VisionTracking()
