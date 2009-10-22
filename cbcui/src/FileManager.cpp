@@ -20,19 +20,101 @@
 
 #include "FileManager.h"
 
+#include <QProcess>
+
+#define DEFAULT_PATH "/mnt"
+
 FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent)
 {
     setupUi(this);
     
+    m_dir.setRootPath(DEFAULT_PATH);
+    ui_directoryBrowser->setModel(&m_dir);
+    m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+
+    ui_directoryBrowser->setRootIndex(m_dir.index(DEFAULT_PATH));
+
+    ui_unmountButton->hide();
+    ui_openButton->hide();
+    ui_compileButton->hide();
 }
 
 FileManager::~FileManager()
 {
 }
 
-void FileManager::on_ui_loadButton_clicked(bool)
+bool FileManager::isUSBMounted()
 {
-   m_compiler.raisePage();
-   m_compiler.compileFromUSB();
+    QFileInfo info("/mnt/usercode");
+
+    return info.exists();
 }
+
+void FileManager::on_ui_directoryBrowser_clicked(const QModelIndex &index)
+{
+    
+    if(m_dir.isDir(index)) {
+        ui_compileButton->hide();
+        ui_openButton->show();
+    }
+    else {
+        ui_compileButton->show();
+        ui_openButton->hide();
+    }
+}
+
+void FileManager::on_ui_openButton_clicked()
+{
+    QString path = m_dir.fileInfo(ui_directoryBrowser->currentIndex()).canonicalFilePath();
+
+    if(path == DEFAULT_PATH)
+        m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+    else
+        m_dir.setFilter(QDir::AllEntries);
+
+    ui_directoryBrowser->setRootIndex(m_dir.index(path));
+}
+
+void FileManager::on_ui_mountButton_clicked()
+{
+    QProcess mount;
+
+    mount.start("/mnt/kiss/usercode/mount-usb");
+    mount.waitForFinished();
+
+    if(mount.exitCode()) return;
+
+    ui_mountButton->hide();
+    ui_unmountButton->show();
+}
+
+void FileManager::on_ui_unmountButton_clicked()
+{
+    QProcess umount;
+
+    ui_directoryBrowser->setRootIndex(m_dir.index(DEFAULT_PATH));
+
+    umount.start("/mnt/kiss/usercode/umount-usb");
+    umount.waitForFinished();
+
+    if(umount.exitCode()) return;
+
+    ui_mountButton->show();
+    ui_unmountButton->hide();
+}
+
+void FileManager::on_ui_compileButton_clicked()
+{
+    if(m_dir.isDir(ui_directoryBrowser->currentIndex())) return;
+
+    QString filePath = m_dir.filePath(ui_directoryBrowser->currentIndex());
+
+    m_compiler.compileFile(filePath);
+}
+
+void FileManager::on_ui_deleteButton_clicked()
+{
+}
+
+
 

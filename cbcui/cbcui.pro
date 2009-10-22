@@ -43,7 +43,8 @@ HEADERS += src/MainWindow.h \
            src/VisionSelect.h \
            src/UserProgram.h \
            src/Compiler.h \
-           src/GraphWidget.h
+           src/GraphWidget.h \
+	   src/Keypad.h
      	      
 FORMS += ui/MainWindow.ui \
          ui/MainMenu.ui \
@@ -63,7 +64,8 @@ FORMS += ui/MainWindow.ui \
          ui/VisionTracking.ui \
          ui/CreateStatus.ui \
          ui/Settings.ui \
-         ui/Compiler.ui
+         ui/Compiler.ui \
+	 ui/Keypad.ui
          
 SOURCES += src/main.cpp \
            src/MainWindow.cpp \
@@ -88,7 +90,8 @@ SOURCES += src/main.cpp \
            src/VisionSelect.cpp \
            src/UserProgram.cpp \
            src/Compiler.cpp \
-           src/GraphWidget.cpp
+           src/GraphWidget.cpp \
+	   src/Keypad.cpp
 
 # Vision
 FORMS   += src/vision/AdjustColorWidget.ui

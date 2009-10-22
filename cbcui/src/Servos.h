@@ -23,6 +23,10 @@
 
 #include "ui_Servos.h"
 #include "Page.h"
+#include <QDialog>
+#include <QPainter>
+
+#include "Keypad.h"
 
 class Servos : public Page, private Ui::Servos
 {
@@ -32,6 +36,29 @@ public:
     Servos(QWidget *parent = 0);
     ~Servos();
 
+public slots:
+    void on_ui_ServoDecButton_clicked(bool checked = false);
+    void on_ui_ServoIncButton_clicked(bool checked = false);
+    void closeServos();
+    void raise();
+
+    void on_ui_AutoCheck_stateChanged(int state);
+    void on_ui_UpdateButton_clicked(bool checked = false);
+    void on_ui_CenterButton_clicked(bool checked = false);
+    void on_ui_ServoRightButton_clicked(bool checked = false);
+    void on_ui_ServoLeftButton_clicked(bool checked = false);
+    void on_ui_ServoPositionLine_selectionChanged();
+
+protected:
+    void paintEvent(QPaintEvent *event);
+
+private:
+    int m_servoNumber;
+    int m_servoPosition[4];
+    int m_servo[4];
+
+    void setServoPosition(int servo, int pos);
+    int getServoPosition(int servo);
 };
 
 #endif

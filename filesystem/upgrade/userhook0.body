@@ -42,14 +42,14 @@ if [ -e /psp ]; then
   fi
 fi
 
-if [ "$SUBHOOK" == "1" ]; then
-  if [ "$1" == "--version" ]; then
+if [ "$SUBHOOK" = "1" ]; then
+  if [ "$1" = "--version" ]; then
     echo $VERSION
     exit 0
-  elif [ "$1" == "--type" ]; then
+  elif [ "$1" = "--type" ]; then
     echo Upgrade
     exit 0
-  elif [ "$1" == "--extract" ]; then
+  elif [ "$1" = "--extract" ]; then
     echo Extract
     $EXTRACT_ptable_bin  >ptable.bin
     $EXTRACT_dosmkfs     >dosmkfs
@@ -61,7 +61,7 @@ if [ "$SUBHOOK" == "1" ]; then
     $EXTRACT_vfat_tgz    >vfat.tgz
     $EXTRACT_ext2_tgz    >ext2.tgz
     exit 0
-  elif [ "$1" == "--upgrade" ]; then
+  elif [ "$1" = "--upgrade" ]; then
     INTERNAL_DEVICE=$2
     if [ ! -b /dev/${INTERNAL_DEVICE} ]; then
       echo "Incorrect option passed to --upgrade" | $PRINT

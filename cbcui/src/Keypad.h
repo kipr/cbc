@@ -18,56 +18,40 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#include "Compiler.h"
+#ifndef __KEYPAD_H__
+#define __KEYPAD_H__
 
-#include <QFileInfo>
-#include <QScrollBar>
+#include "ui_Keypad.h"
+#include <QDialog>
 
-#include "UserProgram.h"
-
-Compiler::Compiler(QWidget *parent) : Page(parent)
+class Keypad : public QDialog, private Ui::Keypad
 {
-    setupUi(this);
+        Q_OBJECT
 
-    QObject::connect(&m_compiler, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));
-    QObject::connect(&m_compiler, SIGNAL(readyReadStandardOutput()), this, SLOT(readStandardOutput()));
-}
+public:
+    Keypad(QWidget *parent = 0);
+    ~Keypad();
 
-Compiler::~Compiler()
-{
-}
+public slots:
+    void on_ui_oneButton_clicked(bool checked = false);
+    void on_ui_twoButton_clicked(bool checked = false);
+    void on_ui_threeButton_clicked(bool checked = false);
+    void on_ui_fourButton_clicked(bool checked = false);
+    void on_ui_fiveButton_clicked(bool checked = false);
+    void on_ui_sixButton_clicked(bool checked = false);
+    void on_ui_sevenButton_clicked(bool checked = false);
+    void on_ui_eightButton_clicked(bool checked = false);
+    void on_ui_nineButton_clicked(bool checked = false);
+    void on_ui_zeroButton_clicked(bool checked = false);
+    void on_ui_enterButton_clicked(bool checked = false);
+    void on_ui_negateButton_clicked(bool checked = false);
+    void on_ui_clearButton_clicked(bool checked = false);
+    void show();
+    int  getValue();
 
-void Compiler::compileFromUSB()
-{
-    if(m_compiler.state() == QProcess::NotRunning) {
-        qWarning("compile from usb");
-        UserProgram::instance()->stop();
-        ui_output->clear();
-        m_compiler.start("/mnt/kiss/usercode/compile-usb");
-    }
-}
+private:
+    void refreshView();
+    int  userValue;
+};
 
-void Compiler::readStandardError()
-{
-    qWarning("readStandardError");
-    ui_output->insertPlainText(QString(m_compiler.readAllStandardError()));
-    ui_output->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
-}
-
-void Compiler::readStandardOutput()
-{
-    qWarning("readStandardOutput()");
-    ui_output->insertPlainText(QString(m_compiler.readAllStandardOutput()));
-    ui_output->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
-}
-
-void Compiler::compileFile(QString filename)
-{
-    qWarning("compileFile");
-    raisePage();
-    if(m_compiler.state() == QProcess::NotRunning) {
-        UserProgram::instance()->stop();
-        ui_output->clear();
-        m_compiler.start("/mnt/kiss/usercode/compile", QStringList() << filename);
-    }
-}
+#endif // KEYPAD_H

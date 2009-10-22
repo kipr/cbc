@@ -21,6 +21,8 @@
 #ifndef __FILE_MANAGER_H__
 #define __FILE_MANAGER_H__
 
+#include <QFileSystemModel>
+
 #include "ui_FileManager.h"
 #include "Page.h"
 #include "Compiler.h"
@@ -32,12 +34,20 @@ class FileManager : public Page, private Ui::FileManager
 public:
     FileManager(QWidget *parent = 0);
     ~FileManager();
+
+    bool isUSBMounted();
     
 public slots:
-    void on_ui_loadButton_clicked(bool checked = false);
+    void on_ui_directoryBrowser_clicked(const QModelIndex &index);
+    void on_ui_mountButton_clicked();
+    void on_ui_unmountButton_clicked();
+    void on_ui_compileButton_clicked();
+    void on_ui_deleteButton_clicked();
+    void on_ui_openButton_clicked();
 
 private:
    Compiler m_compiler;
+    QFileSystemModel m_dir;
 
 };
 
