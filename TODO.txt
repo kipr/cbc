@@ -1,11 +1,8 @@
-- Recalibrate Motors
-- Recalibrate Analogs
-	Under settings?
+p Recalibrate Motors
+p Recalibrate Analogs
 
-- PID Gains configuration
-- check boxes for floating/not floating analog
-- Set PID Defaults
-- PID Tuning
+p check boxes for floating/not floating analog
+p Set PID Defaults
 - Power Plug Detect
 
 BATTV Max 8.4v
@@ -13,15 +10,9 @@ BATTV Min 6v
 
 - Battery Dead Notification
 - Digital Outputs
-- Set Scale
 
 CBC Pages
 - Splash screen
-- About
 - Create Page
 - Raw Display
-- Vision Settings
-- PID Tuning Page
-- Overall Settings
-	- recalibrate motors/accelerometer
 
