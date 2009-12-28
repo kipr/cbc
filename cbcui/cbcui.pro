@@ -44,7 +44,9 @@ HEADERS += src/MainWindow.h \
            src/UserProgram.h \
            src/Compiler.h \
            src/GraphWidget.h \
-	   src/Keypad.h
+	   			 src/Keypad.h \
+	   			 src/MotorTuning.h \
+	   			 src/MotorTest.h
      	      
 FORMS += ui/MainWindow.ui \
          ui/MainMenu.ui \
@@ -65,7 +67,9 @@ FORMS += ui/MainWindow.ui \
          ui/CreateStatus.ui \
          ui/Settings.ui \
          ui/Compiler.ui \
-	 ui/Keypad.ui
+      	 ui/Keypad.ui \
+      	 ui/MotorTuning.ui \
+      	 ui/MotorTest.ui
          
 SOURCES += src/main.cpp \
            src/MainWindow.cpp \
@@ -91,7 +95,9 @@ SOURCES += src/main.cpp \
            src/UserProgram.cpp \
            src/Compiler.cpp \
            src/GraphWidget.cpp \
-	   src/Keypad.cpp
+  	       src/Keypad.cpp \
+	         src/MotorTuning.cpp \
+	         src/MotorTest.cpp
 
 # Vision
 FORMS   += src/vision/AdjustColorWidget.ui

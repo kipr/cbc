@@ -2,7 +2,8 @@
 
 ROOT=/mnt/usb
 
-PRINT=$ROOT/fb_print
+#PRINT=$ROOT/fb_print
+PRINT=echo
 VERSION=`cat $ROOT/FIRMWARE_VERSION`
 
 
@@ -39,6 +40,8 @@ INTERNAL_DEVICE=$1
 # Set up loopback
 #
 ifconfig lo 127.0.0.1
+
+dd if=/mnt/usb/splash_screen.bin of=/dev/fb0
 
 #
 # Set up wired network

@@ -52,6 +52,7 @@ static void __exit cbob_exit(void) {
   cbob_pwm_exit();
   cbob_servo_exit();
   cbob_uart_exit();
+  cbob_spi_exit();
 }
 
 // entry and exit mappings

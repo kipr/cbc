@@ -7,7 +7,7 @@
 #include <linux/types.h>
 #include <asm/semaphore.h>
 #include <asm/uaccess.h>
-
+#include <linux/delay.h>
 #include <asm/arch/imx-regs.h>
 #include <asm/arch/irqs.h>
 #include <asm/arch/hardware.h>
@@ -124,6 +124,8 @@ static ssize_t cbob_uart_write(struct tty_struct *tty, const unsigned char *buf,
 		return -EINVAL;
 	}
 	
+	if(count > 64) count = 64;
+	
 	data = kmalloc(count+6, GFP_KERNEL);
 	memcpy(&(data[2]), buf, count);
 	data[0] = index;
@@ -133,9 +135,10 @@ static ssize_t cbob_uart_write(struct tty_struct *tty, const unsigned char *buf,
 	
 	kfree(data);
 	
+	udelay(500);
 	up(&uart->sem);
 	
-	printk("cbob_uart:wrote %d bytes\n", written);
+	//printk("cbob_uart:wrote %d bytes\n", written);
 	return written;
 }
 
@@ -144,7 +147,7 @@ static int  cbob_uart_write_room(struct tty_struct *tty)
 	return 64;
 }
 
-irqreturn_t cbob_uart_handler(int irq, void *data, struct pt_regs *regs)
+/*irqreturn_t cbob_uart_handler(int irq, void *data, struct pt_regs *regs)
 {
 	disable_irq_nosync(IRQ_GPIOD(27));
 	
@@ -153,7 +156,7 @@ irqreturn_t cbob_uart_handler(int irq, void *data, struct pt_regs *regs)
 	tasklet_schedule(&cbob_uart_fetch);
 	
   return IRQ_HANDLED;
-}
+}*/
 
 void cbob_uart_fetch_data(unsigned long arg) {
 	struct tty_struct *tty;
@@ -218,8 +221,8 @@ int cbob_uart_init(void)
  
  	//cbob_uart_workqueue = create_singlethread_workqueue("CBOB UART");
  
- 	imx_gpio_mode(GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO | GPIO_IRQ_HIGH);
-  request_irq(IRQ_GPIOD(27), cbob_uart_handler, 0, "CBOB", 0);
+ 	//imx_gpio_mode(GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO | GPIO_IRQ_HIGH);
+  //request_irq(IRQ_GPIOD(27), cbob_uart_handler, 0, "CBOB", 0);
   
   return error;
 }
@@ -229,7 +232,7 @@ void cbob_uart_exit(void)
 	struct cbob_uart *uart;
 	int i;
 	
-	free_irq(IRQ_GPIOD(27), 0);
+	//free_irq(IRQ_GPIOD(27), 0);
 	
 	for(i = 0;i < CBOB_UART_MINORS;i++)
 		tty_unregister_device(cbob_uart_tty_driver, i);

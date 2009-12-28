@@ -87,7 +87,7 @@ static ssize_t cbob_pid_write(struct file *file, const char *buf, size_t count, 
 static int cbob_pid_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param)
 {
 	struct pid_port *pid = file->private_data;
-	short request[4];
+	short request[8];
 	short result[6];
 	int error, arg;
 	
@@ -107,13 +107,15 @@ static int cbob_pid_ioctl(struct inode *inode, struct file *file, unsigned int i
 			break;
 		case CBOB_PID_SET_GAINS:
 			request[0] = 2;
-			copy_from_user(((void*)request)+2, (void*)ioctl_param, sizeof(short)*6);
-			if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 7, 0, 0)) < 0)
+			request[1] = pid->port;
+			copy_from_user(((void*)request)+4, (void*)ioctl_param, sizeof(short)*6);
+			if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 8, 0, 0)) < 0)
 				return error;
 			break;
 		case CBOB_PID_GET_GAINS:
 			request[0] = 3;
-			if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 1, result, 6)) < 0)
+			request[1] = pid->port;
+			if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 2, result, 6)) < 0)
 				return error;
 			copy_to_user((void*)ioctl_param, result, 12);
 			break;

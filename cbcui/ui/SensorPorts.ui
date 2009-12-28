@@ -436,6 +436,246 @@
          </property>
         </spacer>
        </item>
+       <item row="1" column="2">
+        <widget class="QCheckBox" name="ui_floatingAnalog0">
+         <property name="minimumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <kerning>false</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QCheckBox" name="ui_floatingAnalog1">
+         <property name="minimumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <kerning>false</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QCheckBox" name="ui_floatingAnalog2">
+         <property name="minimumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <kerning>false</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2">
+        <widget class="QCheckBox" name="ui_floatingAnalog3">
+         <property name="minimumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <kerning>false</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QCheckBox" name="ui_floatingAnalog4">
+         <property name="minimumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <kerning>false</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="2">
+        <widget class="QCheckBox" name="ui_floatingAnalog5">
+         <property name="minimumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <kerning>false</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="2">
+        <widget class="QCheckBox" name="ui_floatingAnalog6">
+         <property name="minimumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <kerning>false</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="2">
+        <widget class="QCheckBox" name="ui_floatingAnalog7">
+         <property name="minimumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>14</width>
+           <height>14</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <kerning>false</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -480,13 +720,13 @@
          <property name="minimumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="text">
@@ -518,13 +758,13 @@
          <property name="minimumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="text">
@@ -556,13 +796,13 @@
          <property name="minimumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="text">
@@ -594,13 +834,13 @@
          <property name="minimumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="text">
@@ -632,13 +872,13 @@
          <property name="minimumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="text">
@@ -670,13 +910,13 @@
          <property name="minimumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="text">
@@ -708,13 +948,13 @@
          <property name="minimumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="text">
@@ -746,13 +986,13 @@
          <property name="minimumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>22</width>
-           <height>12</height>
+           <height>14</height>
           </size>
          </property>
          <property name="text">

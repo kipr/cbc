@@ -1,6 +1,7 @@
 #!/bin/sh
 
-PRINT=/psp/rfs1/fb_print
+#PRINT=/psp/rfs1/fb_print
+PRINT=echo
 chmod +x /psp/rfs1/fb_print
 
 export LD_LIBRARY_PATH=/lib
@@ -19,8 +20,7 @@ internal=""
 upgrade=""
 maybe_internal=""
 
-for i in /sys/block/sd*; do
-  dev=`echo $i | sed 's/\/sys\/block\///'`;
+for dev in sda sdb sdd sdc; do
   mount /dev/${dev}1 /mnt/usb -t vfat -o ro
   
   if [ -e /mnt/usb/userhook0 ]; then

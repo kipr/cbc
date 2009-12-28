@@ -18,25 +18,59 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#include "Motors.h"
-#include <assert.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/ioctl.h>
+#ifndef __MOTOR_TUNING_H__
+#define __MOTOR_TUNING_H__
+
+#include "ui_MotorTuning.h"
+#include "Page.h"
+
+#include <QDialog>
+#include <QTimer>
+
 #include "CbobData.h"
-#include <QMessageBox>
+#include "Keypad.h"
 
-Motors::Motors(QWidget *parent) : Page(parent), m_motorTest(parent), m_motorTuning(parent)
+class MotorTuning : public Page, private Ui::MotorTuning
 {
-    setupUi(this);
-    
-    QObject::connect(ui_testButton, SIGNAL(clicked()), &m_motorTest, SLOT(raisePage()));
-    QObject::connect(ui_tuneButton, SIGNAL(clicked()), &m_motorTuning, SLOT(raisePage()));
-}
+    Q_OBJECT
 
-Motors::~Motors()
-{
-}
+public:
+    MotorTuning(QWidget *parent = 0);
+    ~MotorTuning();
 
+public slots:
+    void on_ui_MotorDecButton_clicked(bool checked = false);
+    void on_ui_MotorIncButton_clicked(bool checked = false);
+    void updateCounters();
+    void show();
+    void hide();
+
+    void clearMotorCounter();
+    void selectGain(int index);
+
+    void on_ui_NegCheck_stateChanged(int state);
+    void on_ui_MultSlider_valueChanged(int value);
+    void on_ui_DivSlider_valueChanged(int value);
+
+    void on_ui_TargetSpeedLine_selectionChanged();
+    void on_ui_TargetPositionLine_selectionChanged();
+    void on_ui_PlayButton_toggled(bool state);
+
+private:
+    CbobData *m_cbobData;
+    QTimer m_timer;
+
+    int m_pid[4];
+
+    int m_motorNumber;
+    int m_targetSpeed;
+    int m_targetPosition;
+
+     void moveMotorPower(int motor,int power);
+     void moveToPosition(int motor,int speed,int target_position);
+     void moveAtVelocity(int motor,int velocity);
+
+    int PIDgains[6];
+};
+
+#endif

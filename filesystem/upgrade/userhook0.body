@@ -24,6 +24,7 @@ $EXTRACT_fb_print > /tmp/fb_print
 chmod +x /tmp/fb_print
 $EXTRACT_ext2_ko > /tmp/ext2.ko
 PRINT="/tmp/fb_print --echo"
+#PRINT="echo"
 
 if [ -e /psp ]; then
   # yes we're on a chumby
@@ -184,11 +185,12 @@ echo -n "Updating boot scripts..." | $PRINT
 cp -f $BOOT/rcS /psp/rfs1
 cp -f $BOOT/fb_print /psp/rfs1
 chmod +x /psp/rfs1/fb_print
-sync
-sync
 echo "done." | $PRINT
 
 echo "Sync'ing drives..." | $PRINT
+
+sync
+sync
 
 umount $BOOT
 umount $KISS

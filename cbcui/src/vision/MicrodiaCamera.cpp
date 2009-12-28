@@ -46,7 +46,7 @@ MicrodiaCamera::MicrodiaCamera()
   system("insmod /mnt/usb/videodev.ko");
   system("rmmod microdia");
 
-  int exposure=5000;
+  int exposure=1000;
   char buf[100];
   printf("Using exposure %d\n", exposure);
   sprintf(buf, "insmod /mnt/usb/microdia.ko max_urbs=20 exposure=%d",

@@ -28,8 +28,13 @@
 #include <linux/errno.h>
 #include <linux/sched.h>
 #include <asm/arch/imx-regs.h>
+#include <asm/arch/irqs.h>
+#include <asm/arch/hardware.h>
+#include <linux/interrupt.h>
+#include <linux/wait.h>
 
 static struct semaphore cbob_spi;
+wait_queue_head_t cbob_spi_flip;
 
 /* Most of the following code was taken from chumby_accel.c
  * Thanks go to Chumby for providing this :)
@@ -40,6 +45,8 @@ static struct semaphore cbob_spi;
 #define TARGET_FREQ  5
 
 #define SPI_CHAN 0
+
+#define CBOB_SPI_TIMEOUT 10
 
 static int spi_tx_fifo_empty(void)
 { return (SSP_INT_REG(SPI_CHAN) & SSP_INT_TE);}
@@ -60,6 +67,15 @@ static unsigned int spi_exchange_data(unsigned int dataTx)
   return SSP_RX_REG(SPI_CHAN);
 }
 
+irqreturn_t cbob_spi_handler(int irq, void *data, struct pt_regs *regs)
+{
+  disable_irq_nosync(IRQ_GPIOD(27));
+	wake_up_interruptible(&cbob_spi_flip);
+	//printk("irq...\n");
+	
+  return IRQ_HANDLED;
+}
+
 void cbob_spi_init(void) {
   // hardware init
   // map GPIO ports appropriately
@@ -72,7 +88,7 @@ void cbob_spi_init(void) {
   //    so these values have to be manually controlled by the software
   
   //imx_gpio_request_irq(CBOB_SERIAL_PIN, cbob_serial_handler, 0);
-  imx_gpio_mode( GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO | GPIO_IRQ_MASK | GPIO_IRQ_RISING | GPIO_IRQ_HIGH );
+  //imx_gpio_mode( GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO | GPIO_IRQ_MASK | GPIO_IRQ_RISING | GPIO_IRQ_HIGH );
   imx_gpio_mode( GPIO_PORTD | 28 | GPIO_OUT | GPIO_PF );
 
   imx_gpio_mode( GPIO_PORTD | 29 | GPIO_OUT | GPIO_PF );
@@ -118,26 +134,40 @@ void cbob_spi_init(void) {
   SSP_CTRL_REG(SPI_CHAN) |= SSP_MODE_MASTER;  // reset fifo
   
   sema_init(&cbob_spi, 1);
-}
-
-inline static int cbob_spi_wait_up(void)
-{
-  //int i;
-  /*for(i = 0;i < CBC_DELAY_COUNT && !(imx_gpio_read(GPIO_PORTKP)&1);i++) 
-    udelay(CBC_DELAY);*/
-
-  while(!(imx_gpio_read(GPIO_PORTKP)&1));
-  return (imx_gpio_read(GPIO_PORTKP)&1);
-}
-
-inline static int cbob_spi_wait_down(void)
-{
-  /*int i;
-  for(i = 0;i < CBC_DELAY_COUNT && (imx_gpio_read(GPIO_PORTKP)&1);i++) 
-    udelay(CBC_DELAY);*/
   
-  while(imx_gpio_read(GPIO_PORTKP)&1);
-  return !(imx_gpio_read(GPIO_PORTKP)&1);
+  init_waitqueue_head(&cbob_spi_flip);
+  
+  imx_gpio_mode(GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO | GPIO_IRQ_LOW);
+  request_irq(IRQ_GPIOD(27), cbob_spi_handler, 0, "CBOB", 0);
+  //disable_irq(IRQ_GPIOD(27));
+}
+
+void cbob_spi_exit(void) {
+  free_irq(IRQ_GPIOD(27), 0);
+}
+
+inline static int cbob_spi_wait(int value)
+{
+  int retval;
+  
+  //if(value) imx_gpio_mode(GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO | GPIO_IRQ_HIGH);
+  
+  //else      imx_gpio_mode(GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO | GPIO_IRQ_LOW);
+  
+ // udelay(1000);
+  
+  //printk("test");
+  
+  //udelay(1000);
+  if(!imx_gpio_read(GPIO_PORTD | 27)) return 1;
+  
+  enable_irq(IRQ_GPIOD(27));
+	
+	retval = wait_event_interruptible(cbob_spi_flip, 0);
+	
+	printk("return...\n");
+	
+	return retval == 0;
 }
 
 int cbob_spi_message(short cmd, short *outbuf, short outcount, short *inbuf, short incount)
@@ -148,79 +178,65 @@ int cbob_spi_message(short cmd, short *outbuf, short outcount, short *inbuf, sho
   header[1] = cmd;
   header[2] = (outcount > 0 ? outcount : 1);
   
+  
   if(down_interruptible(&cbob_spi))
     return -EINTR;
-  
-  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+  //udelay(10);
   //printk("wait_down\n");
-  if(!cbob_spi_wait_down()) {
-    //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
-    //printk("cbc_spi: BOB Disconnected!\n");
+  printk("CBCSPI");
+  //schedule_timeout(10);
+  if(!cbob_spi_wait(0)) {
     up(&cbob_spi);
     return -ETIMEDOUT;
   }
   
-  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
-  //printk("writing cmd\n");
+  /*if(!cbob_spi_wait(0)) {
+  	printk("Disconnected...\n");
+    up(&cbob_spi);
+    return -ETIMEDOUT;
+  }*/
+  
   for(i = 0;i < 3;i++)
     spi_exchange_data(header[i]);
   
-  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
+  //schedule();
   //printk("wait up\n");
-  if(!cbob_spi_wait_up()) {
-    //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
-    //printk("cbc_spi: BOB Disconnected!\n");
+  //udelay(10);
+  printk("....1");
+  //schedule_timeout(10);
+  if(!cbob_spi_wait(1)) {
     up(&cbob_spi);
     return -ETIMEDOUT;
   }
   
-  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
-  //printk("writing message\n");
   if(outcount == 0) {
     spi_exchange_data(0);
   }
   for(i = 0;i < outcount;i++)
     spi_exchange_data(outbuf[i]);
   
-  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
-  //printk("wait_down\n");
-  if(!cbob_spi_wait_down()) {
-    //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
-    //printk("cbc_spi: BOB Write Error!\n");
+  printk("....2");
+  if(!cbob_spi_wait(0)) {
     up(&cbob_spi);
     return -ETIMEDOUT;
   }
-  
-  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
-  //printk("Reading reply\n");
   
   replycount = spi_exchange_data(0);
   spi_exchange_data(0);
   
-  //printk("Reply count=%d\n", replycount);
-  
-  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
-  //printk("wait up\n");
-  if(!cbob_spi_wait_up()) {
-    //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
-    //printk("cbc_spi: BOB Read Error!\n");
+  printk("....3\n");
+  if(!cbob_spi_wait(1)) {
     up(&cbob_spi);
     return -ETIMEDOUT;
   }
   
-  //printk("bend value = %d\n", imx_gpio_read(GPIO_PORTKP)&1);
-  //printk("Reading reply\n");
   for(i = 0;i < replycount;i++) {
-    //printk("\tword %d\n", i);
     if(incount--) {
       inbuf[i] = spi_exchange_data(0);
     }
     else spi_exchange_data(0);
   }
-  
-  //printk("done!\n");
   up(&cbob_spi);
-  
   return 1;
 }
 
