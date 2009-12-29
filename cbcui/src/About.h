@@ -32,6 +32,11 @@ public:
     About(QWidget *parent = 0);
     ~About();
 
+private:
+    QString m_OSVersion;
+    QString m_SWVersion;
+    QString m_FWVersion;
+
 };
 
 #endif

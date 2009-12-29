@@ -60,4 +60,6 @@
 #define CBOB_CMD_SERVO_WRITE    19
 #define CBOB_CMD_SERVO_CONFIG   20
 
+#define CBOB_CMD_STATUS_READ    21
+
 #endif

@@ -11,6 +11,7 @@
 #include "cbob_pwm.h"
 #include "cbob_servo.h"
 #include "cbob_uart.h"
+#include "cbob_status.h"
 
 
 MODULE_AUTHOR("jorge@kipr.org");
@@ -40,6 +41,7 @@ static int __init cbob_init(void)
   cbob_pwm_init();
   cbob_servo_init();
   cbob_uart_init();
+  cbob_status_init();
   
   return (0);
 }
@@ -53,6 +55,7 @@ static void __exit cbob_exit(void) {
   cbob_servo_exit();
   cbob_uart_exit();
   cbob_spi_exit();
+  cbob_status_exit();
 }
 
 // entry and exit mappings

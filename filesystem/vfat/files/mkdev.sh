@@ -52,3 +52,5 @@ mknod /dev/cbc/accelX c 226 0
 mknod /dev/cbc/accelY c 226 1
 mknod /dev/cbc/accelZ c 226 2
 mknod /dev/cbc/accel  c 226 3
+
+mknod /dev/cbc/status c 228 0

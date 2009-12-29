@@ -20,10 +20,34 @@
 
 #include "About.h"
 
+#include <QFile>
+#include <unistd.h>
+#include <fcntl.h>
+
 About::About(QWidget *parent) : Page(parent)
 {
     setupUi(this);
-    
+
+    QFile osVersion("/etc/software_version");
+    QFile swVersion("/mnt/usb/FIRMWARE_VERSION");
+
+    if(osVersion.open(QIODevice::ReadOnly | QIODevice::Text))
+        ui_OSVersion->setText(osVersion.readAll());
+    if(swVersion.open(QIODevice::ReadOnly | QIODevice::Text))
+        ui_SWVersion->setText(swVersion.readAll());
+
+    char version = 0;
+    int fd = ::open("/dev/cbc/status", O_RDONLY);
+    if(fd == 0) {
+        ::read(fd, &version, 1);
+        ::close(fd);
+    }
+
+    if(version)
+        ui_FWVersion->setText(QString::number(((float)version)/10.0));
+    else
+        ui_FWVersion->setText("Error");
+
 }
 
 About::~About()
