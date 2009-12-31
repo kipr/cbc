@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
+    <width>319</width>
     <height>213</height>
    </rect>
   </property>
@@ -35,14 +35,14 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>35</width>
+         <height>35</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>35</width>
+         <height>35</height>
         </size>
        </property>
        <property name="text">
@@ -106,14 +106,14 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>35</width>
+         <height>35</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>35</width>
+         <height>35</height>
         </size>
        </property>
        <property name="text">
@@ -198,7 +198,7 @@
    <item>
     <widget class="QStackedWidget" name="ui_MotorStack">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page_0">
       <layout class="QVBoxLayout">
@@ -443,14 +443,14 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>80</width>
-             <height>40</height>
+             <width>90</width>
+             <height>35</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>80</width>
-             <height>40</height>
+             <height>35</height>
             </size>
            </property>
            <property name="sizeIncrement">
@@ -469,7 +469,7 @@
             <font/>
            </property>
            <property name="text">
-            <string>Clear</string>
+            <string>Reset Counter</string>
            </property>
            <property name="iconSize">
             <size>
@@ -500,10 +500,16 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>40</width>
-             <height>40</height>
+             <width>35</width>
+             <height>35</height>
             </size>
            </property>
            <property name="text">
@@ -779,21 +785,21 @@
           <widget class="QPushButton" name="ui_ClearButton1">
            <property name="minimumSize">
             <size>
-             <width>80</width>
-             <height>40</height>
+             <width>90</width>
+             <height>35</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>80</width>
-             <height>40</height>
+             <width>90</width>
+             <height>35</height>
             </size>
            </property>
            <property name="font">
             <font/>
            </property>
            <property name="text">
-            <string>Clear</string>
+            <string>Reset Counter</string>
            </property>
            <property name="iconSize">
             <size>
@@ -824,10 +830,16 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>40</width>
-             <height>40</height>
+             <width>35</width>
+             <height>35</height>
             </size>
            </property>
            <property name="text">
@@ -1103,21 +1115,21 @@
           <widget class="QPushButton" name="ui_ClearButton2">
            <property name="minimumSize">
             <size>
-             <width>80</width>
-             <height>40</height>
+             <width>90</width>
+             <height>35</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>80</width>
-             <height>40</height>
+             <width>90</width>
+             <height>35</height>
             </size>
            </property>
            <property name="font">
             <font/>
            </property>
            <property name="text">
-            <string>Clear</string>
+            <string>Reset Counter</string>
            </property>
            <property name="iconSize">
             <size>
@@ -1148,10 +1160,16 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>40</width>
-             <height>40</height>
+             <width>35</width>
+             <height>35</height>
             </size>
            </property>
            <property name="text">
@@ -1427,21 +1445,21 @@
           <widget class="QPushButton" name="ui_ClearButton3">
            <property name="minimumSize">
             <size>
-             <width>80</width>
-             <height>40</height>
+             <width>90</width>
+             <height>35</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>80</width>
-             <height>40</height>
+             <width>90</width>
+             <height>35</height>
             </size>
            </property>
            <property name="font">
             <font/>
            </property>
            <property name="text">
-            <string>Clear</string>
+            <string>Reset Counter</string>
            </property>
            <property name="iconSize">
             <size>
@@ -1472,10 +1490,16 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>40</width>
-             <height>40</height>
+             <width>35</width>
+             <height>35</height>
             </size>
            </property>
            <property name="text">

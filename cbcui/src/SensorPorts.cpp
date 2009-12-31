@@ -20,6 +20,11 @@
 
 #include "SensorPorts.h"
 
+#include <stdio.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include "../../kernel/cbob/cbob.h"
+
 SensorPorts::SensorPorts(QWidget *parent) : Page(parent)
 {
     setupUi(this);
@@ -27,6 +32,8 @@ SensorPorts::SensorPorts(QWidget *parent) : Page(parent)
     m_cbobData = CbobData::instance();
     QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateSensors()));
     m_timer.start(100);
+    
+    for(int i = 0;i < 8;i++) setAnalogPullup(i, 1);
 }
 
 SensorPorts::~SensorPorts()
@@ -84,4 +91,59 @@ void SensorPorts::updateSensors()
         ui_BatteryVoltage->setText(QString::number(m_cbobData->batteryVoltage()));
    }
 }
+
+void SensorPorts::on_ui_floatingAnalog0_clicked(bool checked)
+{
+  setAnalogPullup(0, !checked);
+}
+
+void SensorPorts::on_ui_floatingAnalog1_clicked(bool checked)
+{
+  setAnalogPullup(1, !checked);
+}
+
+void SensorPorts::on_ui_floatingAnalog2_clicked(bool checked)
+{
+  setAnalogPullup(2, !checked);
+}
+
+void SensorPorts::on_ui_floatingAnalog3_clicked(bool checked)
+{
+  setAnalogPullup(3, !checked);
+}
+
+void SensorPorts::on_ui_floatingAnalog4_clicked(bool checked)
+{
+  setAnalogPullup(4, !checked);
+}
+
+void SensorPorts::on_ui_floatingAnalog5_clicked(bool checked)
+{
+  setAnalogPullup(5, !checked);
+}
+
+void SensorPorts::on_ui_floatingAnalog6_clicked(bool checked)
+{
+  setAnalogPullup(6, !checked);
+}
+
+void SensorPorts::on_ui_floatingAnalog7_clicked(bool checked)
+{
+  setAnalogPullup(7, !checked);
+}
+
+void SensorPorts::setAnalogPullup(int motor, int enabled)
+{
+  int fd;
+  char port_string[24];
+  
+  ::sprintf(port_string, "/dev/cbc/analog%d", motor);
+  
+  fd = ::open(port_string, O_RDWR);
+  if(fd > 0) {
+    ::ioctl(fd, CBOB_ANALOG_SET_PULLUP, &enabled);
+    ::close(fd);
+  }
+}
+
 

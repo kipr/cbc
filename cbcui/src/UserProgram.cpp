@@ -52,11 +52,13 @@ void UserProgram::readStderr()
 
 void UserProgram::programStarted()
 {
+  emit stateChange(1);
   emit started();
 }
 
 void UserProgram::programFinished(int, QProcess::ExitStatus)
 {
+  emit stateChange(0);
   emit stopped();
 }
 

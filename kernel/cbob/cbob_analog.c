@@ -15,12 +15,14 @@ static int cbob_analog_major = CBOB_ANALOG_MAJOR;
 static ssize_t cbob_analog_read(struct file *file, char *buf, size_t count, loff_t *ppos);
 static int     cbob_analog_open(struct inode *inode, struct file *file);
 static int     cbob_analog_release(struct inode *inode, struct file *file);
+static int     cbob_analog_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param);
 
 static struct file_operations cbob_analog_fops = {
 	owner:   THIS_MODULE,
 	open:    cbob_analog_open,
 	release: cbob_analog_release,
-	read:    cbob_analog_read
+	read:    cbob_analog_read,
+	ioctl:   cbob_analog_ioctl
 };
 
 static int cbob_analog_open(struct inode *inode, struct file *file)
@@ -60,6 +62,26 @@ static ssize_t cbob_analog_read(struct file *file, char *buf, size_t count, loff
   copy_to_user(buf, (char*)&data, count);
   
   return count;
+}
+
+static int cbob_analog_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param)
+{
+	struct analog_port *analog = file->private_data;
+	short request[3];
+	int arg, error;
+	
+	copy_from_user(&arg, (void*)ioctl_param, sizeof(int));
+	
+	switch(ioctl_num) {
+		case CBOB_ANALOG_SET_PULLUP:
+			request[0] = 0;
+			request[1] = analog->port;
+			request[2] = arg;
+			if((error = cbob_spi_message(CBOB_CMD_ANALOG_CONFIG, request, 3, 0,0)) < 0)
+				return error;
+			break;
+	}
+  return 0;
 }
 
 /* init and exit */

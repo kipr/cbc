@@ -25,6 +25,9 @@
 #include "Page.h"
 #include <QString>
 
+#include "SharedMem.h"
+#include "UIData.h"
+
 #define CONSOLE_MAX_LENGTH 5000
 
 class Console : public Page, private Ui::Console
@@ -37,9 +40,26 @@ public:
 
 public slots:
    void updateText(QString text);
+   
+   void on_ui_upButton_pressed();
+   void on_ui_downButton_pressed();
+   void on_ui_leftButton_pressed();
+   void on_ui_rightButton_pressed();
+   void on_ui_aButton_pressed();
+   void on_ui_bButton_pressed();
+
+  void on_ui_upButton_released();
+   void on_ui_downButton_released();
+   void on_ui_leftButton_released();
+   void on_ui_rightButton_released();
+   void on_ui_aButton_released();
+   void on_ui_bButton_released();
 
 private:
    QString m_consoleData;
+   
+   SharedMem<UIData> m_uiData;
+   
 
 };
 

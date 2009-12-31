@@ -31,6 +31,7 @@
 
 /* READ */
 #define CBOB_CMD_ANALOG_READ    4
+#define CBOB_CMD_ANALOG_CONFIG  22
 
 /* READ CONFIG */
 #define CBOB_CMD_ACCEL_READ     5

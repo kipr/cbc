@@ -35,10 +35,13 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent), m_mainMenu(0)
     
     QObject::connect(ui_runstopButton, SIGNAL(clicked()), UserProgram::instance(), SLOT(toggleState()));
     QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateBatteryDisplay()));
+    QObject::connect(UserProgram::instance(), SIGNAL(stateChange(int)), this, SLOT(userProgramStateChange(int)));
     
     m_timer.start(500);
     
     updateBatteryDisplay();
+    
+    userProgramStateChange(0);
 }
 
 MainWindow::~MainWindow()
@@ -62,4 +65,11 @@ void MainWindow::on_ui_closeButton_clicked(bool)
 {
    m_mainMenu->raisePage();
 }
+
+void MainWindow::userProgramStateChange(int state)
+{
+  if(state) ui_runstopButton->setText("E-Stop");
+  else      ui_runstopButton->setText("Run");
+}
+
 

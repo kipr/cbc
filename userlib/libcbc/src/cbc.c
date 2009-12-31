@@ -36,6 +36,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <shared_mem.h>
+#include "../../../cbcui/src/UIData.h"
 
 #include "../../../kernel/cbob/cbob.h"
 
@@ -56,6 +58,9 @@ static int g_pid[4];
 static int g_pwm[4];
 static int g_servo[4];
 static int g_accX, g_accY, g_accZ;
+
+shared_mem *g_uidata_sm = 0;
+UIData *g_uidata = 0;
 
 void libcbc_init()
 {
@@ -86,6 +91,10 @@ void libcbc_init()
 	g_accX = open("/dev/cbc/accX", O_RDONLY);
 	g_accY = open("/dev/cbc/accY", O_RDONLY);
 	g_accZ = open("/dev/cbc/accZ", O_RDONLY);
+	
+	g_uidata_sm = shared_mem_create("/tmp/cbc_uidata", sizeof(UIData));
+	assert(g_uidata_sm);
+	g_uidata = (UIData *)shared_mem_ptr(g_uidata_sm);
 	
 	atexit(libcbc_exit);
 }
@@ -583,51 +592,32 @@ int black_button()
 
 int up_button()
 {
-	PENDING("up_button");
-/*
-  cbc_data *cbc = cbc_data_ptr();
-  
-  return cbc->up;*/
+  return g_uidata->up_button;
 }
 
 int down_button()
 {
-	PENDING("down_button");/*
-  cbc_data *cbc = cbc_data_ptr();
-  
-  return cbc->down;*/
+  return g_uidata->down_button;
 }
 
 int left_button()
 {
-	PENDING("left_button");/*
-  cbc_data *cbc = cbc_data_ptr();
-  
-  return cbc->left;*/
+  return g_uidata->left_button;
 }
 
 int right_button()
 {
-	PENDING("right_button");/*
-  cbc_data *cbc = cbc_data_ptr();
-  
-  return cbc->right;*/
+  return g_uidata->right_button;
 }
 
 int a_button()
 {
-	PENDING("a_button");/*
-  cbc_data *cbc = cbc_data_ptr();
-  
-  return cbc->a;*/
+  return g_uidata->a_button;
 }
 
 int b_button()
 {
-	PENDING("b_button");/*
-  cbc_data *cbc = cbc_data_ptr();
-  
-  return cbc->b;*/
+  return g_uidata->b_button;
 }
 
 void display_clear()

@@ -25,4 +25,6 @@
 #define CBOB_PID_GET_GAINS     _IOR(CBOB_PID_MAJOR, 3, short*)
 #define CBOB_PID_GET_DONE      _IOR(CBOB_PID_MAJOR, 4, int*)
 
+#define CBOB_ANALOG_SET_PULLUP _IOW(CBOB_ANALOG_MAJOR, 0, int*)
+
 #endif

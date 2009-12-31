@@ -38,10 +38,22 @@ public slots:
    void updateSensors();
    void show();
    void hide();
+   
+   void on_ui_floatingAnalog0_clicked(bool checked = false);
+   void on_ui_floatingAnalog1_clicked(bool checked = false);
+   void on_ui_floatingAnalog2_clicked(bool checked = false);
+   void on_ui_floatingAnalog3_clicked(bool checked = false);
+   void on_ui_floatingAnalog4_clicked(bool checked = false);
+   void on_ui_floatingAnalog5_clicked(bool checked = false);
+   void on_ui_floatingAnalog6_clicked(bool checked = false);
+   void on_ui_floatingAnalog7_clicked(bool checked = false);
+   
 
 private:
    CbobData *m_cbobData;
    QTimer m_timer;
+   
+   void setAnalogPullup(int port, int enabled);
 
 };
 

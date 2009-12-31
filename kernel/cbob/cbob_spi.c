@@ -46,7 +46,7 @@ wait_queue_head_t cbob_spi_flip;
 
 #define SPI_CHAN 0
 
-#define CBOB_SPI_TIMEOUT 10
+#define CBOB_SPI_TIMEOUT 25
 
 static int spi_tx_fifo_empty(void)
 { return (SSP_INT_REG(SPI_CHAN) & SSP_INT_TE);}
@@ -163,11 +163,11 @@ inline static int cbob_spi_wait(int value)
   
   enable_irq(IRQ_GPIOD(27));
 	
-	retval = wait_event_interruptible(cbob_spi_flip, 0);
+	retval = wait_event_interruptible_timeout(cbob_spi_flip, 0, CBOB_SPI_TIMEOUT);
 	
 	printk("return...\n");
 	
-	return retval == 0;
+	return retval > 0;
 }
 
 int cbob_spi_message(short cmd, short *outbuf, short outcount, short *inbuf, short incount)

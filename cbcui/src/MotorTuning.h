@@ -69,6 +69,7 @@ private:
      void moveMotorPower(int motor,int power);
      void moveToPosition(int motor,int speed,int target_position);
      void moveAtVelocity(int motor,int velocity);
+     void getGains(int motor);
 
     int PIDgains[6];
 };

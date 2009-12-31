@@ -22,11 +22,18 @@
 #include "UserProgram.h"
 #include <QScrollBar>
 
-Console::Console(QWidget *parent) : Page(parent)
+Console::Console(QWidget *parent) : Page(parent), m_uiData("/tmp/cbc_uidata")
 {
     setupUi(this);
     
     QObject::connect(UserProgram::instance(), SIGNAL(consoleOutput(QString)), this, SLOT(updateText(QString)));
+    
+    m_uiData.shared().a_button = 0;
+    m_uiData.shared().b_button = 0;
+    m_uiData.shared().up_button = 0;
+    m_uiData.shared().down_button = 0;
+    m_uiData.shared().left_button = 0;
+    m_uiData.shared().right_button = 0;
 }
 
 Console::~Console()
@@ -40,3 +47,64 @@ void Console::updateText(QString text)
     ui_console->setPlainText(m_consoleData);
     ui_console->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }
+
+void Console::on_ui_upButton_pressed()
+{
+  m_uiData.shared().up_button = 1;
+}
+   
+void Console::on_ui_downButton_pressed()
+{
+  m_uiData.shared().down_button = 1; 
+}
+
+void Console::on_ui_leftButton_pressed()
+{
+  m_uiData.shared().left_button = 1; 
+}
+
+void Console::on_ui_rightButton_pressed()
+{
+  m_uiData.shared().right_button = 1; 
+}
+
+void Console::on_ui_aButton_pressed()
+{
+  m_uiData.shared().a_button = 1; 
+}
+
+void Console::on_ui_bButton_pressed()
+{
+  m_uiData.shared().b_button = 1; 
+}
+
+void Console::on_ui_upButton_released()
+{
+  m_uiData.shared().up_button = 0; 
+}
+   
+void Console::on_ui_downButton_released()
+{
+  m_uiData.shared().down_button = 0; 
+}
+
+void Console::on_ui_leftButton_released()
+{
+  m_uiData.shared().left_button = 0; 
+}
+
+void Console::on_ui_rightButton_released()
+{
+  m_uiData.shared().right_button = 0; 
+}
+
+void Console::on_ui_aButton_released()
+{
+  m_uiData.shared().a_button = 0; 
+}
+
+void Console::on_ui_bButton_released()
+{
+  m_uiData.shared().b_button = 0; 
+}
+

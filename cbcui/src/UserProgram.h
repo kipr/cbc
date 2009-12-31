@@ -22,6 +22,7 @@ signals:
   void started();
   void stopped();
   void consoleOutput(QString text);
+  void stateChange(int state);
 
 protected:
   UserProgram();

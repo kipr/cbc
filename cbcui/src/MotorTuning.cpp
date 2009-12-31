@@ -32,7 +32,6 @@
 MotorTuning::MotorTuning(QWidget *parent) : Page(parent)
 {   
     int i;
-    short gains[6];
     char devname[32];
     setupUi(this);
     
@@ -56,11 +55,9 @@ MotorTuning::MotorTuning(QWidget *parent) : Page(parent)
                 sprintf(devname, "/dev/cbc/pid%d", i);
                 m_pid[i] = ::open(devname, O_RDWR);
             }
-
-    ioctl(m_pid[0], CBOB_PID_GET_GAINS, gains);
-    for(i=0;i<6;i++) PIDgains[i] = gains[i];
-    this->selectGain(0);
-    
+            
+    getGains(0);
+   this->selectGain(0);
 }
 
 MotorTuning::~MotorTuning()
@@ -92,6 +89,8 @@ void MotorTuning::on_ui_MotorDecButton_clicked(bool)
 {
     if(m_motorNumber == 0) m_motorNumber = 3;
     else m_motorNumber--;
+    
+    getGains(m_motorNumber);
 
     ui_MotorNumberLabel->setText(QString::number(m_motorNumber));
 }
@@ -100,6 +99,8 @@ void MotorTuning::on_ui_MotorIncButton_clicked(bool)
 {
     if(m_motorNumber == 3) m_motorNumber = 0;
     else m_motorNumber++;
+    
+    getGains(m_motorNumber);
 
     ui_MotorNumberLabel->setText(QString::number(m_motorNumber));
 }
@@ -235,6 +236,14 @@ void MotorTuning::moveToPosition(int motor,int speed, int target_position)
         memcpy(outdata+2, &p, 4);
 
         write(m_pid[motor], outdata, 6);
+}
+
+void MotorTuning::getGains(int motor)
+{
+  short gains[6];
+  int i;
+  ioctl(m_pid[motor], CBOB_PID_GET_GAINS, gains);
+    for(i=0;i<6;i++) PIDgains[i] = gains[i];
 }
 
 

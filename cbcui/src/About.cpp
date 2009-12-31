@@ -36,15 +36,15 @@ About::About(QWidget *parent) : Page(parent)
     if(swVersion.open(QIODevice::ReadOnly | QIODevice::Text))
         ui_SWVersion->setText(swVersion.readAll());
 
-    char version = 0;
+    short version = 0;
     int fd = ::open("/dev/cbc/status", O_RDONLY);
-    if(fd == 0) {
-        ::read(fd, &version, 1);
+    if(fd > 0) {
+        ::read(fd, &version, 2);
         ::close(fd);
     }
 
     if(version)
-        ui_FWVersion->setText(QString::number(((float)version)/10.0));
+        ui_FWVersion->setText(QString::number(version));
     else
         ui_FWVersion->setText("Error");
 
