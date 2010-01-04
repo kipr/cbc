@@ -135,10 +135,8 @@ static ssize_t cbob_uart_write(struct tty_struct *tty, const unsigned char *buf,
 	
 	kfree(data);
 	
-	udelay(500);
 	up(&uart->sem);
 	
-	//printk("cbob_uart:wrote %d bytes\n", written);
 	return written;
 }
 

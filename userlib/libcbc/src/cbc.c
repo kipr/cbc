@@ -37,6 +37,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <shared_mem.h>
+#include <sys/ioctl.h>
 #include "../../../cbcui/src/UIData.h"
 
 #include "../../../kernel/cbob/cbob.h"
@@ -198,6 +199,30 @@ int analog10(int port)
 int analog(int port)
 {
   return analog10(port)>>2;
+}
+
+void set_analog_floats(int mask)
+{
+	int i;
+
+	for(i = 0;i < 8;i++)
+		set_analog_float(i, (mask&(1<<i))&&1);
+}
+
+void set_analog_float(int port, int enabled)
+{
+	enabled = !enabled;
+	ioctl(g_analog[port], CBOB_ANALOG_SET_PULLUP, &enabled);
+}
+
+int get_analog_floats()
+{
+	PENDING("get_analog_floats");
+}
+
+int get_analog_float(int port)
+{
+	PENDING("get_analog_float");
 }
 
 /////////////////////////////////////////////////////////////
