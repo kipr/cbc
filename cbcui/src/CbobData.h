@@ -37,6 +37,7 @@ public:
     int accelerometerX();
     int accelerometerY();
     int accelerometerZ();
+		int analogPullups();
 
     float batteryVoltage();
 
@@ -54,7 +55,7 @@ private:
     int m_sensors;
     int m_pid;
     int m_pwm;
-    short m_sensorData[13];
+    short m_sensorData[14];
     int   m_pidData[4];
     signed char   m_pwmData[4];
 

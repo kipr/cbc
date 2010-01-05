@@ -132,16 +132,17 @@ void SensorPorts::on_ui_floatingAnalog7_clicked(bool checked)
   setAnalogPullup(7, !checked);
 }
 
-void SensorPorts::setAnalogPullup(int motor, int enabled)
+void SensorPorts::setAnalogPullup(int port, int enabled)
 {
-  int fd;
-  char port_string[24];
+  int fd, mask;
+  char *port_string = "/dev/cbc/analog0";
   
-  ::sprintf(port_string, "/dev/cbc/analog%d", motor);
+  if(enabled) mask = m_cbobData->analogPullups()|(1<<port);
+  else        mask = m_cbobData->analogPullups()&(~(1<<port));
   
   fd = ::open(port_string, O_RDWR);
   if(fd > 0) {
-    ::ioctl(fd, CBOB_ANALOG_SET_PULLUP, &enabled);
+    ::ioctl(fd, CBOB_ANALOG_SET_PULLUPS, &mask);
     ::close(fd);
   }
 }

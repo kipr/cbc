@@ -171,6 +171,7 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 			g_ChumbyData[++outcount] = Accel_X();
 			g_ChumbyData[++outcount] = Accel_Y();
 			g_ChumbyData[++outcount] = Accel_Z();
+			g_ChumbyData[++outcount] = GetAnalogPullups();
       break;
     case CBOB_CMD_SENSORS_CONFIG:
 			break;

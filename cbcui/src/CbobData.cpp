@@ -91,6 +91,11 @@ int CbobData::motorPosition(int motor)
     return 0;
 }
 
+int CbobData::analogPullups()
+{
+  return m_sensorData[13];
+}
+
 
 int CbobData::motorPWM(int motor)
 {
@@ -102,7 +107,7 @@ int CbobData::motorPWM(int motor)
 void CbobData::updateSensors()
 {
     int error;
-    error = read(m_sensors, m_sensorData, 26);
+    error = read(m_sensors, m_sensorData, 28);
     if(error < 0) perror("Got an error reading the sensor data");
     error = read(m_pid, m_pidData, 16);
     if(error < 0) perror("Got an error reading the motor counters");

@@ -93,9 +93,7 @@ int black_button();/* returns value of hardware button on CBC */
 void display_clear(); /* Clears display and pust cursor in upper left*/
 void cbc_display_clear();/*Clears console display on CBC*/
 void cbc_printf(int col, int row, char *t, ...);/*Does printf at col,row */
-void set_analog_float(int port, int enabled);
 void set_analog_floats(int mask);
-int get_analog_float(int port);
 int get_analog_floats();
 
 #define SIMPLEWORLD 0

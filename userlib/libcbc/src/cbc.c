@@ -204,26 +204,21 @@ int analog(int port)
 void set_analog_floats(int mask)
 {
 	int i;
-
-	for(i = 0;i < 8;i++)
-		set_analog_float(i, (mask&(1<<i))&&1);
-}
-
-void set_analog_float(int port, int enabled)
-{
-	enabled = !enabled;
-	ioctl(g_analog[port], CBOB_ANALOG_SET_PULLUP, &enabled);
+	
+	mask = (~mask)&0xFF;
+	
+	ioctl(g_analog[0], CBOB_ANALOG_SET_PULLUPS, &mask);
 }
 
 int get_analog_floats()
 {
-	PENDING("get_analog_floats");
+	int mask;
+	
+	ioctl(g_analog[0], CBOB_ANALOG_GET_PULLUPS, &mask);
+	
+	return (~mask)&0xFF;
 }
 
-int get_analog_float(int port)
-{
-	PENDING("get_analog_float");
-}
 
 /////////////////////////////////////////////////////////////
 // Accelerometer Functions
