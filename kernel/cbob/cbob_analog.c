@@ -67,20 +67,29 @@ static ssize_t cbob_analog_read(struct file *file, char *buf, size_t count, loff
 static int cbob_analog_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param)
 {
 	struct analog_port *analog = file->private_data;
-	short request[3];
+	short request[2];
+	short retval;
 	int arg, error;
 	
 	copy_from_user(&arg, (void*)ioctl_param, sizeof(int));
 	
 	switch(ioctl_num) {
-		case CBOB_ANALOG_SET_PULLUP:
+		case CBOB_ANALOG_SET_PULLUPS:
 			request[0] = 0;
-			request[1] = analog->port;
-			request[2] = arg;
-			if((error = cbob_spi_message(CBOB_CMD_ANALOG_CONFIG, request, 3, 0,0)) < 0)
+			request[1] = arg;
+			if((error = cbob_spi_message(CBOB_CMD_ANALOG_CONFIG, request, 2, 0,0)) < 0)
 				return error;
 			break;
+		case CBOB_ANALOG_GET_PULLUPS:
+			request[0] = 1;
+			if((error = cbob_spi_message(CBOB_CMD_ANALOG_CONFIG, request, 1, &retval, 1)) < 0)
+				return error;
+			arg = retval;
+			break;
 	}
+	
+	copy_to_user((void*)ioctl_param, &arg, sizeof(int));
+	
   return 0;
 }
 
