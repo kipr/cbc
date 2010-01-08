@@ -12,11 +12,15 @@ Q_OBJECT
 public:
 
   static UserProgram *instance();
+  QString getProgramName() { return programName; }
+  bool isRunning();
 
 public slots:
   void toggleState();
   void start();
   void stop();
+  void updateProgramName();
+  void compileFinished(int eCode, QProcess::ExitStatus eStatus);
   
 signals:
   void started();
@@ -36,6 +40,8 @@ private slots:
 
 private:
   QProcess m_userProgram;
+  QString programName;
+  bool state;
 };
 
 #endif

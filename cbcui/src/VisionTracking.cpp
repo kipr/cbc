@@ -30,10 +30,15 @@ VisionTracking::VisionTracking(QWidget *parent, ColorTracker *colorTracker) : Pa
   m_HSVRangeDisplay = new HSVRangeDisplay();
   hsv->addWidget(m_HSVRangeDisplay);
 
-  qWarning("setting display model 0");
+  //qWarning("setting display model 0");
   displayModel(0);
   
-  qWarning("setting up model buttons");
+ // qWarning("setting up model buttons");
+
+  Model0Button->setCheckable(true);
+  Model1Button->setCheckable(true);
+  Model2Button->setCheckable(true);
+  Model3Button->setCheckable(true);
 
   m_modelGroup.addButton(Model0Button);
   m_modelGroup.addButton(Model1Button);
@@ -41,26 +46,28 @@ VisionTracking::VisionTracking(QWidget *parent, ColorTracker *colorTracker) : Pa
   m_modelGroup.addButton(Model3Button);
   Model0Button->click();
   
-  qWarning("Setting up track button");
+  //qWarning("Setting up track button");
+  RawButton->setCheckable(true);
+  MatchButton->setCheckable(true);
+  TrackButton->setCheckable(true);
   m_modeGroup.addButton(RawButton);
   m_modeGroup.addButton(MatchButton);
   m_modeGroup.addButton(TrackButton);
   TrackButton->click();
   
 
-  qWarning("setting up other buttons");
+  //qWarning("setting up other buttons");
+  TopLeftButton->setCheckable(true);
+  BottomRightButton->setCheckable(true);
   m_tlbrGroup.addButton(TopLeftButton);
   m_tlbrGroup.addButton(BottomRightButton);
   TopLeftButton->click();
   
-  qWarning("loading models");
+  //qWarning("loading models");
 
   if (!loadModels()) {
     loadDefaultModels();
   }
-  
-  qWarning("VisionTracking initted\n");
-  
 }
 
 VisionTracking::~VisionTracking()
@@ -169,4 +176,57 @@ void VisionTracking::showEvent(QShowEvent *) {
 #ifdef QT_ARCH_ARM
   setWindowState(windowState() | Qt::WindowFullScreen);
 #endif
+}
+
+void VisionTracking::on_Model0Button_clicked() {
+    displayModel(0);
+    Model1Button->setChecked(false);
+    Model2Button->setChecked(false);
+    Model3Button->setChecked(false);
+}
+void VisionTracking::on_Model1Button_clicked() {
+    displayModel(1);
+    Model0Button->setChecked(false);
+    Model2Button->setChecked(false);
+    Model3Button->setChecked(false);
+}
+void VisionTracking::on_Model2Button_clicked() {
+    displayModel(2);
+    Model0Button->setChecked(false);
+    Model1Button->setChecked(false);
+    Model3Button->setChecked(false);
+}
+void VisionTracking::on_Model3Button_clicked() {
+    displayModel(3);
+    Model0Button->setChecked(false);
+    Model1Button->setChecked(false);
+    Model2Button->setChecked(false);
+}
+
+void VisionTracking::on_RawButton_clicked() {
+    m_ColorTracker->setDisplayMode(ColorTracker::DisplayRaw);
+    MatchButton->setChecked(false);
+    TrackButton->setChecked(false);
+}
+
+ void VisionTracking::on_MatchButton_clicked() {
+    m_ColorTracker->setDisplayMode(ColorTracker::DisplayMatches);
+    RawButton->setChecked(false);
+    TrackButton->setChecked(false);
+}
+
+  void VisionTracking::on_TrackButton_clicked() {
+    m_ColorTracker->setDisplayMode(ColorTracker::DisplayBlobs);
+    RawButton->setChecked(false);
+    MatchButton->setChecked(false);
+}
+
+void VisionTracking::on_TopLeftButton_clicked() {
+    m_tl = true;
+    BottomRightButton->setChecked(false);
+}
+
+void VisionTracking::on_BottomRightButton_clicked() {
+      m_tl = false;
+      TopLeftButton->setChecked(false);
 }

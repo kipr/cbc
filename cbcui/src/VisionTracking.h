@@ -61,19 +61,19 @@ protected:
   
 public slots:
   // Select model
-  void on_Model0Button_clicked() { displayModel(0); }
-  void on_Model1Button_clicked() { displayModel(1); }
-  void on_Model2Button_clicked() { displayModel(2); }
-  void on_Model3Button_clicked() { displayModel(3); }
+  void on_Model0Button_clicked();
+  void on_Model1Button_clicked();
+  void on_Model2Button_clicked();
+  void on_Model3Button_clicked();
 
   // Select Raw/Match/Track display
-  void on_RawButton_clicked()    { m_ColorTracker->setDisplayMode(ColorTracker::DisplayRaw);     }
-  void on_MatchButton_clicked()  { m_ColorTracker->setDisplayMode(ColorTracker::DisplayMatches); }
-  void on_TrackButton_clicked()  { m_ColorTracker->setDisplayMode(ColorTracker::DisplayBlobs);   }
+  void on_RawButton_clicked();
+  void on_MatchButton_clicked();
+  void on_TrackButton_clicked();
 
   // Select TL/BR
-  void on_TopLeftButton_clicked()     { m_tl = true;  }
-  void on_BottomRightButton_clicked() { m_tl = false; }
+  void on_TopLeftButton_clicked();
+  void on_BottomRightButton_clicked();
 
   // Up/down/left/right
   void on_UpButton_clicked()    { moveVertically(-1);   }

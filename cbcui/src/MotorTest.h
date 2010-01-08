@@ -36,15 +36,15 @@ class MotorTest : public Page, private Ui::MotorTest
 public:
     MotorTest(QWidget *parent = 0);
     ~MotorTest();
+    bool inMotion();
 
 public slots:
         void on_ui_MotorDecButton_clicked(bool checked = false);
         void on_ui_MotorIncButton_clicked(bool checked = false);
         void updateCounters();
+        void motorsOff();
         void show();
         void hide();
-        //void closeMotorTest();
-        //void raise();
 
         void clearMotorCounter();
 
@@ -90,6 +90,7 @@ private:
         int m_targetPower[4];
         int m_targetSpeed[4];
         int m_targetPosition[4];
+        int m_inMotion;
 
         void moveMotorPower(int motor,int power);
         void moveToPosition(int motor,int speed,int target_position);

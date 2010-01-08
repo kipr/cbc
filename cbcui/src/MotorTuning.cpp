@@ -45,6 +45,7 @@ MotorTuning::MotorTuning(QWidget *parent) : Page(parent)
     m_motorNumber = 0;
     m_targetSpeed = 0;
     m_targetPosition = 0;
+    m_inMotion = 0;
 
     ui_GainComboBox->addItem(tr("Proportional"));
     ui_GainComboBox->addItem(tr("Integral"));
@@ -68,13 +69,18 @@ MotorTuning::~MotorTuning()
 
 void MotorTuning::show()
 {
-   m_timer.start();
+    //qWarning("Tuning shown");
+    m_timer.start();
+    Page::show();
 }
 
 void MotorTuning::hide()
 {
-    if(ui_PlayButton->isChecked()) ui_PlayButton->toggle();
+    //qWarning("Tuning hidden");
+    // turn off all motors before hiding page;
+    //this->motorsOff();
     m_timer.stop();
+    Page::hide();
 }
 
 void MotorTuning::updateCounters()
@@ -214,6 +220,13 @@ void MotorTuning::on_ui_PlayButton_toggled(bool state)
     }
 }
 
+void MotorTuning::motorsOff()
+{
+    int i;
+    for(i=0;i<4;i++) this->moveAtVelocity(i,0);
+    if(ui_PlayButton->isChecked()) ui_PlayButton->toggle();
+    m_inMotion = 0;
+}
 
 void MotorTuning::clearMotorCounter()
 {
@@ -246,7 +259,11 @@ void MotorTuning::getGains(int motor)
     for(i=0;i<6;i++) PIDgains[i] = gains[i];
 }
 
-
+bool MotorTuning::inMotion()
+{
+    if(m_inMotion) return true;
+    else return false;
+}
 
 
 

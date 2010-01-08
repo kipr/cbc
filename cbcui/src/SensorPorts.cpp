@@ -42,12 +42,14 @@ SensorPorts::~SensorPorts()
 
 void SensorPorts::show()
 {
+    //qWarning("Sensors shown");
    m_timer.start(100);
    Page::show();
 }
 
 void SensorPorts::hide()
 {
+    //qWarning("Sensors hidden");
    m_timer.stop();
    Page::hide();
 }
@@ -132,12 +134,12 @@ void SensorPorts::on_ui_floatingAnalog7_clicked(bool checked)
   setAnalogPullup(7, !checked);
 }
 
-void SensorPorts::setAnalogPullup(int motor, int enabled)
+void SensorPorts::setAnalogPullup(int port, int enabled)
 {
   int fd;
   char port_string[24];
   
-  ::sprintf(port_string, "/dev/cbc/analog%d", motor);
+  ::sprintf(port_string, "/dev/cbc/analog%d", port);
   
   fd = ::open(port_string, O_RDWR);
   if(fd > 0) {

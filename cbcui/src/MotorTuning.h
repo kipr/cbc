@@ -37,11 +37,13 @@ class MotorTuning : public Page, private Ui::MotorTuning
 public:
     MotorTuning(QWidget *parent = 0);
     ~MotorTuning();
+    bool inMotion();
 
 public slots:
     void on_ui_MotorDecButton_clicked(bool checked = false);
     void on_ui_MotorIncButton_clicked(bool checked = false);
     void updateCounters();
+    void motorsOff();
     void show();
     void hide();
 
@@ -65,6 +67,7 @@ private:
     int m_motorNumber;
     int m_targetSpeed;
     int m_targetPosition;
+    int m_inMotion;
 
      void moveMotorPower(int motor,int power);
      void moveToPosition(int motor,int speed,int target_position);
