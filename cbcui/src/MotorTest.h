@@ -81,7 +81,6 @@ public slots:
 
 private:
         CbobData *m_cbobData;
-        QTimer m_timer;
 
         int m_pid[4];
         int m_pwm[4];

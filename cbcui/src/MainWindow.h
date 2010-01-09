@@ -44,7 +44,6 @@ public slots:
 
 private:
    MainMenu *m_mainMenu;
-   QTimer m_timer;
 };
 
 #endif

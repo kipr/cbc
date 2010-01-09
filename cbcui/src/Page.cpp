@@ -60,4 +60,14 @@ Page *Page::lastPage()
   return m_lastPage;
 }
 
+void Page::show()
+{
+   QWidget::show();
+}
+
+void Page::hide()
+{
+   QWidget::hide();
+}
+
 

@@ -34,13 +34,11 @@ MotorTest::MotorTest(QWidget *parent) : Page(parent)
     setupUi(this);
     char devname[32];
         
-        QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateCounters()));
         QObject::connect(ui_ClearButton0, SIGNAL(pressed()), this, SLOT(clearMotorCounter()));
         QObject::connect(ui_ClearButton1, SIGNAL(pressed()), this, SLOT(clearMotorCounter()));
         QObject::connect(ui_ClearButton2, SIGNAL(pressed()), this, SLOT(clearMotorCounter()));
         QObject::connect(ui_ClearButton3, SIGNAL(pressed()), this, SLOT(clearMotorCounter()));
 
-        m_timer.start(100);
         m_motorNumber = 0;
 
     m_cbobData = CbobData::instance();
@@ -68,13 +66,15 @@ MotorTest::~MotorTest()
 
 void MotorTest::show()
 {
-    m_timer.start(100);
+    m_cbobData->setFastRefresh();
+    QObject::connect(m_cbobData, SIGNAL(refresh()), this, SLOT(updateCounters()));
     Page::show();
 }
 
 void MotorTest::hide()
 {
-    m_timer.stop();
+    QObject::disconnect(this, SLOT(updateCounters()));
+    m_cbobData->setSlowRefresh();
     if(ui_PlayButton0->isChecked()) ui_PlayButton0->toggle();
     if(ui_PlayButton1->isChecked()) ui_PlayButton1->toggle();
     if(ui_PlayButton2->isChecked()) ui_PlayButton2->toggle();
@@ -84,13 +84,10 @@ void MotorTest::hide()
 
 void MotorTest::updateCounters()
 {
-    if(isVisible()) {
-        m_cbobData->updateSensors();
-        ui_MotorPositionLabel0->setText(QString::number(m_cbobData->motorPosition(0)));
-        ui_MotorPositionLabel1->setText(QString::number(m_cbobData->motorPosition(1)));
-        ui_MotorPositionLabel2->setText(QString::number(m_cbobData->motorPosition(2)));
-        ui_MotorPositionLabel3->setText(QString::number(m_cbobData->motorPosition(3)));
-    }
+    ui_MotorPositionLabel0->setText(QString::number(m_cbobData->motorPosition(0)));
+    ui_MotorPositionLabel1->setText(QString::number(m_cbobData->motorPosition(1)));
+    ui_MotorPositionLabel2->setText(QString::number(m_cbobData->motorPosition(2)));
+    ui_MotorPositionLabel3->setText(QString::number(m_cbobData->motorPosition(3)));
 }
 
 void MotorTest::on_ui_MotorDecButton_clicked(bool)

@@ -28,6 +28,11 @@ CbobData::CbobData()
     m_sensors = open("/dev/cbc/sensors", O_RDONLY);
     m_pid = open("/dev/cbc/pid", O_RDONLY);
     m_pwm = open("/dev/cbc/pwm", O_RDONLY);
+    
+    QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateSensors()));
+    
+    updateSensors();
+    setSlowRefresh();
 }
 
 CbobData::~CbobData()
@@ -104,6 +109,21 @@ int CbobData::motorPWM(int motor)
 	return 0;
 }
 
+void CbobData::setRefresh(int delay)
+{
+	m_timer.start(delay);
+}
+
+void CbobData::setFastRefresh()
+{
+	setRefresh(CBOB_REFRESH_FAST);
+}
+
+void CbobData::setSlowRefresh()
+{
+	setRefresh(CBOB_REFRESH_SLOW);
+}
+
 void CbobData::updateSensors()
 {
     int error;
@@ -113,6 +133,8 @@ void CbobData::updateSensors()
     if(error < 0) perror("Got an error reading the motor counters");
     error = read(m_pwm, m_pwmData, 4);
     if(error < 0) perror("Got an error reading the motor pwm values");
+    
+    emit refresh();
 }
 
 

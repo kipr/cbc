@@ -30,8 +30,6 @@ SensorPorts::SensorPorts(QWidget *parent) : Page(parent)
     setupUi(this);
     
     m_cbobData = CbobData::instance();
-    QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateSensors()));
-    m_timer.start(100);
     
     for(int i = 0;i < 8;i++) setAnalogPullup(i, 1);
 }
@@ -42,20 +40,20 @@ SensorPorts::~SensorPorts()
 
 void SensorPorts::show()
 {
-   m_timer.start(100);
+   m_cbobData->setFastRefresh();
+   QObject::connect(m_cbobData, SIGNAL(refresh()), this, SLOT(updateSensors()));
    Page::show();
 }
 
 void SensorPorts::hide()
 {
-   m_timer.stop();
+   m_cbobData->setSlowRefresh();
+   QObject::disconnect(this, SLOT(updateSensors()));
    Page::hide();
 }
 
 void SensorPorts::updateSensors()
 {
-      if(isVisible()) {
-         m_cbobData->updateSensors();
         ui_Digital0->setText(QString::number(m_cbobData->digital(0)));
         ui_Digital1->setText(QString::number(m_cbobData->digital(1)));
         ui_Digital2->setText(QString::number(m_cbobData->digital(2)));
@@ -89,7 +87,6 @@ void SensorPorts::updateSensors()
         ui_AccelerometerZ->setText(QString::number(m_cbobData->accelerometerZ()));
         
         ui_BatteryVoltage->setText(QString::number(m_cbobData->batteryVoltage()));
-   }
 }
 
 void SensorPorts::on_ui_floatingAnalog0_clicked(bool checked)
