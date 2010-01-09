@@ -31,6 +31,7 @@ Compiler::Compiler(QWidget *parent) : Page(parent)
 
     QObject::connect(&m_compiler, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));
     QObject::connect(&m_compiler, SIGNAL(readyReadStandardOutput()), this, SLOT(readStandardOutput()));
+    QObject::connect(&m_compiler, SIGNAL(finished(int, QProcess::ExitStatus)), UserProgram::instance(), SLOT(compileFinished(int, QProcess::ExitStatus)));
 }
 
 Compiler::~Compiler()

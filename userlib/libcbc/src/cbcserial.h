@@ -21,8 +21,7 @@
 #ifndef __CBCSERIAL_H__
 #define __CBCSERIAL_H__
 
-#define CREATE_UART_TX "/tmp/uart1tx"
-#define CREATE_UART_RX "/tmp/uart1rx"
+#define CREATE_UART "/dev/cbc/uart1"
 
 void serial_init();
 void serial_quit();

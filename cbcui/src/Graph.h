@@ -49,7 +49,6 @@ private:
     int getScale(int index);
     
     CbobData *m_cbobData;
-    QTimer m_timer;
     GraphWidget *m_graph;
 };
 

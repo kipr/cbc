@@ -19,234 +19,217 @@
 
 /* File Ops */
 
+
+static int cbob_uart_major = CBOB_UART_MAJOR;
+
 struct cbob_uart {
-  struct tty_struct *tty;
-  int open_count;
+  volatile int port;
+  volatile int open_count;
   struct semaphore sem;
 };
 
-static int  cbob_uart_open(struct tty_struct *tty, struct file *filp);
-static void cbob_uart_close(struct tty_struct *tty, struct file *filp);
-static int  cbob_uart_write(struct tty_struct *tty, const unsigned char *buf, int count);
-static int  cbob_uart_write_room(struct tty_struct *tty);
-void cbob_uart_fetch_data(unsigned long arg);
+static int  cbob_uart_open(struct inode *inode, struct file *file);
+static int  cbob_uart_close(struct inode *inode, struct file *file);
+static int  cbob_uart_write(struct file *file, const char *buf, size_t count, loff_t *ppos);
+static int  cbob_uart_read(struct file *file, char *buf, size_t count, loff_t *ppos);
+static int  cbob_uart_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param);
 
-DECLARE_TASKLET(cbob_uart_fetch, cbob_uart_fetch_data, 0);
-
-//DECLARE_WORK(cbob_uart_fetch, cbob_uart_fetch_data, 0);
-
-static void do_close(struct cbob_uart *uart);
-
-static struct tty_driver *cbob_uart_tty_driver;
-static struct tty_operations cbob_uart_ops = {
+static struct file_operations cbob_uart_fops = {
   open:       cbob_uart_open,
-  close:      cbob_uart_close,
+  release:    cbob_uart_close,
   write:      cbob_uart_write,
-  write_room: cbob_uart_write_room
+  read:       cbob_uart_read,
+  ioctl:      cbob_uart_ioctl
 };
 
+struct cbob_uart cbob_uarts[CBOB_UART_MINORS];
 
-struct cbob_uart *cbob_uarts[CBOB_UART_MINORS];
-
-static unsigned char cbob_uart_packet[CBOB_UART_PACKET_SIZE];
-
-static int cbob_uart_open(struct tty_struct *tty, struct file *filp)
+static int cbob_uart_open(struct inode *inode, struct file *file)
 { 
-  struct cbob_uart *uart;
-  int index;
+	int port;
+	struct cbob_uart *uart = 0;
   
   printk("%s\n", __FUNCTION__);
   
-  tty->driver_data = NULL;
+  port = iminor(inode);
   
-  index = tty->index;
-  uart = cbob_uarts[index];
-  if(uart == NULL) {
-  	uart = kmalloc(sizeof(struct cbob_uart), GFP_KERNEL);
-  	if(!uart)
-  		return -ENOMEM;
-  	init_MUTEX(&uart->sem);
-  	uart->open_count = 0;
-  	
-  	cbob_uarts[index] = uart;
-  }
+  if(port > 1) return -ENODEV;
+  
+  uart = &cbob_uarts[port];
   
   if(down_interruptible(&uart->sem))
   	return -EINTR;
   
-  tty->driver_data = uart;
-  uart->tty = tty;
+  if(uart->open_count) {
+  	up(&uart->sem);
+  	return -EBUSY;
+  }
   
-  uart->open_count++;
+  uart->open_count = 1;
+  
+  file->private_data = uart;
+  
   up(&uart->sem);
+  
   return 0;
 }
 
-static void cbob_uart_close(struct tty_struct *tty, struct file *filp)
+
+static int cbob_uart_close(struct inode *inode, struct file *file)
 {
-  struct cbob_uart *uart = tty->driver_data;
-  
-  printk("%s\n", __FUNCTION__);
-  
-  if(uart)
-    do_close(uart);
+	struct cbob_uart *uart;
+	
+	printk("%s...", __FUNCTION__);
+	
+	uart = file->private_data;
+	
+	down(&uart->sem);
+	
+	uart->open_count = 0;
+	
+	up(&uart->sem);
+	
+	printk("returning...\n");
+	return 0;
 }
 
-static void do_close(struct cbob_uart *uart)
+static ssize_t cbob_uart_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
 {
+	struct cbob_uart *uart = file->private_data;
+	int port = uart->port;
+	short data[35], written;
+	
 	printk("%s\n", __FUNCTION__);
-  
-  down(&uart->sem);
-  
-  if(!uart->open_count) {
-  	up(&uart->sem);
-  	return;
-  }
-  
-  --uart->open_count;
-  up(&uart->sem);
-}
-
-static ssize_t cbob_uart_write(struct tty_struct *tty, const unsigned char *buf, int count)
-{
-	struct cbob_uart *uart = tty->driver_data;
-	int index = tty->index;
-	short *data, written;
+	
+	if(count > 64) count = 64;
 	
 	if(!uart)
 		return -ENODEV;
 	
 	if(down_interruptible(&uart->sem))
 		return -EINTR;
-	
-	if(!uart->open_count) {
-		up(&uart->sem);
-		return -EINVAL;
-	}
-	
-	if(count > 64) count = 64;
-	
-	data = kmalloc(count+6, GFP_KERNEL);
-	memcpy(&(data[2]), buf, count);
-	data[0] = index;
+
+	copy_from_user(&(data[2]), buf, count);
+	data[0] = port;
 	data[1] = count;
 	
 	cbob_spi_message(CBOB_CMD_UART_WRITE, data, (count>>1)+3, &written, 1);
-	
-	kfree(data);
 	
 	up(&uart->sem);
 	
 	return written;
 }
 
-static int  cbob_uart_write_room(struct tty_struct *tty)
+static int  cbob_uart_read(struct file *file, char *buf, size_t count, loff_t *ppos)
 {
-	return 64;
+	struct cbob_uart *uart = file->private_data;
+	int port = uart->port;
+	short data[33], request[2], data_read;
+	
+	printk("%s\n", __FUNCTION__);
+	
+	if(count > 64) count = 64;
+	
+	if(!uart)
+		return -ENODEV;
+		
+	printk("uart is valid\n");
+		
+	if(down_interruptible(&uart->sem))
+		return -EINTR;
+		
+	printk("got the semaphore\n");
+		
+	if(!(imx_gpio_read(GPIO_PORTKP)&1)) {
+		up(&uart->sem);
+		return 0;
+	}
+	
+	printk("passed the io port test\n");
+
+	request[0] = port;
+	request[1] = count;
+	cbob_spi_message(CBOB_CMD_UART_READ, request, 2, data, 33);
+	
+	printk("spi request completed\n");
+	
+	data_read = data[0];
+	
+	printk("read %d bytes\n", data_read);
+	
+	copy_to_user(buf, &(data[1]), data_read);
+	
+	printk("done!\n");
+	
+	up(&uart->sem);
+	
+	return data_read;
 }
 
-/*irqreturn_t cbob_uart_handler(int irq, void *data, struct pt_regs *regs)
+
+static int cbob_uart_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param)
 {
-	disable_irq_nosync(IRQ_GPIOD(27));
+	struct cbob_uart *uart = file->private_data;
+	short request[2];
+	short retval;
+	int arg, error;
 	
-	//queue_work(cbob_uart_workqueue, &cbob_uart_fetch);
+	printk("%s\n", __FUNCTION__);
 	
-	tasklet_schedule(&cbob_uart_fetch);
+	copy_from_user(&arg, (void*)ioctl_param, sizeof(int));
 	
-  return IRQ_HANDLED;
-}*/
-
-void cbob_uart_fetch_data(unsigned long arg) {
-	struct tty_struct *tty;
-	short uart0count, uart1count;
-	
-	if(cbob_spi_message(CBOB_CMD_UART_READ, 0, 0, (short*)cbob_uart_packet, CBOB_UART_PACKET_SIZE>>1) >= 0) {
-		uart0count = *((short*)cbob_uart_packet);
-		uart1count = *((short*)(cbob_uart_packet+2));
-
-		if(uart0count && cbob_uarts[0] && cbob_uarts[0]->open_count) {
-			tty = cbob_uarts[0]->tty;
-			tty_insert_flip_string(tty, cbob_uart_packet+4, uart0count);
-			tty_flip_buffer_push(tty);		
-		}
-		if(uart1count && cbob_uarts[1] && cbob_uarts[1]->open_count) {
-			tty = cbob_uarts[1]->tty;
-			tty_insert_flip_string(tty, &(cbob_uart_packet[6+(uart0count>>1)]), uart1count);
-			tty_flip_buffer_push(tty);
-		}
+	switch(ioctl_num) {
+		case CBOB_UART_SET_SIGMASK:
+			request[0] = 0;
+			request[1] = arg;
+			if((error = cbob_spi_message(CBOB_CMD_UART_CONFIG, request, 2, 0,0)) < 0)
+				return error;
+			break;
+		case CBOB_UART_GET_SIGMASK:
+			request[0] = 1;
+			if((error = cbob_spi_message(CBOB_CMD_UART_CONFIG, request, 1, &retval, 1)) < 0)
+				return error;
+			arg = retval;
+			break;
 	}
-	enable_irq(IRQ_GPIOD(27));
+	
+	copy_to_user((void*)ioctl_param, &arg, sizeof(int));
+	
+  return 0;
 }
 
 /* init and exit */
 int cbob_uart_init(void)
 {
-  int error, i;
-  
-  printk("cbob_uart_init\n");
-  cbob_uart_tty_driver = alloc_tty_driver(CBOB_UART_MINORS);
-  if(!cbob_uart_tty_driver)
-  	return -ENOMEM;
-  
-  cbob_uart_tty_driver->owner = THIS_MODULE;
-  cbob_uart_tty_driver->driver_name = "cbob_uart";
-  cbob_uart_tty_driver->name = "uart";
-  cbob_uart_tty_driver->devfs_name = "cbc/uart%d";
-  cbob_uart_tty_driver->major = CBOB_UART_MAJOR;
-  cbob_uart_tty_driver->type = TTY_DRIVER_TYPE_SERIAL,
-  cbob_uart_tty_driver->subtype = SERIAL_TYPE_NORMAL;
-  cbob_uart_tty_driver->flags = TTY_DRIVER_REAL_RAW | TTY_DRIVER_NO_DEVFS;
-  cbob_uart_tty_driver->init_termios = tty_std_termios;
-  cbob_uart_tty_driver->init_termios.c_iflag = IGNBRK | IGNPAR;
-  cbob_uart_tty_driver->init_termios.c_oflag = 0;
-  cbob_uart_tty_driver->init_termios.c_cflag = B115200 | CS8 | CREAD | CLOCAL;
-  cbob_uart_tty_driver->init_termios.c_lflag = 0;
-  cbob_uart_tty_driver->init_termios.c_cc[VMIN] = 1;
-  cbob_uart_tty_driver->init_termios.c_cc[VTIME] = 0;
-  tty_set_operations(cbob_uart_tty_driver, &cbob_uart_ops);
-  
-  error = tty_register_driver(cbob_uart_tty_driver);
-  if(error) {
-  	printk(KERN_ERR "failed to register cbob uart tty driver");
-  	put_tty_driver(cbob_uart_tty_driver);
-  	return error;
+	int error;
+	
+	printk("%s\n", __FUNCTION__);
+	
+	error = register_chrdev(cbob_uart_major, CBOB_UART_NAME, &cbob_uart_fops);
+	
+	if(error < 0) {
+    printk(KERN_ALERT "Failed to register cbob_uart char device with error: %d\n", error);
+    return error;
   }
   
-  for(i = 0;i < CBOB_UART_MINORS; i++) {
-  	tty_register_device(cbob_uart_tty_driver, i, NULL);
-  	cbob_uarts[i] = NULL;
-  }
- 
- 	//cbob_uart_workqueue = create_singlethread_workqueue("CBOB UART");
- 
- 	//imx_gpio_mode(GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO | GPIO_IRQ_HIGH);
-  //request_irq(IRQ_GPIOD(27), cbob_uart_handler, 0, "CBOB", 0);
+  sema_init(&(cbob_uarts[0].sem), 1);
+  sema_init(&(cbob_uarts[1].sem), 1);
   
+  cbob_uarts[1].port = 1;
+	
   return error;
 }
 
 void cbob_uart_exit(void)
 {
-	struct cbob_uart *uart;
-	int i;
-	
-	//free_irq(IRQ_GPIOD(27), 0);
-	
-	for(i = 0;i < CBOB_UART_MINORS;i++)
-		tty_unregister_device(cbob_uart_tty_driver, i);
-	tty_unregister_driver(cbob_uart_tty_driver);
-	
-	for(i = 0;i < CBOB_UART_MINORS;i++) {
-		uart = cbob_uarts[i];
-		if(uart) {
-			while(uart->open_count)
-				do_close(uart);
-			kfree(uart);
-			cbob_uarts[i] = NULL;
-		}
-	}
-	
-	//flush_workqueue(cbob_uart_workqueue);
-	//destroy_workqueue(cbob_uart_workqueue);
+  int error;
+  
+  printk("%s\n", __FUNCTION__);
+  
+  error = unregister_chrdev(cbob_uart_major, CBOB_UART_NAME);
+  
+  if(error < 0) {
+    printk(KERN_ALERT "Failed to unregister cbob_uart char device with error: %d\n", error);
+  }
 }
 

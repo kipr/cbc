@@ -35,6 +35,7 @@ Servos::Servos(QWidget *parent) : Page(parent)
 
     setupUi(this);
 
+    m_inMotion = false;
     m_servoNumber = 0;
     for(i=0;i<4;i++){
         sprintf(devname, "/dev/cbc/servo%d",i);
@@ -43,6 +44,7 @@ Servos::Servos(QWidget *parent) : Page(parent)
     for(i=0;i<4;i++) m_servoPosition[i] = 1024;
 
     ui_ServoPositionLine->setText(QString::number(1024));
+    this->disableServos();
 }
 
 Servos::~Servos()
@@ -51,25 +53,34 @@ Servos::~Servos()
     for(i=0;i<4;i++) ::close(m_servo[i]);
 }
 
-void Servos::raise()
+void Servos::show()
 {
-    int i;
+    //qWarning("servos shown");
     ui_AutoCheck->setCheckState(Qt::Unchecked);
-    // enable servos
-    for(i=0;i<4;i++) this->setServoPosition(i,m_servoPosition[i]);
+    this->disableServos();
     update();
+    Page::show();
 }
 
-void Servos::closeServos()
+void Servos::hide()
+{
+    //qWarning("servos hidden");
+    // kill servos before hiding page
+    //this->disableServos();
+    Page::hide();
+}
+
+void Servos::disableServos()
 {
     int i;
     // disable servos
     for(i=0;i<4;i++) this->setServoPosition(i,-1);
-    this->close();
+    m_inMotion = false;
 }
 
 void Servos::on_ui_AutoCheck_stateChanged(int state)
 {
+    m_inMotion = true;
     if(state) ui_UpdateButton->setDown(true);
     else ui_UpdateButton->setDown(false);
     this->setServoPosition(m_servoNumber,m_servoPosition[m_servoNumber]);
@@ -166,7 +177,7 @@ void Servos::on_ui_CenterButton_clicked(bool)
 void Servos::on_ui_UpdateButton_clicked(bool)
 {
     short position = m_servoPosition[m_servoNumber];
-
+    m_inMotion = true;
     write(m_servo[m_servoNumber], &position, 2);
     update();
 }

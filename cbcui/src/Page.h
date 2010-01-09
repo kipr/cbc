@@ -34,6 +34,9 @@ public:
     
     static Page *currentPage();
     Page *lastPage();
+    
+    virtual void show();
+    virtual void hide();
 
 public slots:
    void raiseLastPage();
