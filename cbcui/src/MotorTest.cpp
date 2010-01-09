@@ -40,6 +40,7 @@ MotorTest::MotorTest(QWidget *parent) : Page(parent)
         QObject::connect(ui_ClearButton3, SIGNAL(pressed()), this, SLOT(clearMotorCounter()));
 
         m_motorNumber = 0;
+        m_inMotion = 0;
 
     m_cbobData = CbobData::instance();
 
@@ -397,7 +398,8 @@ void MotorTest::on_ui_PlayButton0_toggled(bool state)
     ui_TargetPositionLine0->setEnabled(!state);
 
     if(state){
-        ui_PlayButton0->setText("Stop");
+        m_inMotion++;
+        //ui_PlayButton0->setText("Stop");
         value = ui_TargetSpeedPowerLine0->text();
         if(ui_PowerRadio0->isChecked()){
             m_targetPower[m_motorNumber] = value.toInt();
@@ -417,7 +419,8 @@ void MotorTest::on_ui_PlayButton0_toggled(bool state)
 
     }
     else{
-        ui_PlayButton0->setText("Go");
+        m_inMotion--;
+        //ui_PlayButton0->setText("Go");
         this->moveMotorPower(0,0);
         this->moveAtVelocity(0,0);
     }
@@ -433,7 +436,8 @@ void MotorTest::on_ui_PlayButton1_toggled(bool state)
     ui_TargetPositionLine1->setEnabled(!state);
 
     if(state){
-        ui_PlayButton1->setText("Stop");
+        m_inMotion++;
+        //ui_PlayButton1->setText("Stop");
         value = ui_TargetSpeedPowerLine1->text();
         if(ui_PowerRadio1->isChecked()){
             m_targetPower[m_motorNumber] = value.toInt();
@@ -453,7 +457,8 @@ void MotorTest::on_ui_PlayButton1_toggled(bool state)
 
     }
     else{
-        ui_PlayButton1->setText("Go");
+        m_inMotion--;
+        //ui_PlayButton1->setText("Go");
         this->moveMotorPower(1,0);
         this->moveAtVelocity(1,0);
     }
@@ -469,7 +474,8 @@ void MotorTest::on_ui_PlayButton2_toggled(bool state)
     ui_TargetPositionLine2->setEnabled(!state);
 
     if(state){
-        ui_PlayButton2->setText("Stop");
+        m_inMotion++;
+        //ui_PlayButton2->setText("Stop");
         value = ui_TargetSpeedPowerLine2->text();
         if(ui_PowerRadio2->isChecked()){
             m_targetPower[m_motorNumber] = value.toInt();
@@ -489,7 +495,8 @@ void MotorTest::on_ui_PlayButton2_toggled(bool state)
 
     }
     else{
-        ui_PlayButton2->setText("Go");
+        m_inMotion--;
+        //ui_PlayButton2->setText("Go");
         this->moveMotorPower(2,0);
         this->moveAtVelocity(2,0);
     }
@@ -505,7 +512,8 @@ void MotorTest::on_ui_PlayButton3_toggled(bool state)
     ui_TargetPositionLine3->setEnabled(!state);
 
     if(state){
-        ui_PlayButton3->setText("Stop");
+        m_inMotion++;
+        //ui_PlayButton3->setText("Stop");
         value = ui_TargetSpeedPowerLine3->text();
         if(ui_PowerRadio3->isChecked()){
             m_targetPower[m_motorNumber] = value.toInt();
@@ -525,7 +533,8 @@ void MotorTest::on_ui_PlayButton3_toggled(bool state)
 
     }
     else{
-        ui_PlayButton3->setText("Go");
+        m_inMotion--;
+        //ui_PlayButton3->setText("Go");
         this->moveMotorPower(3,0);
         this->moveAtVelocity(3,0);
     }
@@ -555,4 +564,23 @@ void MotorTest::moveToPosition(int motor,int speed, int target_position)
         memcpy(outdata+2, &p, 4);
 
         write(m_pid[motor], outdata, 6);
+}
+
+bool MotorTest::inMotion()
+{
+    if(m_inMotion) return true;
+    else return false;
+}
+
+void MotorTest::motorsOff()
+{
+    if(ui_PlayButton0->isChecked()) ui_PlayButton0->toggle();
+    else this->moveAtVelocity(0,0);
+    if(ui_PlayButton1->isChecked()) ui_PlayButton1->toggle();
+    else this->moveAtVelocity(1,0);
+    if(ui_PlayButton2->isChecked()) ui_PlayButton2->toggle();
+    else this->moveAtVelocity(2,0);
+    if(ui_PlayButton3->isChecked()) ui_PlayButton3->toggle();
+    else this->moveAtVelocity(3,0);
+    m_inMotion = 0;
 }

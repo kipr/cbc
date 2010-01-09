@@ -8,6 +8,7 @@ UserProgram::UserProgram()
   QObject::connect(&m_userProgram, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(programFinished(int, QProcess::ExitStatus)));
   QObject::connect(&m_userProgram, SIGNAL(readyReadStandardError()), this, SLOT(readStderr()));
   QObject::connect(&m_userProgram, SIGNAL(readyReadStandardOutput()), this, SLOT(readStdout()));
+  this->updateProgramName();
 }
 
 UserProgram::~UserProgram()
@@ -62,6 +63,13 @@ void UserProgram::programFinished(int, QProcess::ExitStatus)
   emit stopped();
 }
 
+void UserProgram::compileFinished(int eCode, QProcess::ExitStatus eStatus)
+{
+    if(eStatus == QProcess::NormalExit) this->updateProgramName();
+    else programName = "Compile Err.";
+    emit stateChange(0);
+}
+
 void UserProgram::start()
 {
   if(m_userProgram.state() == QProcess::NotRunning) {
@@ -76,3 +84,23 @@ void UserProgram::stop()
   }
 }
 
+void UserProgram::updateProgramName()
+{
+    QFile fn(QString("/mnt/user/bin/robot_name.txt"));
+    if(fn.exists()){
+        fn.open(QIODevice::ReadOnly);
+        QString path(fn.readLine());
+        programName = path.section('/',-1);
+        fn.close();
+    }
+    else{
+        programName = "----";
+    }
+}
+
+bool UserProgram::isRunning()
+{
+    // is the program running?
+    if(m_userProgram.state() == QProcess::NotRunning) return false;
+    else return true;
+}

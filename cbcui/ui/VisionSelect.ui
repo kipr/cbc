@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
+<ui version="4.0" >
  <class>VisionSelect</class>
- <widget class="QWidget" name="VisionSelect">
-  <property name="geometry">
+ <widget class="QWidget" name="VisionSelect" >
+  <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
@@ -10,16 +9,16 @@
     <height>213</height>
    </rect>
   </property>
-  <property name="windowTitle">
+  <property name="windowTitle" >
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" >
    <item>
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
+    <spacer>
+     <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" stdset="0">
+     <property name="sizeHint" >
       <size>
        <width>102</width>
        <height>20</height>
@@ -28,13 +27,13 @@
     </spacer>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" >
      <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
+      <spacer>
+       <property name="orientation" >
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="sizeHint" >
         <size>
          <width>20</width>
          <height>13</height>
@@ -43,18 +42,44 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="ui_trackingButton">
-       <property name="text">
+      <widget class="QPushButton" name="ui_trackingButton" >
+       <property name="minimumSize" >
+        <size>
+         <width>95</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>95</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet" >
+        <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet95x30L.png);
+color:black;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet95x30D.png);
+color:white;
+font-size:12pt;
+}</string>
+       </property>
+       <property name="text" >
         <string>Tracking</string>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
+      <spacer>
+       <property name="orientation" >
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="sizeHint" >
         <size>
          <width>20</width>
          <height>13</height>
@@ -63,21 +88,47 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="ui_rawDisplayButton">
-       <property name="enabled">
+      <widget class="QPushButton" name="ui_rawDisplayButton" >
+       <property name="enabled" >
         <bool>false</bool>
        </property>
-       <property name="text">
+       <property name="minimumSize" >
+        <size>
+         <width>95</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>95</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet" >
+        <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet95x30L.png);
+color:black;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet95x30D.png);
+color:white;
+font-size:12pt;
+}</string>
+       </property>
+       <property name="text" >
         <string>Raw Display</string>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="verticalSpacer_3">
-       <property name="orientation">
+      <spacer>
+       <property name="orientation" >
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="sizeHint" >
         <size>
          <width>20</width>
          <height>13</height>
@@ -88,11 +139,11 @@
     </layout>
    </item>
    <item>
-    <spacer name="horizontalSpacer_2">
-     <property name="orientation">
+    <spacer>
+     <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" stdset="0">
+     <property name="sizeHint" >
       <size>
        <width>102</width>
        <height>20</height>

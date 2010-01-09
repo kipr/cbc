@@ -46,7 +46,6 @@ private:
     SensorsMotors m_sensorsmotors;
     About m_about;
     Settings m_settings;
-
 };
 
 #endif

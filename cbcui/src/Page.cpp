@@ -47,7 +47,7 @@ void Page::raisePage()
     m_lastPage->hide();
   }
    m_currentPage = this;
-   show();
+   this->show();
 }
     
 Page *Page::currentPage()
@@ -69,5 +69,4 @@ void Page::hide()
 {
    QWidget::hide();
 }
-
 

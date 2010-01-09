@@ -43,6 +43,32 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton" >
+       <property name="minimumSize" >
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet" >
+        <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet80x30L.png);
+color:black;
+font-size:10pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet80x30D.png);
+color:white;
+font-size:10pt;
+}</string>
+       </property>
        <property name="text" >
         <string>File Manager</string>
        </property>
@@ -93,6 +119,32 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_2" >
+       <property name="minimumSize" >
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet" >
+        <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet80x30L.png);
+color:black;
+font-size:10pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet80x30D.png);
+color:white;
+font-size:10pt;
+}</string>
+       </property>
        <property name="text" >
         <string>Console</string>
        </property>

@@ -39,11 +39,13 @@ public:
 public slots:
    void on_ui_backButton_clicked(bool checked = false);
    void on_ui_closeButton_clicked(bool checked = false);
+   void on_ui_estopButton_clicked(bool checked = false);
    void updateBatteryDisplay();
    void userProgramStateChange(int state);
 
 private:
    MainMenu *m_mainMenu;
+   void hideEStop();
 };
 
 #endif

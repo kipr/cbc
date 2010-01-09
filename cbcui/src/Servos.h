@@ -35,12 +35,14 @@ class Servos : public Page, private Ui::Servos
 public:
     Servos(QWidget *parent = 0);
     ~Servos();
+    bool inMotion() { return m_inMotion;}
 
 public slots:
     void on_ui_ServoDecButton_clicked(bool checked = false);
     void on_ui_ServoIncButton_clicked(bool checked = false);
-    void closeServos();
-    void raise();
+    void disableServos();
+    void show();
+    void hide();
 
     void on_ui_AutoCheck_stateChanged(int state);
     void on_ui_UpdateButton_clicked(bool checked = false);
@@ -56,6 +58,7 @@ private:
     int m_servoNumber;
     int m_servoPosition[4];
     int m_servo[4];
+    bool m_inMotion;
 
     void setServoPosition(int servo, int pos);
     int getServoPosition(int servo);

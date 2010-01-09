@@ -1,27 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
+<ui version="4.0" >
  <class>MainMenu</class>
- <widget class="QWidget" name="MainMenu">
-  <property name="geometry">
+ <widget class="QWidget" name="MainMenu" >
+  <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
     <width>320</width>
-    <height>213</height>
+    <height>212</height>
    </rect>
   </property>
-  <property name="windowTitle">
+  <property name="windowTitle" >
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout">
+  <layout class="QVBoxLayout" >
    <item>
-    <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" >
      <item>
       <spacer>
-       <property name="orientation">
+       <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="sizeHint" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -30,25 +29,25 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label">
-       <property name="font">
+      <widget class="QLabel" name="label" >
+       <property name="font" >
         <font>
          <pointsize>11</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
-       <property name="text">
-        <string>CBC 2</string>
+       <property name="text" >
+        <string>Matt's CBC 2</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation">
+       <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="sizeHint" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -59,13 +58,13 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" >
      <item>
       <spacer>
-       <property name="orientation">
+       <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="sizeHint" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -74,13 +73,13 @@
       </spacer>
      </item>
      <item>
-      <layout class="QVBoxLayout">
+      <layout class="QVBoxLayout" >
        <item>
         <spacer>
-         <property name="orientation">
+         <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0">
+         <property name="sizeHint" >
           <size>
            <width>20</width>
            <height>20</height>
@@ -89,24 +88,44 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="ui_programsButton">
-         <property name="minimumSize">
+        <widget class="QPushButton" name="ui_programsButton" >
+         <property name="minimumSize" >
           <size>
            <width>95</width>
-           <height>0</height>
+           <height>30</height>
           </size>
          </property>
-         <property name="text">
+         <property name="maximumSize" >
+          <size>
+           <width>95</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="styleSheet" >
+          <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet95x30L.png);
+color:black;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet95x30D.png);
+color:white;
+font-size:12pt;
+}</string>
+         </property>
+         <property name="text" >
           <string>Programs</string>
          </property>
         </widget>
        </item>
        <item>
         <spacer>
-         <property name="orientation">
+         <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0">
+         <property name="sizeHint" >
           <size>
            <width>20</width>
            <height>20</height>
@@ -115,27 +134,47 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="ui_utilitiesButton">
-         <property name="minimumSize">
+        <widget class="QPushButton" name="ui_utilitiesButton" >
+         <property name="minimumSize" >
           <size>
            <width>95</width>
-           <height>0</height>
+           <height>30</height>
           </size>
          </property>
-         <property name="text">
+         <property name="maximumSize" >
+          <size>
+           <width>95</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="styleSheet" >
+          <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet95x30L.png);
+color:black;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet95x30D.png);
+color:white;
+font-size:12pt;
+}</string>
+         </property>
+         <property name="text" >
           <string>Utilities</string>
          </property>
         </widget>
        </item>
        <item>
         <spacer>
-         <property name="orientation">
+         <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0">
+         <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>16</height>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -144,10 +183,10 @@
      </item>
      <item>
       <spacer>
-       <property name="orientation">
+       <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="sizeHint" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -156,13 +195,13 @@
       </spacer>
      </item>
      <item>
-      <layout class="QVBoxLayout">
+      <layout class="QVBoxLayout" >
        <item>
         <spacer>
-         <property name="orientation">
+         <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0">
+         <property name="sizeHint" >
           <size>
            <width>20</width>
            <height>20</height>
@@ -171,18 +210,44 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="ui_visionButton">
-         <property name="text">
+        <widget class="QPushButton" name="ui_visionButton" >
+         <property name="minimumSize" >
+          <size>
+           <width>95</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>95</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="styleSheet" >
+          <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet95x30L.png);
+color:black;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet95x30D.png);
+color:white;
+font-size:12pt;
+}</string>
+         </property>
+         <property name="text" >
           <string>Vision</string>
          </property>
         </widget>
        </item>
        <item>
         <spacer>
-         <property name="orientation">
+         <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0">
+         <property name="sizeHint" >
           <size>
            <width>20</width>
            <height>20</height>
@@ -191,24 +256,44 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="ui_sensorsmotorsButton">
-         <property name="maximumSize">
+        <widget class="QPushButton" name="ui_sensorsmotorsButton" >
+         <property name="minimumSize" >
           <size>
            <width>95</width>
-           <height>16777215</height>
+           <height>30</height>
           </size>
          </property>
-         <property name="text">
+         <property name="maximumSize" >
+          <size>
+           <width>95</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="styleSheet" >
+          <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet95x30L.png);
+color:black;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet95x30D.png);
+color:white;
+font-size:12pt;
+}</string>
+         </property>
+         <property name="text" >
           <string>Sensors/Motors</string>
          </property>
         </widget>
        </item>
        <item>
         <spacer>
-         <property name="orientation">
+         <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0">
+         <property name="sizeHint" >
           <size>
            <width>20</width>
            <height>20</height>
@@ -220,10 +305,10 @@
      </item>
      <item>
       <spacer>
-       <property name="orientation">
+       <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="sizeHint" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -234,13 +319,13 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" >
      <item>
       <spacer>
-       <property name="orientation">
+       <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="sizeHint" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -249,18 +334,44 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="ui_aboutButton">
-       <property name="text">
+      <widget class="QPushButton" name="ui_aboutButton" >
+       <property name="minimumSize" >
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet" >
+        <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet80x30L.png);
+color:black;
+font-size:10pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet80x30D.png);
+color:white;
+font-size:10pt;
+}</string>
+       </property>
+       <property name="text" >
         <string>About</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation">
+       <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="sizeHint" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -269,18 +380,44 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="ui_settingsButton">
-       <property name="text">
+      <widget class="QPushButton" name="ui_settingsButton" >
+       <property name="minimumSize" >
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet" >
+        <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet80x30L.png);
+color:black;
+font-size:10pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet80x30D.png);
+color:white;
+font-size:10pt;
+}</string>
+       </property>
+       <property name="text" >
         <string>Settings</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation">
+       <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0">
+       <property name="sizeHint" >
         <size>
          <width>40</width>
          <height>20</height>
