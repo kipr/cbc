@@ -110,12 +110,12 @@ VPATH += $(PERIPH)/efc $(PERIPH)/tc $(PERIPH)/twi
 VPATH += $(BOARDS)/$(BOARD) $(BOARDS)/$(BOARD)/$(CHIP)
 VPATH += $(BOB) $(BOB)/bootloader $(BOB)/usb $(BOB)/utility 
 VPATH += $(BOB)/motors $(BOB)/timer $(BOB)/sensors $(BOB)/servos $(BOB)/accel
-VPATH += $(BOB)/chumby $(BOB)/uart
+VPATH += $(BOB)/chumby $(BOB)/uart $(BOB)/dma
 
 # Objects built from C source files
 C_OBJECTS = main.o
 C_OBJECTS += bootloader.o usb.o crc32.o io.o timer.o bob.o sensors.o motors.o servos.o accel.o
-C_OBJECTS += chumby.o chumby_spi.o uart.o
+C_OBJECTS += chumby.o chumby_spi.o uart.o dma.o
 C_OBJECTS += CDCDSerialDriver.o CDCDSerialDriverDescriptors.o
 C_OBJECTS += CDCSetControlLineStateRequest.o CDCLineCoding.o
 C_OBJECTS += USBD_OTGHS.o USBD_UDP.o USBD_UDPHS.o USBDDriver.o
