@@ -126,6 +126,12 @@ static int cbob_pid_ioctl(struct inode *inode, struct file *file, unsigned int i
 			arg = result[0];
 			copy_to_user((void*)ioctl_param, &arg, sizeof(int));
 			break;
+		case CBOB_PID_RESET_GAINS:
+			request[0] = 5;
+			request[1] = pid->port;
+			if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 2, 0, 0)) < 0)
+				return error;
+			break;
 	}
   return 0;
 }
