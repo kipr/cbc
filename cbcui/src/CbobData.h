@@ -41,20 +41,40 @@ public:
     int accelerometerX();
     int accelerometerY();
     int accelerometerZ();
-		int analogPullups();
+    int analogPullups();
 
     float batteryVoltage();
 
+    // motors
     int motorPosition(int motor);
     int motorVelocity(int motor);
     int motorPWM(int motor);
-    
+
+    void motorGains(int motor,int *gains);
+    void motorSetGains(int motor,int *gains);
+    void moveMotorPower(int motor,int power);
+    void moveAtVelocity(int motor,int velocity);
+    void moveToPosition(int motor,int speed,int target_position);
+    void clearMotorCounter(int motor);
+
+    // servos
+    void setServoPosition(int servo, int pos);
+    int getServoPosition(int servo);
+
     void setFastRefresh();
     void setSlowRefresh();
     void setRefresh(int delay);
 
 signals:
     void refresh();
+
+public slots:
+    void motorsOff();
+    void disableServos();
+    void allStop();
+
+signals:
+    void eStop();
 
 protected:
     CbobData();
@@ -65,15 +85,17 @@ protected slots:
 
 private:
     int m_sensors;
-    int m_pid;
-    int m_pwm;
+    int m_allPID;
+    int m_pid[4];
+    int m_allPWM;
+    int m_pwm[4];
+    int m_servo[4];
     short m_sensorData[14];
     int   m_pidData[4];
     signed char   m_pwmData[4];
     QTimer m_timer;
 
     //static CbobData *inst;
-
 };
 
 #endif

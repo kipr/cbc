@@ -37,17 +37,16 @@ class MotorTuning : public Page, private Ui::MotorTuning
 public:
     MotorTuning(QWidget *parent = 0);
     ~MotorTuning();
-    bool inMotion();
 
 public slots:
     void on_ui_MotorDecButton_clicked(bool checked = false);
     void on_ui_MotorIncButton_clicked(bool checked = false);
     void updateCounters();
-    void motorsOff();
+    void resetMotorCounter();
+    void allStop();
     void show();
     void hide();
 
-    void clearMotorCounter();
     void selectGain(int index);
 
     void on_ui_NegCheck_stateChanged(int state);
@@ -61,18 +60,9 @@ public slots:
 private:
     CbobData *m_cbobData;
 
-    int m_pid[4];
-
     int m_motorNumber;
     int m_targetSpeed;
     int m_targetPosition;
-    int m_inMotion;
-
-     void moveMotorPower(int motor,int power);
-     void moveToPosition(int motor,int speed,int target_position);
-     void moveAtVelocity(int motor,int velocity);
-     void getGains(int motor);
-
     int PIDgains[6];
 };
 
