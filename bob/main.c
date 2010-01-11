@@ -41,6 +41,11 @@ int main()
 	}*/
 	
 	while(1){
+		/*while(!BlackButton());
+		ChumbySS1(1);
+		while(BlackButton());
+		ChumbySS1(0);*/
+		
 		while(USBD_GetState() == USBD_STATE_CONFIGURED) nop();
 		while(USBD_GetState() != USBD_STATE_CONFIGURED) nop();
 		UartStartRead();
