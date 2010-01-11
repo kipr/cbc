@@ -59,7 +59,6 @@ public slots:
 
 private:
     CbobData *m_cbobData;
-    QTimer m_timer;
 
     int m_motorNumber;
     int m_targetSpeed;

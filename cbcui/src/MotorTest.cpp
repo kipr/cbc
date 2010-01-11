@@ -53,8 +53,8 @@ MotorTest::~MotorTest()
 
 void MotorTest::show()
 {
-    //qWarning("Test shown");
-    m_timer.start(100);
+    m_cbobData->setFastRefresh();
+    QObject::connect(m_cbobData, SIGNAL(refresh()), this, SLOT(updateCounters()));
     Page::show();
 }
 
@@ -63,19 +63,17 @@ void MotorTest::hide()
     //qWarning("Test hidden");
     // stop all motors if the page is hidden
     //m_cbobData->motorsOff();
-    m_timer.stop();
+    QObject::disconnect(this, SLOT(updateCounters()));
+    m_cbobData->setSlowRefresh();
     Page::hide();
 }
 
 void MotorTest::updateCounters()
 {
-    if(isVisible()) {
-        m_cbobData->updateSensors();
-        ui_MotorPositionLabel0->setText(QString::number(m_cbobData->motorPosition(0)));
-        ui_MotorPositionLabel1->setText(QString::number(m_cbobData->motorPosition(1)));
-        ui_MotorPositionLabel2->setText(QString::number(m_cbobData->motorPosition(2)));
-        ui_MotorPositionLabel3->setText(QString::number(m_cbobData->motorPosition(3)));
-    }
+    ui_MotorPositionLabel0->setText(QString::number(m_cbobData->motorPosition(0)));
+    ui_MotorPositionLabel1->setText(QString::number(m_cbobData->motorPosition(1)));
+    ui_MotorPositionLabel2->setText(QString::number(m_cbobData->motorPosition(2)));
+    ui_MotorPositionLabel3->setText(QString::number(m_cbobData->motorPosition(3)));
 }
 
 void MotorTest::resetMotorCounter()

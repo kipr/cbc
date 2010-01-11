@@ -36,8 +36,6 @@ Graph::Graph(QWidget *parent) : Page(parent)
 {
     setupUi(this);
 
-    QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateGraph()));
-
     m_cbobData = CbobData::instance();
     
     m_graph = new GraphWidget(ui_graphWidget);
@@ -46,8 +44,6 @@ Graph::Graph(QWidget *parent) : Page(parent)
     
     ui_graphWidget->show();
     m_graph->show();
-    
-    m_timer.start(100);
 }
 
 Graph::~Graph()
@@ -57,20 +53,20 @@ Graph::~Graph()
 
 void Graph::show()
 {
-    m_timer.start();
+    m_cbobData->setRefresh(100);
+    QObject::connect(m_cbobData, SIGNAL(refresh()), this, SLOT(updateGraph()));
+    
     Page::show();
 }
 
 void Graph::hide()
 {
-    m_timer.stop();
+    QObject::disconnect(this, SLOT(updateGraph()));
     Page::hide();
 }
 
 void Graph::updateGraph()
 {
-    m_cbobData->updateSensors();
- 
     int xIndex = ui_xSelect->currentIndex();
     int yIndex = ui_ySelect->currentIndex();
     int zIndex = ui_zSelect->currentIndex();

@@ -9,6 +9,7 @@
 #include <accel/accel.h>
 #include <chumby/chumby.h>
 #include <uart/uart.h>
+#include <usart/usart.h>
 
 #include <usb/device/cdc-serial/CDCDSerialDriver.h>
 #include <usb/device/cdc-serial/CDCDSerialDriverDescriptors.h>

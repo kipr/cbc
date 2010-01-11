@@ -41,6 +41,7 @@ void ChumbyInit()
   ChumbySpiSetCallback(ChumbyCallback);
   
   ChumbySetStateCmd();
+	ChumbyBend(0);
 }
 
 static void ChumbySetStateCmd()
@@ -279,17 +280,21 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 			}
 			break;
 		case CBOB_CMD_UART_READ:
-			data[1] = UartRead(0, (char*)(&(data[3])), 256);
-			data[2] = UartRead(1, (char*)(&(data[(data[1]>>1)+4])), 256);
-		  //((unsigned char*)data)[2] = UartRead(0, (char*)(&(data[2])), 256);
-			outcount = (data[1]>>1)+(data[2]>>1)+4;
-			//data[1] = UartRead((data[0]>>8)&0xff,(char*)(&(data[2])), data[0]&0xff);
-			//outcount = (data[1]>>1)+2;
+			data[1] = UartRead(data[0], (char*)(&(data[2])), data[1]);
+			printf("Read %d bytes\n\r", data[1]);
+			outcount = (data[1]>>1)+2;
 			break;
 		case CBOB_CMD_UART_WRITE:
 			data[1] = UartWrite(data[0], (char*)&(data[2]), data[1]);
 			outcount += 1;
 		case CBOB_CMD_UART_CONFIG:
+			if(data[0] == 0) {
+				UartSetSigmask(data[1]);
+			}
+			else if(data[0] == 1) {
+				data[1] = UartGetSigmask();
+				outcount += 1;
+			}
 			break;
 		case CBOB_CMD_STATUS_READ:
 			data[1] = CBOB_VERSION;

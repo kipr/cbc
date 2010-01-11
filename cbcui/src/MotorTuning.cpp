@@ -27,12 +27,15 @@ MotorTuning::MotorTuning(QWidget *parent) : Page(parent)
     
     m_cbobData = CbobData::instance();
 
+<<<<<<< HEAD:cbcui/src/MotorTuning.cpp
     QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateCounters()));
     QObject::connect(m_cbobData, SIGNAL(eStop()), this, SLOT(allStop()));
     QObject::connect(ui_ClearButton, SIGNAL(pressed()), this, SLOT(resetMotorCounter()));
+=======
+    QObject::connect(ui_ClearButton, SIGNAL(pressed()), this, SLOT(clearMotorCounter()));
+>>>>>>> 46fcbbd09aab3b0ae33c32f6c9085371ad3bdea9:cbcui/src/MotorTuning.cpp
     QObject::connect(ui_GainComboBox, SIGNAL(activated(int)), this, SLOT(selectGain(int)));
 
-    m_timer.start(100);
     m_motorNumber = 0;
     m_targetSpeed = 0;
     m_targetPosition = 0;
@@ -53,9 +56,9 @@ MotorTuning::~MotorTuning()
 
 void MotorTuning::show()
 {
-    //qWarning("Tuning shown");
-    m_timer.start();
-    Page::show();
+  m_cbobData->setFastRefresh();
+  QObject::connect(m_cbobData, SIGNAL(refresh()), this, SLOT(updateCounters()));
+   Page::show();
 }
 
 void MotorTuning::hide()
@@ -64,16 +67,14 @@ void MotorTuning::hide()
     // turn off all motors before hiding page;
     //m_cbobData->motorsOff();
     //if(ui_PlayButton->isChecked()) ui_PlayButton->toggle();
-    m_timer.stop();
+    m_cbobData->setSlowRefresh();
+    QObject::disconnect(this, SLOT(updateCounters()));
     Page::hide();
 }
 
 void MotorTuning::updateCounters()
 {
-    if(isVisible()){
-        m_cbobData->updateSensors();
-        ui_MotorPositionLabel->setText(QString::number(m_cbobData->motorPosition(m_motorNumber)));
-    }
+    ui_MotorPositionLabel->setText(QString::number(m_cbobData->motorPosition(m_motorNumber)));
 }
 
 void MotorTuning::resetMotorCounter()

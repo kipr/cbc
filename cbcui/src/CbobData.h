@@ -22,6 +22,10 @@
 #define __CBOB_DATA_H__
 
 #include <QObject>
+#include <QTimer>
+
+#define CBOB_REFRESH_FAST 100
+#define CBOB_REFRESH_SLOW 2000
 
 class CbobData : public QObject
 {
@@ -45,6 +49,7 @@ public:
     int motorPosition(int motor);
     int motorVelocity(int motor);
     int motorPWM(int motor);
+
     void motorGains(int motor,int *gains);
     void motorSetGains(int motor,int *gains);
     void moveMotorPower(int motor,int power);
@@ -56,7 +61,12 @@ public:
     void setServoPosition(int servo, int pos);
     int getServoPosition(int servo);
 
-    void updateSensors();
+    void setFastRefresh();
+    void setSlowRefresh();
+    void setRefresh(int delay);
+
+signals:
+    void refresh();
 
 public slots:
     void motorsOff();
@@ -70,6 +80,9 @@ protected:
     CbobData();
     ~CbobData();
 
+protected slots:
+		void updateSensors();
+
 private:
     int m_sensors;
     int m_allPID;
@@ -80,6 +93,7 @@ private:
     short m_sensorData[14];
     int   m_pidData[4];
     signed char   m_pwmData[4];
+    QTimer m_timer;
 
     //static CbobData *inst;
 };

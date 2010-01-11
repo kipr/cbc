@@ -27,34 +27,28 @@
 #include <sys/types.h>
 #include <stdio.h>
 
-int g_cbc_serial_tx_fd = -1;
-int g_cbc_serial_rx_fd = -1;
+int g_cbc_serial_fd = -1;
 
 void serial_init()
 {
-  g_cbc_serial_tx_fd = open(CREATE_UART_TX, O_WRONLY | O_NONBLOCK);
-  g_cbc_serial_rx_fd = open(CREATE_UART_RX, O_RDONLY | O_NONBLOCK);
+  g_cbc_serial_fd = open(CREATE_UART, O_RDWR | O_NONBLOCK);
   
   atexit(serial_quit);
 }
 
 void serial_quit()
 {
-  if(g_cbc_serial_tx_fd > 0) {
-    close(g_cbc_serial_tx_fd);
-    g_cbc_serial_tx_fd = -1;
-  }
-  if(g_cbc_serial_rx_fd > 0) {
-    close(g_cbc_serial_rx_fd);
-    g_cbc_serial_rx_fd = -1;
+  if(g_cbc_serial_fd > 0) {
+    close(g_cbc_serial_fd);
+    g_cbc_serial_fd = -1;
   }
 }
 
 int serial_read(char *data, int count)
 {
   int ret;
-  if(g_cbc_serial_rx_fd > 0) {
-    if((ret = read(g_cbc_serial_rx_fd, data, count)) > 0)
+  if(g_cbc_serial_fd > 0) {
+    if((ret = read(g_cbc_serial_fd, data, count)) > 0)
       return ret;
   }
   return 0;
@@ -63,8 +57,8 @@ int serial_read(char *data, int count)
 int serial_write(char *data, int count)
 {
   int ret;
-  if(g_cbc_serial_tx_fd > 0) {
-    if((ret = write(g_cbc_serial_tx_fd, data, count)) > 0)
+  if(g_cbc_serial_fd > 0) {
+    if((ret = write(g_cbc_serial_fd, data, count)) > 0)
       return ret;
   }
   return 0;

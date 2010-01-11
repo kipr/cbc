@@ -51,7 +51,6 @@ public slots:
 
 private:
    CbobData *m_cbobData;
-   QTimer m_timer;
    
    void setAnalogPullup(int port, int enabled);
 

@@ -60,12 +60,13 @@ Page *Page::lastPage()
   return m_lastPage;
 }
 
-void Page::hide()
-{
-    QWidget::hide();
-}
-
 void Page::show()
 {
-    QWidget::show();
+   QWidget::show();
 }
+
+void Page::hide()
+{
+   QWidget::hide();
+}
+
