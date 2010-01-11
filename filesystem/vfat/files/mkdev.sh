@@ -54,3 +54,6 @@ mknod /dev/cbc/accelZ c 226 2
 mknod /dev/cbc/accel  c 226 3
 
 mknod /dev/cbc/status c 228 0
+
+mknod /dev/cbc/uart0 c 227 0
+mknod /dev/cbc/uart1 c 227 1
