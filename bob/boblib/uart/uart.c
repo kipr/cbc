@@ -111,7 +111,7 @@ static void UpdateBend()
 	if(g_UartSigmask & 2 && g_Uart1BufferIndex != g_Uart1BufferReadIndex)
 		data_ready = 1;
 		
-	if(data_ready) ChumbyBend(1);
+	if(data_ready)  {ChumbyBend(1);}
 	else ChumbyBend(0);
 }
 
@@ -182,9 +182,13 @@ int UartReset(int uart)
 	if(uart == 0) {
 		g_Uart0WriteIndex = 0;
 		g_Uart0ReadIndex = 0;
+		UpdateBend();
 		return 1;
 	}
 	else {
+		g_Uart1BufferIndex = 0;
+		g_Uart1BufferReadIndex = 0;
+		UpdateBend();
 		return 0;
 	}
 }

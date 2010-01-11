@@ -162,6 +162,10 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 			}
 			break;
 		case CBOB_CMD_ACCEL_CONFIG:
+				if(data[0] == 0) {
+					// Accelerometer Calibration
+					AccelCalibration();
+				}
 			break;
     case CBOB_CMD_SENSORS_READ:
       g_ChumbyData[1] = AllDigitals() | (BlackButton()<<8);
@@ -261,6 +265,14 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 					outcount = 1;
 				}
 			}
+			else if(data[0] == 5) {
+				// Reset PID Gains
+				SetPIDGainsDefault(data[1]);
+			}
+			else if(data[0] == 6) {
+				// Recalibrate Motors
+				MotorCalibration();
+			}
 			break;
 		case CBOB_CMD_SERVO_READ:
 			if(data[0] >= 0 && data[0] < 4) {
@@ -286,6 +298,7 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 			break;
 		case CBOB_CMD_UART_WRITE:
 			data[1] = UartWrite(data[0], (char*)&(data[2]), data[1]);
+			printf("Wrote %d bytes\n\r", data[1]);
 			outcount += 1;
 		case CBOB_CMD_UART_CONFIG:
 			if(data[0] == 0) {
@@ -294,6 +307,9 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 			else if(data[0] == 1) {
 				data[1] = UartGetSigmask();
 				outcount += 1;
+			}
+			else if(data[0] == 2) {
+				UartReset(data[1]);
 			}
 			break;
 		case CBOB_CMD_STATUS_READ:
