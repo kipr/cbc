@@ -41,7 +41,7 @@ public:
   bool saveModels();
   bool loadModels();
   void loadDefaultModels();
-  virtual void closeEvent(QCloseEvent *event);
+  //virtual void closeEvent(QCloseEvent *event);
 
 protected:
   //Ui::AdjustColorWidget ui;
@@ -60,6 +60,8 @@ protected:
   std::string modelSaveFile() const;
   
 public slots:
+  void show();
+  void hide();
   // Select model
   void on_Model0Button_clicked();
   void on_Model1Button_clicked();

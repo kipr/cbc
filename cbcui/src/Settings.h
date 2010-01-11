@@ -32,6 +32,11 @@ public:
     Settings(QWidget *parent = 0);
     ~Settings();
 
+public slots:
+    void recalibrateMotors();
+    void recalibrateAccel();
+    void resetPID();
+    void setCameraDefault();
 };
 
 #endif

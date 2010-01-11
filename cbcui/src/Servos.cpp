@@ -174,7 +174,7 @@ void Servos::paintEvent(QPaintEvent *)
     marker = QPen(Qt::red,3);
     sketcher.setPen(marker);
     sketcher.setBrush(QBrush(Qt::black));
-    sketcher.translate(130,135);
+    sketcher.translate(130,114);
     sketcher.drawChord(rect,5440,3520);
     sketcher.rotate(m_servoPosition[m_servoNumber]/9.31 + 70);
     marker.setColor(Qt::white);

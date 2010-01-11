@@ -27,13 +27,8 @@ MotorTuning::MotorTuning(QWidget *parent) : Page(parent)
     
     m_cbobData = CbobData::instance();
 
-<<<<<<< HEAD:cbcui/src/MotorTuning.cpp
-    QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateCounters()));
     QObject::connect(m_cbobData, SIGNAL(eStop()), this, SLOT(allStop()));
     QObject::connect(ui_ClearButton, SIGNAL(pressed()), this, SLOT(resetMotorCounter()));
-=======
-    QObject::connect(ui_ClearButton, SIGNAL(pressed()), this, SLOT(clearMotorCounter()));
->>>>>>> 46fcbbd09aab3b0ae33c32f6c9085371ad3bdea9:cbcui/src/MotorTuning.cpp
     QObject::connect(ui_GainComboBox, SIGNAL(activated(int)), this, SLOT(selectGain(int)));
 
     m_motorNumber = 0;
@@ -58,6 +53,7 @@ void MotorTuning::show()
 {
   m_cbobData->setFastRefresh();
   QObject::connect(m_cbobData, SIGNAL(refresh()), this, SLOT(updateCounters()));
+  m_cbobData->motorGains(m_motorNumber,PIDgains);
    Page::show();
 }
 

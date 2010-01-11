@@ -104,6 +104,10 @@ int CbobData::accelerometerZ()
 {
     return m_sensorData[12];
 }
+void CbobData::accelerometerRecalibrate()
+{
+    qWarning("accel recal");
+}
 
 float CbobData::batteryVoltage()
 {
@@ -131,12 +135,16 @@ int CbobData::motorPWM(int motor)
 		return m_pwmData[motor];
 	return 0;
 }
+void CbobData::motorsRecalibrate()
+{
+    qWarning("motors recal");
+}
 void CbobData::motorGains(int motor,int *gains)
 {
-  short data[6];
-  int i;
-  ioctl(m_pid[motor], CBOB_PID_GET_GAINS, data);
-  for(i=0;i<6;i++) gains[i] = data[i];
+    short data[6];
+    int i;
+    ioctl(m_pid[motor], CBOB_PID_GET_GAINS, data);
+    for(i=0;i<6;i++) gains[i] = data[i];
 }
 void CbobData::motorSetGains(int motor,int *gains)
 {
@@ -157,14 +165,14 @@ void CbobData::moveAtVelocity(int motor,int velocity)
 }
 void CbobData::moveToPosition(int motor,int speed,int target_position)
 {
-        short v = speed;
-        int p = target_position;
-        char outdata[6];
+    short v = speed;
+    int p = target_position;
+    char outdata[6];
 
-        memcpy(outdata, &v, 2);
-        memcpy(outdata+2, &p, 4);
+    memcpy(outdata, &v, 2);
+    memcpy(outdata+2, &p, 4);
 
-        write(m_pid[motor], outdata, 6);
+    write(m_pid[motor], outdata, 6);
 }
 void CbobData::motorsOff()
 {
@@ -174,6 +182,10 @@ void CbobData::motorsOff()
 void CbobData::clearMotorCounter(int motor)
 {
     ioctl(m_pid[motor], CBOB_PID_CLEAR_COUNTER);
+}
+void CbobData::defaultPIDgains()
+{
+    qWarning("default PID gains");
 }
 
 void CbobData::disableServos()

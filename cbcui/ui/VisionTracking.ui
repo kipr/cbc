@@ -494,6 +494,12 @@ border:0px;
            <property name="autoRepeat" >
             <bool>true</bool>
            </property>
+           <property name="autoRepeatDelay" >
+            <number>300</number>
+           </property>
+           <property name="autoRepeatInterval" >
+            <number>50</number>
+           </property>
           </widget>
          </item>
          <item>
@@ -545,6 +551,12 @@ border:0px;
            <property name="autoRepeat" >
             <bool>true</bool>
            </property>
+           <property name="autoRepeatDelay" >
+            <number>150</number>
+           </property>
+           <property name="autoRepeatInterval" >
+            <number>20</number>
+           </property>
           </widget>
          </item>
          <item>
@@ -575,6 +587,12 @@ border:0px;
            </property>
            <property name="autoRepeat" >
             <bool>true</bool>
+           </property>
+           <property name="autoRepeatDelay" >
+            <number>150</number>
+           </property>
+           <property name="autoRepeatInterval" >
+            <number>20</number>
            </property>
           </widget>
          </item>
@@ -626,6 +644,12 @@ border:0px;
            </property>
            <property name="autoRepeat" >
             <bool>true</bool>
+           </property>
+           <property name="autoRepeatDelay" >
+            <number>300</number>
+           </property>
+           <property name="autoRepeatInterval" >
+            <number>50</number>
            </property>
           </widget>
          </item>

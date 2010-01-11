@@ -30,6 +30,3 @@ VisionSelect::VisionSelect(QWidget *parent) : Page(parent), m_tracking(parent, &
 VisionSelect::~VisionSelect()
 {
 }
-
-
-

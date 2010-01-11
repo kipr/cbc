@@ -28,14 +28,12 @@ MotorTest::MotorTest(QWidget *parent) : Page(parent)
 
     m_cbobData = CbobData::instance();
 
-    QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateCounters()));
     QObject::connect(m_cbobData, SIGNAL(eStop()), this, SLOT(allStop()));
     QObject::connect(ui_ClearButton0, SIGNAL(pressed()), this, SLOT(resetMotorCounter()));
     QObject::connect(ui_ClearButton1, SIGNAL(pressed()), this, SLOT(resetMotorCounter()));
     QObject::connect(ui_ClearButton2, SIGNAL(pressed()), this, SLOT(resetMotorCounter()));
     QObject::connect(ui_ClearButton3, SIGNAL(pressed()), this, SLOT(resetMotorCounter()));
 
-    m_timer.start(100);
     m_motorNumber = 0;
      ui_MotorStack->setCurrentIndex(m_motorNumber);
 

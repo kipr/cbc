@@ -54,8 +54,7 @@ Graph::~Graph()
 void Graph::show()
 {
     m_cbobData->setRefresh(100);
-    QObject::connect(m_cbobData, SIGNAL(refresh()), this, SLOT(updateGraph()));
-    
+    QObject::connect(m_cbobData, SIGNAL(refresh()), this, SLOT(updateGraph()));  
     Page::show();
 }
 

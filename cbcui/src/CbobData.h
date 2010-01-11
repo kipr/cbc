@@ -41,6 +41,7 @@ public:
     int accelerometerX();
     int accelerometerY();
     int accelerometerZ();
+    void accelerometerRecalibrate();
     int analogPullups();
 
     float batteryVoltage();
@@ -49,6 +50,7 @@ public:
     int motorPosition(int motor);
     int motorVelocity(int motor);
     int motorPWM(int motor);
+    void motorsRecalibrate();
 
     void motorGains(int motor,int *gains);
     void motorSetGains(int motor,int *gains);
@@ -56,6 +58,7 @@ public:
     void moveAtVelocity(int motor,int velocity);
     void moveToPosition(int motor,int speed,int target_position);
     void clearMotorCounter(int motor);
+    void defaultPIDgains();
 
     // servos
     void setServoPosition(int servo, int pos);
@@ -81,7 +84,7 @@ protected:
     ~CbobData();
 
 protected slots:
-		void updateSensors();
+    void updateSensors();
 
 private:
     int m_sensors;
