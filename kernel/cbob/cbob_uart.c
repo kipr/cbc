@@ -89,7 +89,6 @@ static int cbob_uart_close(struct inode *inode, struct file *file)
 	
 	up(&uart->sem);
 	
-	printk("returning...\n");
 	return 0;
 }
 
@@ -99,7 +98,6 @@ static ssize_t cbob_uart_write(struct file *file, const char *buf, size_t count,
 	int port = uart->port;
 	short data[35], written;
 	
-	printk("%s\n", __FUNCTION__);
 	
 	if(count > 64) count = 64;
 	
@@ -126,40 +124,26 @@ static int  cbob_uart_read(struct file *file, char *buf, size_t count, loff_t *p
 	int port = uart->port;
 	short data[33], request[2], data_read;
 	
-	printk("%s\n", __FUNCTION__);
-	
 	if(count > 64) count = 64;
 	
 	if(!uart)
 		return -ENODEV;
 		
-	printk("uart is valid\n");
-		
 	if(down_interruptible(&uart->sem))
 		return -EINTR;
-		
-	printk("got the semaphore\n");
 		
 	if(!(imx_gpio_read(GPIO_PORTKP)&1)) {
 		up(&uart->sem);
 		return 0;
 	}
-	
-	printk("passed the io port test\n");
 
 	request[0] = port;
 	request[1] = count;
 	cbob_spi_message(CBOB_CMD_UART_READ, request, 2, data, 33);
 	
-	printk("spi request completed\n");
-	
 	data_read = data[0];
 	
-	printk("read %d bytes\n", data_read);
-	
 	copy_to_user(buf, &(data[1]), data_read);
-	
-	printk("done!\n");
 	
 	up(&uart->sem);
 	
@@ -173,8 +157,6 @@ static int cbob_uart_ioctl(struct inode *inode, struct file *file, unsigned int 
 	short request[2];
 	short retval;
 	int arg, error;
-	
-	printk("%s\n", __FUNCTION__);
 	
 	copy_from_user(&arg, (void*)ioctl_param, sizeof(int));
 	
@@ -190,6 +172,12 @@ static int cbob_uart_ioctl(struct inode *inode, struct file *file, unsigned int 
 			if((error = cbob_spi_message(CBOB_CMD_UART_CONFIG, request, 1, &retval, 1)) < 0)
 				return error;
 			arg = retval;
+			break;
+		case CBOB_UART_FLUSH:
+			request[0] = 2;
+			request[1] = uart->port;
+			if((error = cbob_spi_message(CBOB_CMD_UART_CONFIG, request, 1, 0, 0)) < 0)
+				return error;
 			break;
 	}
 	
