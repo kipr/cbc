@@ -71,7 +71,7 @@ static int cbob_accel_ioctl(struct inode *inode, struct file *file, unsigned int
 	int error;
 	
 	switch(ioctl_num) {
-		case CBOB_PID_SET_GAINS:
+		case CBOB_ACCEL_RECALIBRATE:
 			request = 0;
 			if((error = cbob_spi_message(CBOB_CMD_ACCEL_CONFIG, &request, 1, 0, 0)) < 0)
 				return error;
