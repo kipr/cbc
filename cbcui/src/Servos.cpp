@@ -19,45 +19,32 @@
  **************************************************************************/
 
 #include "Servos.h"
-#include <assert.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/ioctl.h>
-#include "../../../kernel/cbob/cbob.h"
 #include <QMessageBox>
 
 Servos::Servos(QWidget *parent) : Page(parent)
 {
     int i;
-    char devname[32];
 
     setupUi(this);
 
-    m_inMotion = false;
+    m_cbobData = CbobData::instance();
+    QObject::connect(m_cbobData, SIGNAL(eStop()), this, SLOT(allStop()));
     m_servoNumber = 0;
-    for(i=0;i<4;i++){
-        sprintf(devname, "/dev/cbc/servo%d",i);
-        m_servo[i] = open(devname, O_RDWR);
-    }
     for(i=0;i<4;i++) m_servoPosition[i] = 1024;
-
     ui_ServoPositionLine->setText(QString::number(1024));
-    this->disableServos();
+    m_cbobData->disableServos();
 }
 
 Servos::~Servos()
 {
-    int i;
-    for(i=0;i<4;i++) ::close(m_servo[i]);
+    m_cbobData->disableServos();
 }
 
 void Servos::show()
 {
     //qWarning("servos shown");
     ui_AutoCheck->setCheckState(Qt::Unchecked);
-    this->disableServos();
+    //m_cbobData->disableServos();
     update();
     Page::show();
 }
@@ -66,24 +53,22 @@ void Servos::hide()
 {
     //qWarning("servos hidden");
     // kill servos before hiding page
-    //this->disableServos();
+    //m_cbobData->disableServos();
     Page::hide();
 }
 
-void Servos::disableServos()
+void Servos::allStop()
 {
-    int i;
-    // disable servos
-    for(i=0;i<4;i++) this->setServoPosition(i,-1);
-    m_inMotion = false;
+    if(ui_AutoCheck->isChecked()) ui_AutoCheck->setCheckState(Qt::Unchecked);
 }
 
 void Servos::on_ui_AutoCheck_stateChanged(int state)
 {
-    m_inMotion = true;
-    if(state) ui_UpdateButton->setDown(true);
+    if(state){
+        ui_UpdateButton->setDown(true);
+        m_cbobData->setServoPosition(m_servoNumber,m_servoPosition[m_servoNumber]);
+    }
     else ui_UpdateButton->setDown(false);
-    this->setServoPosition(m_servoNumber,m_servoPosition[m_servoNumber]);
 }
 
 void Servos::on_ui_ServoDecButton_clicked(bool)
@@ -127,7 +112,7 @@ void Servos::on_ui_ServoPositionLine_selectionChanged()
     m_servoPosition[m_servoNumber] = value;
 
     ui_ServoPositionLine->setText(QString::number(value));
-    if(ui_AutoCheck->isChecked()) this->setServoPosition(m_servoNumber,m_servoPosition[m_servoNumber]);
+    if(ui_AutoCheck->isChecked()) m_cbobData->setServoPosition(m_servoNumber,m_servoPosition[m_servoNumber]);
     ui_ServoPositionLine->setStyleSheet("QLineEdit#ui_ServoPositionLine{background-color:white}");
     update();
 }
@@ -144,7 +129,7 @@ void Servos::on_ui_ServoLeftButton_clicked(bool)
     if(value < 0) value = 0;
 
     ui_ServoPositionLine->setText(QString::number(value));
-    if(ui_AutoCheck->isChecked()) this->setServoPosition(m_servoNumber,value);
+    if(ui_AutoCheck->isChecked()) m_cbobData->setServoPosition(m_servoNumber,value);
     m_servoPosition[m_servoNumber] = value;
     update();
 }
@@ -161,7 +146,7 @@ void Servos::on_ui_ServoRightButton_clicked(bool)
     if(value > 2048) value = 2048;
 
     ui_ServoPositionLine->setText(QString::number(value));
-    if(ui_AutoCheck->isChecked()) this->setServoPosition(m_servoNumber,value);
+    if(ui_AutoCheck->isChecked()) m_cbobData->setServoPosition(m_servoNumber,value);
     m_servoPosition[m_servoNumber] = value;
     update();
 }
@@ -170,32 +155,14 @@ void Servos::on_ui_CenterButton_clicked(bool)
 {
     ui_ServoPositionLine->setText(QString::number(1024));
     m_servoPosition[m_servoNumber] = 1024;
-    if(ui_AutoCheck->isChecked()) this->setServoPosition(m_servoNumber,1024);
+    if(ui_AutoCheck->isChecked()) m_cbobData->setServoPosition(m_servoNumber,1024);
     update();
 }
 
 void Servos::on_ui_UpdateButton_clicked(bool)
 {
-    short position = m_servoPosition[m_servoNumber];
-    m_inMotion = true;
-    write(m_servo[m_servoNumber], &position, 2);
+    m_cbobData->setServoPosition(m_servoNumber,m_servoPosition[m_servoNumber]);
     update();
-}
-
-void Servos::setServoPosition(int servo, int pos)
-{
-    short position = pos;
-
-    write(m_servo[servo], &position, 2);
-}
-
-int Servos::getServoPosition(int servo)
-{
-    short position;
-
-    read(m_servo[servo], &position, 2);
-
-    return position;
 }
 
 void Servos::paintEvent(QPaintEvent *)

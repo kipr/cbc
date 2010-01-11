@@ -36,17 +36,15 @@ class MotorTest : public Page, private Ui::MotorTest
 public:
     MotorTest(QWidget *parent = 0);
     ~MotorTest();
-    bool inMotion();
 
 public slots:
         void on_ui_MotorDecButton_clicked(bool checked = false);
         void on_ui_MotorIncButton_clicked(bool checked = false);
         void updateCounters();
-        void motorsOff();
+        void resetMotorCounter();
+        void allStop();
         void show();
         void hide();
-
-        void clearMotorCounter();
 
         void on_ui_TargetSpeedPowerLine0_selectionChanged();
         void on_ui_TargetSpeedPowerLine1_selectionChanged();
@@ -83,19 +81,10 @@ private:
         CbobData *m_cbobData;
         QTimer m_timer;
 
-        int m_pid[4];
-        int m_pwm[4];
-
         int m_motorNumber;
         int m_targetPower[4];
         int m_targetSpeed[4];
         int m_targetPosition[4];
-        int m_inMotion;
-
-        void moveMotorPower(int motor,int power);
-        void moveToPosition(int motor,int speed,int target_position);
-        void moveAtVelocity(int motor,int velocity);
-
 };
 
 #endif

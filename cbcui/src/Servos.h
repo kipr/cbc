@@ -23,6 +23,7 @@
 
 #include "ui_Servos.h"
 #include "Page.h"
+#include "CbobData.h"
 #include <QDialog>
 #include <QPainter>
 
@@ -35,12 +36,11 @@ class Servos : public Page, private Ui::Servos
 public:
     Servos(QWidget *parent = 0);
     ~Servos();
-    bool inMotion() { return m_inMotion;}
 
 public slots:
     void on_ui_ServoDecButton_clicked(bool checked = false);
     void on_ui_ServoIncButton_clicked(bool checked = false);
-    void disableServos();
+    void allStop();
     void show();
     void hide();
 
@@ -55,13 +55,9 @@ protected:
     void paintEvent(QPaintEvent *event);
 
 private:
+    CbobData *m_cbobData;
     int m_servoNumber;
     int m_servoPosition[4];
-    int m_servo[4];
-    bool m_inMotion;
-
-    void setServoPosition(int servo, int pos);
-    int getServoPosition(int servo);
 };
 
 #endif

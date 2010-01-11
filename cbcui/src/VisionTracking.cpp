@@ -65,8 +65,8 @@ VisionTracking::VisionTracking(QWidget *parent, ColorTracker *colorTracker) : Pa
   
   //qWarning("loading models");
 
-  if (!loadModels()) {
-    loadDefaultModels();
+  if (!this->loadModels()) {
+    this->loadDefaultModels();
   }
 }
 
