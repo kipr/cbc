@@ -32,4 +32,8 @@ int serial_write(char *data, int count);
 char serial_read_byte();
 void serial_wryte_byte(char byte);
 
+void serial_flush_output();
+void serial_flush_input();
+void serial_flush();
+
 #endif

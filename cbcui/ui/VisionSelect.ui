@@ -82,7 +82,7 @@ font-size:12pt;
        <property name="sizeHint" >
         <size>
          <width>20</width>
-         <height>13</height>
+         <height>15</height>
         </size>
        </property>
       </spacer>

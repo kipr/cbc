@@ -22,6 +22,7 @@
 #include "MainMenu.h"
 #include "Page.h"
 #include "UserProgram.h"
+#include "CbobData.h"
 
 MainWindow::MainWindow(QWidget *parent) : QDialog(parent), m_mainMenu(0)
 {
@@ -68,13 +69,13 @@ void MainWindow::on_ui_closeButton_clicked(bool)
 
 void MainWindow::on_ui_estopButton_clicked(bool)
 {
-    // turn off motors from test page
-    // turn off motors from tune page
+    // turn off motors
     // disable servos
+    CbobData::instance()->allStop();
     // kill user program
     UserProgram::instance()->stop();
     // hide estop button
-    ui_estopButton->hide();
+    //ui_estopButton->hide();
 }
 
 void MainWindow::userProgramStateChange(int state)
@@ -92,13 +93,13 @@ void MainWindow::userProgramStateChange(int state)
         name.prepend("Running\n");
         ui_runstopButton->setChecked(true);
         ui_runstopButton->setText(name);
-        ui_estopButton->show();
+        //ui_estopButton->show();
     }
     else {
         name.prepend("Run\n");
         ui_runstopButton->setText(name);
         ui_runstopButton->setChecked(false);
-        this->hideEStop();
+        //this->hideEStop();
     }
 }
 

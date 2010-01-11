@@ -31,7 +31,9 @@ int g_cbc_serial_fd = -1;
 
 void serial_init()
 {
-  g_cbc_serial_fd = open(CREATE_UART, O_RDWR | O_NONBLOCK);
+  g_cbc_serial_fd = open(CREATE_UART, O_RDWR);
+  
+  serial_flush();
   
   atexit(serial_quit);
 }
@@ -64,4 +66,11 @@ int serial_write(char *data, int count)
   return 0;
 }
 
+void serial_flush()
+{
+  char data;
+  if(g_cbc_serial_fd > 0) {
+    while(read(g_cbc_serial_fd, &data, 1) == 1);
+  }
+}
 

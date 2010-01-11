@@ -19,15 +19,45 @@
  **************************************************************************/
 
 #include "Settings.h"
+#include "CbobData.h"
+#include <QFile>
 
 Settings::Settings(QWidget *parent) : Page(parent)
 {
     setupUi(this);
-    
+
+    QObject::connect(ui_recalibrateMotorsButton, SIGNAL(clicked()), this, SLOT(recalibrateMotors()));
+    QObject::connect(ui_recalibrateAccelerometerButton, SIGNAL(clicked()), this, SLOT(recalibrateAccel()));
+    QObject::connect(ui_resetPIDButton, SIGNAL(clicked()), this, SLOT(resetPID()));
+    QObject::connect(ui_cameraDefaultButton, SIGNAL(clicked()), this, SLOT(setCameraDefault()));
 }
 
 Settings::~Settings()
 {
+}
+
+void Settings::recalibrateMotors()
+{
+    CbobData::instance()->motorsRecalibrate();
+}
+
+void Settings::recalibrateAccel()
+{
+    CbobData::instance()->accelerometerRecalibrate();
+}
+
+void Settings::resetPID()
+{
+    CbobData::instance()->defaultPIDgains();
+}
+
+void Settings::setCameraDefault()
+{
+#ifdef QT_ARCH_ARM
+  QFile::remove("/mnt/user/vision/track_colors");
+#else
+  QFile::remove(QDir::homePath().toStdString() + "/track_colors");
+#endif
 }
 
 

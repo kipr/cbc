@@ -36,7 +36,6 @@
 extern int __pid_defaults[6];
 
 int set_digital_port_direction(int port, int direction);
-void get_pid_gains(int *p, int *i, int *d, int *pd, int *id, int *dd);
 void tone(int frequency, int duration); /* makes a sound at frequency for duration ms */
 void beep(); /* make a beep */
 int digital(int port); /* returns a 1 or 0 reflecting the state of port (0 to 7) */
@@ -61,7 +60,8 @@ int move_to_position(int motor, int speed, int goal_pos);/* move motor (0 to 3) 
 int mtp(int motor, int speed, int goal_pos);/* move motor (0 to 3) at speed to goal_pos */
 int move_relative_position(int motor, int speed, int delta_pos);/* move motor (0 to 3) at speed by delta_pos */
 int mrp(int motor, int speed, int delta_pos);/* move motor (0 to 3) at speed by delta_pos */
-void set_pid_gains(int p, int i, int d, int pd, int id, int dd);/* set PID gains */
+void set_pid_gains(int motor, int p, int i, int d, int pd, int id, int dd);/* set PID gains */
+void get_pid_gains(int motor, int *p, int *i, int *d, int *pd, int *id, int *dd);
 int freeze(int motor);/* keep motor (0 to 3) at current position */
 int get_motor_done(int motor); /* returns 1 if motor (0 to 3) is moving to a goal and 0 otherwise */
 void block_motor_done(int motor); /* returns when motor (0 to 3) has reached goal */

@@ -19,64 +19,52 @@
  **************************************************************************/
 
 #include "MotorTuning.h"
-
-#include <assert.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/ioctl.h>
-#include "../../../kernel/cbob/cbob.h"
 #include <QMessageBox>
 
 MotorTuning::MotorTuning(QWidget *parent) : Page(parent)
 {   
-    int i;
-    char devname[32];
     setupUi(this);
     
     m_cbobData = CbobData::instance();
 
-    QObject::connect(ui_ClearButton, SIGNAL(pressed()), this, SLOT(clearMotorCounter()));
+    QObject::connect(m_cbobData, SIGNAL(eStop()), this, SLOT(allStop()));
+    QObject::connect(ui_ClearButton, SIGNAL(pressed()), this, SLOT(resetMotorCounter()));
     QObject::connect(ui_GainComboBox, SIGNAL(activated(int)), this, SLOT(selectGain(int)));
 
     m_motorNumber = 0;
     m_targetSpeed = 0;
     m_targetPosition = 0;
-    m_inMotion = 0;
 
     ui_GainComboBox->addItem(tr("Proportional"));
     ui_GainComboBox->addItem(tr("Integral"));
     ui_GainComboBox->addItem(tr("Derivative"));
     ui_GainComboBox->setCurrentIndex(0);
 
-    for(i=0;i<4;i++){
-                sprintf(devname, "/dev/cbc/pid%d", i);
-                m_pid[i] = ::open(devname, O_RDWR);
-            }
-            
-    getGains(0);
+    m_cbobData->motorGains(0,PIDgains);
    this->selectGain(0);
 }
 
 MotorTuning::~MotorTuning()
 {
-    int i;
-    for(i = 0;i < 4;i++) ::close(m_pid[i]);
+    m_cbobData->motorsOff();
 }
 
 void MotorTuning::show()
 {
   m_cbobData->setFastRefresh();
   QObject::connect(m_cbobData, SIGNAL(refresh()), this, SLOT(updateCounters()));
+  m_cbobData->motorGains(m_motorNumber,PIDgains);
    Page::show();
 }
 
 void MotorTuning::hide()
 {
+    //qWarning("Tuning hidden");
+    // turn off all motors before hiding page;
+    //m_cbobData->motorsOff();
+    //if(ui_PlayButton->isChecked()) ui_PlayButton->toggle();
     m_cbobData->setSlowRefresh();
     QObject::disconnect(this, SLOT(updateCounters()));
-    if(ui_PlayButton->isChecked()) ui_PlayButton->toggle();
     Page::hide();
 }
 
@@ -85,12 +73,22 @@ void MotorTuning::updateCounters()
     ui_MotorPositionLabel->setText(QString::number(m_cbobData->motorPosition(m_motorNumber)));
 }
 
+void MotorTuning::resetMotorCounter()
+{
+    m_cbobData->clearMotorCounter(m_motorNumber);
+}
+
+void MotorTuning::allStop()
+{
+    if(ui_PlayButton->isChecked()) ui_PlayButton->toggle();
+}
+
 void MotorTuning::on_ui_MotorDecButton_clicked(bool)
 {
     if(m_motorNumber == 0) m_motorNumber = 3;
     else m_motorNumber--;
     
-    getGains(m_motorNumber);
+    m_cbobData->motorGains(m_motorNumber,PIDgains);
 
     ui_MotorNumberLabel->setText(QString::number(m_motorNumber));
 }
@@ -100,7 +98,7 @@ void MotorTuning::on_ui_MotorIncButton_clicked(bool)
     if(m_motorNumber == 3) m_motorNumber = 0;
     else m_motorNumber++;
     
-    getGains(m_motorNumber);
+    m_cbobData->motorGains(m_motorNumber,PIDgains);
 
     ui_MotorNumberLabel->setText(QString::number(m_motorNumber));
 }
@@ -194,10 +192,6 @@ void MotorTuning::on_ui_TargetPositionLine_selectionChanged()
 
 void MotorTuning::on_ui_PlayButton_toggled(bool state)
 {
-    int i;
-    QString value;
-    short gains[6];
-
     ui_TargetSpeedLine->setEnabled(!state);
     ui_TargetPositionLine->setEnabled(!state);
     ui_MultSlider->setEnabled(!state);
@@ -205,59 +199,10 @@ void MotorTuning::on_ui_PlayButton_toggled(bool state)
     ui_NegCheck->setEnabled(!state);
 
     if(state){
-        for(i=0;i<6;i++) gains[i] = PIDgains[i];
-        ioctl(m_pid[0], CBOB_PID_SET_GAINS, gains);
-        this->moveToPosition(m_motorNumber,m_targetSpeed,m_targetPosition);
+        m_cbobData->motorSetGains(0,PIDgains);
+        m_cbobData->moveToPosition(m_motorNumber,m_targetSpeed,m_targetPosition);
     }
     else{
-        this->moveAtVelocity(m_motorNumber,0);
+        m_cbobData->moveAtVelocity(m_motorNumber,0);
     }
 }
-
-void MotorTuning::motorsOff()
-{
-    int i;
-    for(i=0;i<4;i++) this->moveAtVelocity(i,0);
-    if(ui_PlayButton->isChecked()) ui_PlayButton->toggle();
-    m_inMotion = 0;
-}
-
-void MotorTuning::clearMotorCounter()
-{
-    ioctl(m_pid[m_motorNumber], CBOB_PID_CLEAR_COUNTER);
-}
-
-void MotorTuning::moveAtVelocity(int motor,int velocity)
-{
-    short v = velocity;
-    write(m_pid[motor], &v, 2);
-}
-
-void MotorTuning::moveToPosition(int motor,int speed, int target_position)
-{
-        short v = speed;
-        int p = target_position;
-        char outdata[6];
-
-        memcpy(outdata, &v, 2);
-        memcpy(outdata+2, &p, 4);
-
-        write(m_pid[motor], outdata, 6);
-}
-
-void MotorTuning::getGains(int motor)
-{
-  short gains[6];
-  int i;
-  ioctl(m_pid[motor], CBOB_PID_GET_GAINS, gains);
-    for(i=0;i<6;i++) PIDgains[i] = gains[i];
-}
-
-bool MotorTuning::inMotion()
-{
-    if(m_inMotion) return true;
-    else return false;
-}
-
-
-

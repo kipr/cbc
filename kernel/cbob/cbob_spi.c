@@ -34,8 +34,6 @@
 #include <linux/wait.h>
 
 static struct semaphore cbob_spi;
-wait_queue_head_t cbob_spi_flip;
-volatile int cbob_spi_state = 0;
 
 /* Most of the following code was taken from chumby_accel.c
  * Thanks go to Chumby for providing this :)
@@ -47,7 +45,7 @@ volatile int cbob_spi_state = 0;
 
 #define SPI_CHAN 0
 
-#define CBOB_SPI_TIMEOUT 25
+#define CBOB_SPI_TIMEOUT 500
 
 static int spi_tx_fifo_empty(void)
 { return (SSP_INT_REG(SPI_CHAN) & SSP_INT_TE);}
@@ -66,14 +64,6 @@ static unsigned int spi_exchange_data(unsigned int dataTx)
   while(!spi_rx_fifo_data_ready());
 
   return SSP_RX_REG(SPI_CHAN);
-}
-
-irqreturn_t cbob_spi_handler(int irq, void *data, struct pt_regs *regs)
-{
-  cbob_spi_state++;
-	wake_up_interruptible(&cbob_spi_flip);
-	
-  return IRQ_HANDLED;
 }
 
 void cbob_spi_init(void) {
@@ -135,38 +125,17 @@ void cbob_spi_init(void) {
   
   sema_init(&cbob_spi, 1);
   
-  init_waitqueue_head(&cbob_spi_flip);
-  
-  imx_gpio_mode(GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO | GPIO_IRQ_FALLING);
-  request_irq(IRQ_GPIOD(27), cbob_spi_handler, 0, "CBOB", 0);
+  imx_gpio_mode(GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO);
   //disable_irq(IRQ_GPIOD(27));
 }
 
 void cbob_spi_exit(void) {
-  free_irq(IRQ_GPIOD(27), 0);
 }
 
-inline static int cbob_spi_wait(int state)
+inline static void cbob_spi_wait()
 {
-  int retval;
-  
-  //if(value) imx_gpio_mode(GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO | GPIO_IRQ_HIGH);
-  
-  //else      imx_gpio_mode(GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO | GPIO_IRQ_LOW);
-  
- // udelay(1000);
-  
-  //printk("test");
-  
-  //udelay(1000);
-	
-	retval = wait_event_interruptible_timeout(cbob_spi_flip, cbob_spi_state >= state, CBOB_SPI_TIMEOUT);
-	
-	return retval > 0;
-	
-	//while(imx_gpio_read(GPIO_PORTD | 27));
-	
-	//return 1;
+	mdelay(1);
+	while(imx_gpio_read(GPIO_PORTD | 27)) schedule_timeout(1);
 }
 
 int cbob_spi_message(short cmd, short *outbuf, short outcount, short *inbuf, short incount)
@@ -180,35 +149,15 @@ int cbob_spi_message(short cmd, short *outbuf, short outcount, short *inbuf, sho
   
   if(down_interruptible(&cbob_spi))
     return -EINTR;
-    
-  cbob_spi_state = 0;
-  //udelay(10);
-  //printk("wait_down\n");
-  //printk("CBCSPI");
-  //schedule_timeout(10);
-  if(!cbob_spi_wait(0)) {
-    up(&cbob_spi);
-    return -ETIMEDOUT;
-  }
   
-  /*if(!cbob_spi_wait(0)) {
-  	printk("Disconnected...\n");
-    up(&cbob_spi);
-    return -ETIMEDOUT;
-  }*/
+  //set_current_state(TASK_INTERRUPTIBLE);
+  
+  cbob_spi_wait();
   
   for(i = 0;i < 3;i++)
     spi_exchange_data(header[i]);
-  
-  //schedule();
-  //printk("wait up\n");
-  //udelay(10);
-  //printk("....1");
-  //schedule_timeout(10);
-  if(!cbob_spi_wait(1)) {
-    up(&cbob_spi);
-    return -ETIMEDOUT;
-  }
+ 
+  cbob_spi_wait();
   
   if(outcount == 0) {
     spi_exchange_data(0);
@@ -216,20 +165,12 @@ int cbob_spi_message(short cmd, short *outbuf, short outcount, short *inbuf, sho
   for(i = 0;i < outcount;i++)
     spi_exchange_data(outbuf[i]);
   
-  //printk("....2");
-  if(!cbob_spi_wait(2)) {
-    up(&cbob_spi);
-    return -ETIMEDOUT;
-  }
+  cbob_spi_wait();
   
   replycount = spi_exchange_data(0);
   spi_exchange_data(0);
   
-  //printk("....3\n");
-  if(!cbob_spi_wait(3)) {
-    up(&cbob_spi);
-    return -ETIMEDOUT;
-  }
+  cbob_spi_wait();
   
   for(i = 0;i < replycount;i++) {
     if(incount--) {

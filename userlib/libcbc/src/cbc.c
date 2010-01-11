@@ -446,7 +446,7 @@ int freeze(int motor)
 	return move_to_position(motor, 500, get_motor_position_counter(motor));
 }
 
-void set_pid_gains(int p, int i, int d, int pd, int id, int dd)
+void set_pid_gains(int motor, int p, int i, int d, int pd, int id, int dd)
 {
 	short gains[6];
 	
@@ -457,14 +457,14 @@ void set_pid_gains(int p, int i, int d, int pd, int id, int dd)
 	gains[4] = id;
 	gains[5] = dd;
 	
-	ioctl(g_pid[0], CBOB_PID_SET_GAINS, gains);
+        ioctl(g_pid[motor], CBOB_PID_SET_GAINS, gains);
 }
 
-void get_pid_gains(int *p, int *i, int *d, int *pd, int *id, int *dd)
+void get_pid_gains(int motor, int *p, int *i, int *d, int *pd, int *id, int *dd)
 {
 	short gains[6];
 	
-	ioctl(g_pid[0], CBOB_PID_GET_GAINS, gains);
+        ioctl(g_pid[motor], CBOB_PID_GET_GAINS, gains);
 	
 	*p = gains[0];
 	*i = gains[1];

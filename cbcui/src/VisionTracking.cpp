@@ -65,8 +65,8 @@ VisionTracking::VisionTracking(QWidget *parent, ColorTracker *colorTracker) : Pa
   
   //qWarning("loading models");
 
-  if (!loadModels()) {
-    loadDefaultModels();
+  if (!this->loadModels()) {
+    this->loadDefaultModels();
   }
 }
 
@@ -74,8 +74,14 @@ VisionTracking::~VisionTracking()
 {
 }
 
-void VisionTracking::closeEvent(QCloseEvent */*event*/) {
+void VisionTracking::show() {
+    if(!this->loadModels())
+        this->loadDefaultModels();
+    Page::show();
+}
+void VisionTracking::hide() {
   saveModels();
+  Page::hide();
 }
 
 void VisionTracking::setModel(const HSVRange &model) {
@@ -103,6 +109,7 @@ std::string VisionTracking::modelSaveFile() const {
 
 bool VisionTracking::loadModels()
 {
+        //qWarning(modelSaveFile().c_str());
   bool ret=m_ColorTracker->loadModels(modelSaveFile().c_str());
   updateModel();
   return ret;
@@ -110,6 +117,7 @@ bool VisionTracking::loadModels()
 
 bool VisionTracking::saveModels()
 {
+    //qWarning(modelSaveFile().c_str());
   return m_ColorTracker->saveModels(modelSaveFile().c_str());
 }
 
@@ -208,13 +216,11 @@ void VisionTracking::on_RawButton_clicked() {
     MatchButton->setChecked(false);
     TrackButton->setChecked(false);
 }
-
  void VisionTracking::on_MatchButton_clicked() {
     m_ColorTracker->setDisplayMode(ColorTracker::DisplayMatches);
     RawButton->setChecked(false);
     TrackButton->setChecked(false);
 }
-
   void VisionTracking::on_TrackButton_clicked() {
     m_ColorTracker->setDisplayMode(ColorTracker::DisplayBlobs);
     RawButton->setChecked(false);
@@ -225,7 +231,6 @@ void VisionTracking::on_TopLeftButton_clicked() {
     m_tl = true;
     BottomRightButton->setChecked(false);
 }
-
 void VisionTracking::on_BottomRightButton_clicked() {
       m_tl = false;
       TopLeftButton->setChecked(false);

@@ -527,10 +527,10 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_4" >
+      <widget class="QLabel" name="ui_xValue" >
        <property name="minimumSize" >
         <size>
-         <width>15</width>
+         <width>40</width>
          <height>0</height>
         </size>
        </property>
@@ -540,40 +540,22 @@ font-size:12pt;
 font:bold;</string>
        </property>
        <property name="text" >
-        <string>X:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="ui_xValue" >
-       <property name="minimumSize" >
-        <size>
-         <width>40</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="text" >
         <string>9999</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_5" >
-       <property name="minimumSize" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
         <size>
-         <width>15</width>
-         <height>0</height>
+         <width>40</width>
+         <height>20</height>
         </size>
        </property>
-       <property name="styleSheet" >
-        <string>color:yellow;
-font-size:12pt;
-font:bold;</string>
-       </property>
-       <property name="text" >
-        <string>Y:</string>
-       </property>
-      </widget>
+      </spacer>
      </item>
      <item>
       <widget class="QLabel" name="ui_yValue" >
@@ -583,28 +565,28 @@ font:bold;</string>
          <height>0</height>
         </size>
        </property>
+       <property name="styleSheet" >
+        <string>color:yellow;
+font-size:12pt;
+font:bold;</string>
+       </property>
        <property name="text" >
         <string>9999</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_6" >
-       <property name="minimumSize" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
         <size>
-         <width>15</width>
-         <height>0</height>
+         <width>40</width>
+         <height>20</height>
         </size>
        </property>
-       <property name="styleSheet" >
-        <string>color:red;
-font-size:12pt;
-font:bold;</string>
-       </property>
-       <property name="text" >
-        <string>Z:</string>
-       </property>
-      </widget>
+      </spacer>
      </item>
      <item>
       <widget class="QLabel" name="ui_zValue" >
@@ -613,6 +595,11 @@ font:bold;</string>
          <width>40</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="styleSheet" >
+        <string>color:red;
+font-size:12pt;
+font:bold;</string>
        </property>
        <property name="text" >
         <string>9999</string>
