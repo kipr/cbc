@@ -20,6 +20,5 @@
 void ChumbyInit();
 inline void ChumbyBend(int value);
 inline void ChumbySS1(int value);
-inline void ChumbyWiggle();
 
 #endif

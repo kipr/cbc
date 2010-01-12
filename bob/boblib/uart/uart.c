@@ -111,8 +111,8 @@ static void UpdateBend()
 	if(g_UartSigmask & 2 && g_Uart1BufferIndex != g_Uart1BufferReadIndex)
 		data_ready = 1;
 		
-	if(data_ready)  {ChumbyBend(1);}
-	else ChumbyBend(0);
+	if(data_ready)  {ChumbySS1(1);}
+	else ChumbySS1(0);
 }
 
 int UartWrite(int uart, char *data, int len)
@@ -209,7 +209,7 @@ static void UartUsbRead(void *pArg,
 	memcpy(&(g_Uart0Buffer[g_Uart0WriteIndex]), &(g_UartUsbReadBuffer[copied]), received - copied);
 	g_Uart0WriteIndex += received - copied;
 	
-	ChumbyBend(1);
+	ChumbySS1(1);
 
 	CDCDSerialDriver_Read(g_UartUsbReadBuffer, USB_BUFFER_SIZE, UartUsbRead, 0);
 }

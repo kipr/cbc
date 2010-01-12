@@ -342,17 +342,10 @@ void ChumbySS1(int value)
 	//printf("ChumbySS1(%d)\n\r", value);
 }
 
-void ChumbyWiggle()
-{
-	ChumbySS1(0);
-	ChumbySS1(1);
-	ChumbySS1(0);
-}
-
 static void ChumbyCallback()
 {
 	//printf("callback...\n");
-	ChumbySS1(1);
+	ChumbyBend(1);
   switch(g_ChumbyState) {
     case CHUMBY_STATE_RXT_CMD:
       if((ushort)g_ChumbyCmd[0] == CHUMBY_START) {
@@ -372,5 +365,5 @@ static void ChumbyCallback()
       ChumbySetStateWriteData();
       break;
   }
-	ChumbySS1(0);
+	ChumbyBend(0);
 }
