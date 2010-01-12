@@ -27,6 +27,7 @@ Console::Console(QWidget *parent) : Page(parent), m_uiData("/tmp/cbc_uidata")
     setupUi(this);
     
     QObject::connect(UserProgram::instance(), SIGNAL(consoleOutput(QString)), this, SLOT(updateText(QString)));
+    QObject::connect(UserProgram::instance(), SIGNAL(started()), this, SLOT(raisePage()));
     
     m_uiData.shared().a_button = 0;
     m_uiData.shared().b_button = 0;

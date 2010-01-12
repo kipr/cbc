@@ -251,11 +251,12 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 			else if(data[0] == 2) {
 				// Set pid gains
 				SetPIDGains(data[1],data[2],data[3],data[4],data[5],data[6], data[7]);
-				//SetPIDGains(data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
+				
 			}
 			else if(data[0] == 3) {
 				// Get pid gains
 				GetPIDGains(data[1], data+2, data+3, data+4, data+5, data+6, data+7);
+				for(tmp=1;tmp<7;tmp++) data[tmp] = data[tmp+1];
 				outcount = 7;
 			}
 			else if(data[0] == 4) {
