@@ -33,6 +33,7 @@ CbobData::CbobData()
     char devname[32];
 
     m_sensors = open("/dev/cbc/sensors", O_RDONLY);
+    m_angPullups = open("/dev/cbc/analog0", O_RDWR);
 
     // motor control
     m_allPID = open("/dev/cbc/pid", O_RDONLY);
@@ -60,6 +61,7 @@ CbobData::~CbobData()
 {
     int i;
     close(m_sensors);
+    close(m_angPullups);
 
     this->motorsOff();
     close(m_allPID);
@@ -87,6 +89,12 @@ int CbobData::analog(int port)
 int CbobData::analogPullups()
 {
   return m_sensorData[13];
+}
+void CbobData::resetPullups()
+{
+    int mask = 0;
+    mask = ~mask;
+    ioctl(m_angPullups, CBOB_ANALOG_SET_PULLUPS, &mask);
 }
 int CbobData::digital(int port)
 {
@@ -208,6 +216,8 @@ void CbobData::defaultPIDgains(int motor)
     m_settings.setValue("DerivativeDiv",PIDgains[5]);
     m_settings.endGroup();
     m_settings.sync();
+    ::system("sync");
+    ::system("sync");
 }
 
 void CbobData::disableServos()

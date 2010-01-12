@@ -1,5 +1,6 @@
 #include "UserProgram.h"
 #include <QFileInfo>
+#include "CbobData.h"
 
 
 UserProgram::UserProgram()
@@ -59,6 +60,7 @@ void UserProgram::programStarted()
 
 void UserProgram::programFinished(int, QProcess::ExitStatus)
 {
+  CbobData::instance()->resetPullups();
   emit stateChange(0);
   emit stopped();
 }
@@ -79,6 +81,7 @@ void UserProgram::start()
 
 void UserProgram::stop()
 {
+    CbobData::instance()->resetPullups();
   if(m_userProgram.state() != QProcess::NotRunning) {
     toggleState();
   }

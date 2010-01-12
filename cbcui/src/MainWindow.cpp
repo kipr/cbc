@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent), m_mainMenu(0)
     QObject::connect(UserProgram::instance(), SIGNAL(stateChange(int)), this, SLOT(userProgramStateChange(int)));
     
     updateBatteryDisplay();
+    CbobData::instance()->resetPullups();
     
     userProgramStateChange(0);
 }
@@ -54,6 +55,15 @@ void MainWindow::updateBatteryDisplay()
     // This is confusing.  The purpose here is to allow the battery percentage to 
     // be seen as if it is hiding under the clear half of the close button.
    ui_closeButton->setText(QString::number((int)((CbobData::instance()->batteryVoltage()-6.0)*(100.0/2.4))) + "%");
+}
+
+void MainWindow::batteryWarning()
+{
+    QMessageBox::warning(this,
+                            "Low Battery!",
+                             "Low Battery - Charge Me!",
+                             QMessageBox::Ok,
+                             QMessageBox::NoButton);
 }
 
 void MainWindow::on_ui_backButton_clicked(bool)

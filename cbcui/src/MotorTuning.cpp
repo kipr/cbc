@@ -272,7 +272,7 @@ void MotorTuning::readSettings()
     // if no settings file is located the defaults are input
     for(i=0;i<4;i++){
         m_settings.beginGroup(QString("PIDgainsMotor%1").arg(i));
-        PIDgains[0] = m_settings.value("ProportionalMult",6).toInt();
+        PIDgains[0] = m_settings.value("ProportionalMult",4).toInt();
         PIDgains[1] = m_settings.value("IntegralMult",1).toInt();
         PIDgains[2] = m_settings.value("DerivativeMult",-1).toInt();
         PIDgains[3] = m_settings.value("ProportionalDiv",1).toInt();
@@ -297,4 +297,6 @@ void MotorTuning::writeSettings(int motor)
     m_settings.setValue("DerivativeDiv",PIDgains[5]);
     m_settings.endGroup();
     m_settings.sync();
+    ::system("sync");
+    ::system("sync");
 }

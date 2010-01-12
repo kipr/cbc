@@ -43,6 +43,9 @@ public slots:
    void updateBatteryDisplay();
    void userProgramStateChange(int state);
 
+protected:
+   void batteryWarning();
+
 private:
    MainMenu *m_mainMenu;
    void hideEStop();

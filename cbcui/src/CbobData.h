@@ -72,6 +72,7 @@ signals:
     void refresh();
 
 public slots:
+    void resetPullups();
     void motorsOff();
     void disableServos();
     void allStop();
@@ -88,6 +89,7 @@ protected slots:
 
 private:
     int m_sensors;
+    int m_angPullups;
     int m_allPID;
     int m_pid[4];
     int m_allPWM;
