@@ -19,6 +19,7 @@
  **************************************************************************/
 
 #include "CbobData.h"
+#include <QSettings>
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -107,6 +108,9 @@ int CbobData::accelerometerZ()
 void CbobData::accelerometerRecalibrate()
 {
     qWarning("accel recal");
+    int accel = open("/dev/cbc/accel", O_RDWR);
+    ioctl(accel, CBOB_ACCEL_RECALIBRATE);
+    close(accel);
 }
 
 float CbobData::batteryVoltage()
@@ -138,19 +142,24 @@ int CbobData::motorPWM(int motor)
 void CbobData::motorsRecalibrate()
 {
     qWarning("motors recal");
+    ioctl(m_allPID, CBOB_PID_RECALIBRATE);
 }
 void CbobData::motorGains(int motor,int *gains)
 {
     short data[6];
     int i;
     ioctl(m_pid[motor], CBOB_PID_GET_GAINS, data);
-    for(i=0;i<6;i++) gains[i] = data[i];
+    for(i=0;i<6;i++) {
+        gains[i] = data[i];
+    }
 }
 void CbobData::motorSetGains(int motor,int *gains)
 {
     short data[6];
     int i;
-    for(i=0;i<6;i++) data[i] = gains[i];
+    for(i=0;i<6;i++) {
+        data[i] = gains[i];
+    }
     ioctl(m_pid[motor], CBOB_PID_SET_GAINS, data);
 }
 void CbobData::moveMotorPower(int motor,int power)
@@ -183,9 +192,22 @@ void CbobData::clearMotorCounter(int motor)
 {
     ioctl(m_pid[motor], CBOB_PID_CLEAR_COUNTER);
 }
-void CbobData::defaultPIDgains()
+void CbobData::defaultPIDgains(int motor)
 {
-    qWarning("default PID gains");
+    int PIDgains[6];
+    ioctl(m_pid[motor], CBOB_PID_RESET_GAINS);
+    this->motorGains(motor,PIDgains);
+
+    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    m_settings.beginGroup(QString("PIDgainsMotor%1").arg(motor));
+    m_settings.setValue("ProportionalMult",PIDgains[0]);
+    m_settings.setValue("IntegralMult",PIDgains[1]);
+    m_settings.setValue("DerivativeMult",PIDgains[2]);
+    m_settings.setValue("ProportionalDiv",PIDgains[3]);
+    m_settings.setValue("IntegralDiv",PIDgains[4]);
+    m_settings.setValue("DerivativeDiv",PIDgains[5]);
+    m_settings.endGroup();
+    m_settings.sync();
 }
 
 void CbobData::disableServos()

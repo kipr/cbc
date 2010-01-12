@@ -47,8 +47,6 @@ public slots:
     void show();
     void hide();
 
-    void selectGain(int index);
-
     void on_ui_NegCheck_stateChanged(int state);
     void on_ui_MultSlider_valueChanged(int value);
     void on_ui_DivSlider_valueChanged(int value);
@@ -56,6 +54,13 @@ public slots:
     void on_ui_TargetSpeedLine_selectionChanged();
     void on_ui_TargetPositionLine_selectionChanged();
     void on_ui_PlayButton_toggled(bool state);
+    void GUIupdate();
+
+protected:
+    void writeGains();
+    void motorCheckBoxes();
+    void readSettings();
+    void writeSettings(int motor);
 
 private:
     CbobData *m_cbobData;

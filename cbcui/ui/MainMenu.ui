@@ -32,13 +32,17 @@
       <widget class="QLabel" name="label" >
        <property name="font" >
         <font>
-         <pointsize>11</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
+         <pointsize>14</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
         </font>
        </property>
+       <property name="styleSheet" >
+        <string>font:14pt;</string>
+       </property>
        <property name="text" >
-        <string>Matt's CBC 2</string>
+        <string>CBC 2</string>
        </property>
       </widget>
      </item>

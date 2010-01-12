@@ -38,17 +38,18 @@ Settings::~Settings()
 
 void Settings::recalibrateMotors()
 {
-    CbobData::instance()->motorsRecalibrate();
+    //CbobData::instance()->motorsRecalibrate();
 }
 
 void Settings::recalibrateAccel()
 {
-    CbobData::instance()->accelerometerRecalibrate();
+    //CbobData::instance()->accelerometerRecalibrate();
 }
 
 void Settings::resetPID()
 {
-    CbobData::instance()->defaultPIDgains();
+    int i;
+    for(i=0;i<4;i++) CbobData::instance()->defaultPIDgains(i);
 }
 
 void Settings::setCameraDefault()

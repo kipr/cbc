@@ -276,28 +276,28 @@ font-size:20pt;</string>
       </spacer>
      </item>
      <item>
-      <widget class="QCheckBox" name="ui_Check0" >
+      <widget class="QCheckBox" name="ui_motorCheck0" >
        <property name="text" >
         <string>0</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="ui_Check1" >
+      <widget class="QCheckBox" name="ui_motorCheck1" >
        <property name="text" >
         <string>1</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="ui_Check2" >
+      <widget class="QCheckBox" name="ui_motorCheck2" >
        <property name="text" >
         <string>2</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="ui_Check3" >
+      <widget class="QCheckBox" name="ui_motorCheck3" >
        <property name="text" >
         <string>3</string>
        </property>
@@ -685,6 +685,12 @@ font-size:20pt;</string>
    </item>
    <item>
     <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>3</number>
+     </property>
      <item>
       <widget class="QPushButton" name="ui_ClearButton" >
        <property name="sizePolicy" >
@@ -748,7 +754,7 @@ font-size:12pt;
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_5" >
+      <widget class="QLabel" name="positionLabel" >
        <property name="font" >
         <font>
          <pointsize>12</pointsize>

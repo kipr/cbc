@@ -250,7 +250,7 @@ font-size:20pt;</string>
    <item>
     <widget class="QStackedWidget" name="ui_MotorStack" >
      <property name="currentIndex" >
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page_0" >
       <layout class="QVBoxLayout" >
@@ -480,7 +480,7 @@ font-size:20pt;</string>
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>16</height>
+             <height>14</height>
             </size>
            </property>
           </spacer>
@@ -507,6 +507,9 @@ font-size:20pt;</string>
         <layout class="QHBoxLayout" >
          <property name="spacing" >
           <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>3</number>
          </property>
          <item>
           <widget class="QPushButton" name="ui_ClearButton0" >
@@ -898,6 +901,9 @@ background-image:url(:/actions/rivet30x30Stop.png);
          <property name="spacing" >
           <number>0</number>
          </property>
+         <property name="bottomMargin" >
+          <number>3</number>
+         </property>
          <item>
           <widget class="QPushButton" name="ui_ClearButton1" >
            <property name="minimumSize" >
@@ -1265,6 +1271,9 @@ background-image:url(:/actions/rivet30x30Stop.png);
        <item>
         <layout class="QHBoxLayout" >
          <property name="spacing" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
           <number>3</number>
          </property>
          <item>
@@ -1634,6 +1643,9 @@ background-image:url(:/actions/rivet30x30Stop.png);
        <item>
         <layout class="QHBoxLayout" >
          <property name="spacing" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
           <number>3</number>
          </property>
          <item>

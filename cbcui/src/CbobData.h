@@ -58,7 +58,7 @@ public:
     void moveAtVelocity(int motor,int velocity);
     void moveToPosition(int motor,int speed,int target_position);
     void clearMotorCounter(int motor);
-    void defaultPIDgains();
+    void defaultPIDgains(int motor);
 
     // servos
     void setServoPosition(int servo, int pos);

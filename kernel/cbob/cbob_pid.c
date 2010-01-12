@@ -88,7 +88,7 @@ static int cbob_pid_ioctl(struct inode *inode, struct file *file, unsigned int i
 {
 	struct pid_port *pid = file->private_data;
 	short request[8];
-	short result[6];
+        short result[8];
 	int error, arg;
 	
 	switch(ioctl_num) {
@@ -117,7 +117,7 @@ static int cbob_pid_ioctl(struct inode *inode, struct file *file, unsigned int i
 			request[1] = pid->port;
 			if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 2, result, 6)) < 0)
 				return error;
-			copy_to_user((void*)ioctl_param, result, 12);
+                        copy_to_user((void*)ioctl_param, result, 14);
 			break;
 		case CBOB_PID_GET_DONE:
 			request[0] = 4;
