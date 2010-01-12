@@ -53,7 +53,7 @@ void MainWindow::updateBatteryDisplay()
 {
     // This is confusing.  The purpose here is to allow the battery percentage to 
     // be seen as if it is hiding under the clear half of the close button.
-   ui_closeButton->setText(QString::number((int)((CbobData::instance()->batteryVoltage()-6.0)*(100.0/2.4))) + "%");
+   ui_closeButton->setText(QString::number((int)((CbobData::instance()->batteryVoltage()-6.0)*(100.0/2.41))) + "%");
 }
 
 void MainWindow::on_ui_backButton_clicked(bool)
