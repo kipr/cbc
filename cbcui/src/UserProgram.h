@@ -12,7 +12,7 @@ Q_OBJECT
 public:
 
   static UserProgram *instance();
-  QString getProgramName() { return programName; }
+  QString getProgramName();
   bool isRunning();
 
 public slots:

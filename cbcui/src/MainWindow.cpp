@@ -23,6 +23,7 @@
 #include "Page.h"
 #include "UserProgram.h"
 #include "CbobData.h"
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) : QDialog(parent), m_mainMenu(0)
 {
@@ -93,9 +94,10 @@ void MainWindow::userProgramStateChange(int state)
     QString name(UserProgram::instance()->getProgramName());
     int lastChar = name.count() - 1;
     name.remove(lastChar,1);
+
     int n = name.count() - 15;
     if(n > 0) {
-        name.remove(13,n+2);
+        name.remove(12,n+3);
         name.append("...");
     }
 

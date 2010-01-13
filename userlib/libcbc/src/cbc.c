@@ -130,7 +130,8 @@ void tone(int frequency, int duration)
 	cbc->tone_freq=frequency;
 	msleep(duration);
 	cbc->tone_freq=0;*/
-	PENDING("tone");
+        //PENDING("tone");
+        printf("\a");
 }
 
 void beep()

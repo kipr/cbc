@@ -29,7 +29,11 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QPlainTextEdit" native="1" name="ui_console" />
+    <widget class="QPlainTextEdit" native="1" name="ui_console" >
+     <property name="styleSheet" >
+      <string/>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" >

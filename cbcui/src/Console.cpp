@@ -21,6 +21,7 @@
 #include "Console.h"
 #include "UserProgram.h"
 #include <QScrollBar>
+#include <QTimer>
 
 Console::Console(QWidget *parent) : Page(parent), m_uiData("/tmp/cbc_uidata")
 {
@@ -41,8 +42,29 @@ Console::~Console()
 {
 }
 
+void Console::setViewportColors(Qt::GlobalColor text, Qt::GlobalColor background)
+{
+    //set the background and text color of the console
+    QPalette p(ui_console->viewport()->palette());
+    p.setColor(QPalette::Active,QPalette::Base, background);
+    p.setColor(QPalette::Active,QPalette::Text, text);
+    ui_console->viewport()->setPalette(p);
+}
+
+void Console::invertColors()
+{
+    if(ui_console->viewport()->palette().color(QPalette::Base) == Qt::white)
+        this->setViewportColors(Qt::white,Qt::black);
+    else
+        this->setViewportColors(Qt::black,Qt::white);
+}
+
 void Console::updateText(QString text)
 {
+    if(text.contains("\a",Qt::CaseInsensitive)){
+        this->invertColors();
+        QTimer::singleShot(200,this,SLOT(invertColors()));
+    }
     m_consoleData += text;
     m_consoleData = m_consoleData.right(CONSOLE_MAX_LENGTH);
     ui_console->setPlainText(m_consoleData);

@@ -39,6 +39,7 @@ public:
     ~Console();
 
 public slots:
+   void invertColors();
    void updateText(QString text);
    
    void on_ui_upButton_pressed();
@@ -55,9 +56,11 @@ public slots:
    void on_ui_aButton_released();
    void on_ui_bButton_released();
 
+protected:
+    void setViewportColors(Qt::GlobalColor text, Qt::GlobalColor background);
 private:
    QString m_consoleData;
-   
+
    SharedMem<UIData> m_uiData;
    
 

@@ -101,6 +101,11 @@ void UserProgram::updateProgramName()
     }
 }
 
+QString UserProgram::getProgramName()
+{
+    return programName;
+}
+
 bool UserProgram::isRunning()
 {
     // is the program running?
