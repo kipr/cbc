@@ -21,6 +21,7 @@
 #include "Settings.h"
 #include "CbobData.h"
 #include <QFile>
+#include <QSettings>
 
 Settings::Settings(QWidget *parent) : Page(parent)
 {
@@ -30,6 +31,14 @@ Settings::Settings(QWidget *parent) : Page(parent)
     QObject::connect(ui_recalibrateAccelerometerButton, SIGNAL(clicked()), this, SLOT(recalibrateAccel()));
     QObject::connect(ui_resetPIDButton, SIGNAL(clicked()), this, SLOT(resetPID()));
     QObject::connect(ui_cameraDefaultButton, SIGNAL(clicked()), this, SLOT(setCameraDefault()));
+
+    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    if(!m_settings.contains("consoleShowOnRun")){
+        m_settings.setValue("consoleShowOnRun", true);
+        this->resetPID();
+    }
+
+    ui_consoleShowBox->setChecked(m_settings.value("consoleShowOnRun").toBool());
 }
 
 Settings::~Settings()
@@ -61,5 +70,13 @@ void Settings::setCameraDefault()
 #endif
 }
 
+void Settings::on_ui_consoleShowBox_clicked(bool checked)
+{
+    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
 
+    m_settings.setValue("consoleShowOnRun",checked);
+    m_settings.sync();
+    ::system("sync");
+    ::system("sync");
+}
 

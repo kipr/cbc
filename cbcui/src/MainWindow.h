@@ -42,9 +42,7 @@ public slots:
    void on_ui_estopButton_clicked(bool checked = false);
    void updateBatteryDisplay();
    void userProgramStateChange(int state);
-
-protected:
-   void batteryWarning();
+   void batteryWarning(float volts);
 
 private:
    MainMenu *m_mainMenu;

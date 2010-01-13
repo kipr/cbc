@@ -26,6 +26,7 @@ signals:
   void started();
   void stopped();
   void consoleOutput(QString text);
+  void consoleRaise();
   void stateChange(int state);
 
 protected:

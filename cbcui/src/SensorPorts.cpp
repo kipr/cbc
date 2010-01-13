@@ -97,7 +97,7 @@ void SensorPorts::updateSensors()
     ui_AccelerometerY->setText(QString::number(m_cbobData->accelerometerY()));
     ui_AccelerometerZ->setText(QString::number(m_cbobData->accelerometerZ()));
 
-    ui_BatteryVoltage->setText(QString::number(m_cbobData->batteryVoltage()));
+    ui_BatteryVoltage->setText(QString::number(m_cbobData->batteryVoltage(),'f',3));
 }
 
 void SensorPorts::on_ui_floatingAnalog0_clicked(bool checked)

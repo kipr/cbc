@@ -230,6 +230,19 @@ font-size:12pt;
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QCheckBox" name="ui_consoleShowBox" >
+       <property name="layoutDirection" >
+        <enum>Qt::RightToLeft</enum>
+       </property>
+       <property name="text" >
+        <string>Show Console on Run</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>

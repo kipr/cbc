@@ -70,6 +70,7 @@ public:
 
 signals:
     void refresh();
+    void lowBattery(float volts);
 
 public slots:
     void resetPullups();

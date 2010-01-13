@@ -37,6 +37,7 @@ public slots:
     void recalibrateAccel();
     void resetPID();
     void setCameraDefault();
+    void on_ui_consoleShowBox_clicked(bool checked = true);
 };
 
 #endif

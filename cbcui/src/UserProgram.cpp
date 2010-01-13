@@ -1,5 +1,6 @@
 #include "UserProgram.h"
 #include <QFileInfo>
+#include <QSettings>
 #include "CbobData.h"
 
 
@@ -56,6 +57,10 @@ void UserProgram::programStarted()
 {
   emit stateChange(1);
   emit started();
+
+  QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+  if(m_settings.value("consoleShowOnRun").toBool())
+      emit consoleRaise();
 }
 
 void UserProgram::programFinished(int, QProcess::ExitStatus)

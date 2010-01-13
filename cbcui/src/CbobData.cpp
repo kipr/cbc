@@ -122,13 +122,18 @@ void CbobData::accelerometerRecalibrate()
 }
 
 float CbobData::batteryVoltage()
-{
-    //float volts = m_cbobData.shared().volts;
-    
-    //volts /= 4095.0;cpp
-    
-    //volts *= 8.4;
-   return ((float)m_sensorData[9])/1000.0; 
+{ 
+    static float trigger = 6.5;
+    float voltage = ((float)m_sensorData[9])/1000.0;
+
+    if(voltage < trigger){
+        trigger -= 0.2;
+        emit lowBattery(voltage);
+    }
+    else if(voltage > trigger + 0.5 && trigger <= 6.3)
+        trigger += 0.2;
+
+    return voltage;
 }
 
 int CbobData::motorVelocity(int motor)

@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent), m_mainMenu(0)
     
     QObject::connect(ui_runstopButton, SIGNAL(clicked()), UserProgram::instance(), SLOT(toggleState()));
     QObject::connect(CbobData::instance(), SIGNAL(refresh()), this, SLOT(updateBatteryDisplay()));
+    QObject::connect(CbobData::instance(), SIGNAL(lowBattery(float)), this, SLOT(batteryWarning(float)));
     QObject::connect(UserProgram::instance(), SIGNAL(stateChange(int)), this, SLOT(userProgramStateChange(int)));
     
     updateBatteryDisplay();
@@ -53,18 +54,34 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateBatteryDisplay()
 {
-    // This is confusing.  The purpose here is to allow the battery percentage to 
-    // be seen as if it is hiding under the clear half of the close button.
-   ui_closeButton->setText(QString::number((int)((CbobData::instance()->batteryVoltage()-6.0)*(100.0/2.4))) + "%");
+    int percentage;
+    // The close button has an image with the close X set as the background
+    // the text that is placed on top of the button is the battery percentage however,
+    // it has been shifted to the left to make it look like it is not part of the button
+    // the voltage percent calculation is based on the cutoff voltage of 5.8v
+    // then scaled up to the maximum voltage 8.4v (8.4v - 5.8v = 2.6)
+    percentage = (int)((CbobData::instance()->batteryVoltage()-5.8)*(100.0/2.6));
+    if(percentage > 100) percentage = 100;
+
+    ui_closeButton->setText(QString::number(percentage) + "%");
 }
 
-void MainWindow::batteryWarning()
+void MainWindow::batteryWarning(float volts)
 {
-    QMessageBox::warning(this,
-                            "Low Battery!",
-                             "Low Battery - Charge Me!",
+    if(volts < 5.9){
+        QMessageBox::critical(this,
+                             "Low Battery!",
+                             "Shutdown imminent!",
                              QMessageBox::Ok,
                              QMessageBox::NoButton);
+    }
+    else{
+        QMessageBox::warning(this,
+                             "Low Battery!",
+                             "Low Battery - Please Charge Me!",
+                             QMessageBox::Ok,
+                             QMessageBox::NoButton);
+    }
 }
 
 void MainWindow::on_ui_backButton_clicked(bool)
