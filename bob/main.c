@@ -40,6 +40,9 @@ int main()
 		ChumbySS1(1);
 	}*/
 	
+	USBD_Connect();
+ UartStartRead();
+	
 	while(1){
 		/*while(!BlackButton());
 		ChumbySS1(1);
