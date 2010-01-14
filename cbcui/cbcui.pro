@@ -46,7 +46,9 @@ HEADERS += src/MainWindow.h \
            src/GraphWidget.h \
 	   			 src/Keypad.h \
 	   			 src/MotorTuning.h \
-	   			 src/MotorTest.h
+	   			 src/MotorTest.h \
+	   			 src/SerialPort.h \
+	   			 src/SerialServer.h
      	      
 FORMS += ui/MainWindow.ui \
          ui/MainMenu.ui \
@@ -97,7 +99,9 @@ SOURCES += src/main.cpp \
            src/GraphWidget.cpp \
   	       src/Keypad.cpp \
 	         src/MotorTuning.cpp \
-	         src/MotorTest.cpp
+	         src/MotorTest.cpp \
+	         src/SerialPort.cpp \
+	         src/SerialServer.cpp
 
 # Vision
 FORMS   += src/vision/AdjustColorWidget.ui

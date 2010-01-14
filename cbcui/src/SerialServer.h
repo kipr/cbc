@@ -18,35 +18,57 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#ifndef __COMPILER_H__
-#define __COMPILER_H__
+#ifndef __CBC_SERIAL_SERVER_H__
+#define __CBC_SERIAL_SERVER_H__
 
-#include "ui_Compiler.h"
-#include "Page.h"
-#include "SerialServer.h"
+#include <QThread>
+#include <QFile>
+#include <QStringList>
+#include <QVector>
+#include <QDataStream>
 
-#include <QProcess>
+#include "SerialPort.h"
 
-class Compiler : public Page, private Ui::Compiler
+typedef struct {
+    QStringList filenames;
+    QVector<int> filesizes;
+} CBCSerialHeader;
+
+#define SERIAL_MESSAGE_OK   ((quint8)1)
+#define SERIAL_MESSAGE_FAIL ((quint8)2)
+#define SERIAL_START        ((quint16)0xCBC)
+
+#define HEADER_KEY (quint32)(0xB07BA11)
+#define SERIAL_DEVICE "/dev/uart0"
+#define TEMP_PATH "/tmp/upload"
+
+class SerialServer : public QThread
 {
     Q_OBJECT
 
 public:
-    Compiler(QWidget *parent = 0);
-    ~Compiler();
+    SerialServer(QObject *parent = 0);
+    ~SerialServer();
 
-public slots:
-
-    void readStandardError();
-    void readStandardOutput();
+    void run();
+    void stop();
     
-    void compileFile(QString filename);
-    void compileFromUSB();
-
+signals:
+    void downloadFinished(QString filename);
+    
 private:
-    QProcess m_compiler;
-    SerialServer m_serial;
+    SerialPort m_port;
+    QDataStream m_stream;
+    bool  m_quit;
+
+    bool readPacket(QByteArray *packetData);
+
+    void processTransfer(QByteArray& header);
+    void processData(QByteArray& data);
+    void writeFile(QString fileName, QByteArray& fileData);
+    void sendOk();
+    
+    QString createProject(QString projectName);
 };
 
 #endif
-

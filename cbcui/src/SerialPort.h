@@ -18,34 +18,38 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#ifndef __COMPILER_H__
-#define __COMPILER_H__
+#ifndef __SERIAL_PORT_H__
+#define __SERIAL_PORT_H__
 
-#include "ui_Compiler.h"
-#include "Page.h"
-#include "SerialServer.h"
+/* Currenty hard-wired for ReadWrite at 38400 */
 
-#include <QProcess>
+#include <QIODevice>
+#include <QString>
 
-class Compiler : public Page, private Ui::Compiler
+class SerialPort : public QIODevice
 {
-    Q_OBJECT
-
+Q_OBJECT
 public:
-    Compiler(QWidget *parent = 0);
-    ~Compiler();
-
-public slots:
-
-    void readStandardError();
-    void readStandardOutput();
+    SerialPort(QString filename, QObject *parent = 0);
+    ~SerialPort();
     
-    void compileFile(QString filename);
-    void compileFromUSB();
+    bool open(OpenMode mode = 0);
+    void close();
 
+    qint64 bytesAvailable() const;
+    bool   waitForReadyRead(int msecs);
+    
+    bool isSequential() { return true; }
+
+protected:
+    qint64 readData(char *data, qint64 maxSize);
+    qint64 writeData(const char *data, qint64 maxSize);
+    
 private:
-    QProcess m_compiler;
-    SerialServer m_serial;
+    QString m_name;
+    int m_fd;
+    
+    bool select(int msecs) const;
 };
 
 #endif
