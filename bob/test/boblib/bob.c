@@ -5,10 +5,15 @@
 #include <motors/motors.h>
 #include <servos/servos.h>
 #include <accel/accel.h>
+#include <usart/usart.h>
+#include <pmc/pmc.h>
+#include <pio/pio.h>
 #include <uart/uart.h>
 
 #include <utility/trace.h>
 #include <pio/pio_it.h>
+
+static Pin g_SerialPins[] = {SERIAL_TXD, SERIAL_RXD};
 
 void BobInit()
 {
@@ -32,7 +37,14 @@ void BobTest()
 	TRACE_CONFIGURE(DBGU_STANDARD, 115200, MCK);
 	PIO_InitializeInterrupts(0);
 	//UsbInit();
-	UartInit();
+	//UartInit();
+	
+	PIO_Configure(g_SerialPins, PIO_LISTSIZE(g_SerialPins));
+	PMC_EnablePeripheral(AT91C_ID_US0);
+	
+	USART_Configure(AT91C_BASE_US0, USART_MODE_ASYNCHRONOUS, 115200, MCK);
+	USART_SetTransmitterEnabled(AT91C_BASE_US0, 1);
+	
 	printf("\n\n\n\n\n\n\r");
 	printf("Starting BoB test\n\r");
 	
@@ -107,6 +119,7 @@ void BobTest()
 	usleep(30000);
 	// read in analog values and compare to 4096 print out bad port
 	for(i=0;i<8;i++){
+		//printf("Analog Hi%d: %d\n\r",i,Analog(i));
 		if(Analog(i) < 1018){
 			printf("Analog HIGH %d: %d\n\r",i,Analog(i));
 			status = 0;
@@ -150,6 +163,7 @@ void BobTest()
 	// read in analog values without pullup disabled
 	for(i=0;i<8;i++){
 		testvals[i] = Analog(i);
+		//printf("no PULLUP %d: %d\n\r",i,Analog(i));
 	}
 	// configure all analogs with pullups enabled
 	for(i=0;i<8;i++) AnalogPullup(i,1);
@@ -157,6 +171,7 @@ void BobTest()
 	
 	// read in analog values and compare to pullups disabled
 	for(i=0;i<8;i++){
+		//printf("A PULLUP %d: %d\n\r",i,Analog(i));
 		// if the change is less than threshold the pullups are not working
 		if((Analog(i) - testvals[i]) < 5){
 			printf("Analog PULLUP %d: %d\n\r",i,Analog(i));

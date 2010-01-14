@@ -51,21 +51,23 @@ static void UartWiggle();
 
 int UartInit()
 {
-	CDCDSerialDriver_Initialize();
+	//CDCDSerialDriver_Initialize();
 	
 	PIO_Configure(g_UartPins, PIO_LISTSIZE(g_UartPins));
 	PMC_EnablePeripheral(AT91C_ID_US0);
 	
-	USART_Configure(AT91C_BASE_US0, AT91C_US_USMODE_NORMAL | AT91C_US_CLKS_CLOCK | 
-																	AT91C_US_CHRL_8_BITS | AT91C_US_PAR_NONE | 
-																	AT91C_US_NBSTOP_1_BIT, 57600, MCK);
+	USART_Configure(AT91C_BASE_US0, USART_MODE_ASYNCHRONOUS, 115200, MCK);
 	USART_SetReceiverEnabled(AT91C_BASE_US0, 1);
 	USART_SetTransmitterEnabled(AT91C_BASE_US0, 1);
 	
-	DMA_Init(&g_Uart1DMA, AT91C_BASE_PDC_US0);
+	//DMA_Init(&g_Uart1DMA, AT91C_BASE_PDC_US0);
 	
-	SetPitCallback(UartRefresh, 2);
+	//SetPitCallback(UartRefresh, 2);
 	
+	UartRefresh();
+	
+	while(1){ USART_Write(AT91C_BASE_US0,'a',0);
+	 }
 	return 1;
 }
 
