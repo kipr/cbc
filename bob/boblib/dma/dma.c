@@ -37,6 +37,12 @@ void DMA_Disable(struct dma_dev *channel)
 	channel->base->PDC_PTCR = AT91C_PDC_TXTDIS | AT91C_PDC_RXTDIS;
 }
 
+void DMA_Enable(struct dma_dev *channel)
+{
+	DMA_Flush(channel);
+	channel->base->PDC_PTCR = AT91C_PDC_TXTEN | AT91C_PDC_RXTEN;
+}
+
 void DMA_Flush(struct dma_dev *channel)
 {
 	DMA_FlushInput(channel);

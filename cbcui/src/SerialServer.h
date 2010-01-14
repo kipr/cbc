@@ -17,44 +17,58 @@
  *  along with this copy of CBC Firmware.  Check the LICENSE file         *
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
- 
-#ifndef __DMA_H__
-#define __DMA_H__
 
-#include <bob.h>
+#ifndef __CBC_SERIAL_SERVER_H__
+#define __CBC_SERIAL_SERVER_H__
 
-#define DMA_BUFFER_SIZE 512
+#include <QThread>
+#include <QFile>
+#include <QStringList>
+#include <QVector>
+#include <QDataStream>
 
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned int   uint32;
+#include "SerialPort.h"
 
-struct dma_dev {
-	volatile AT91PS_PDC base;
-	volatile uint8 rx_buf[2][DMA_BUFFER_SIZE];
-	volatile uint8 tx_buf[2][DMA_BUFFER_SIZE];
-	
-	volatile int rx_pos;     // Our current receive buffer position
-	volatile int rx_current; // Our current receive buffer (0 or 1)
-	
-	volatile int tx_pos;       // Our current transmit buffer position
-	volatile int tx_current;   // Our current transmit buffer
-	volatile int tx_switching; // Whether or not we're in the middle of switching buffers
+typedef struct {
+    QStringList filenames;
+    QVector<int> filesizes;
+} CBCSerialHeader;
+
+#define SERIAL_MESSAGE_OK   ((quint8)1)
+#define SERIAL_MESSAGE_FAIL ((quint8)2)
+#define SERIAL_START        ((quint16)0xCBC)
+
+#define HEADER_KEY (quint32)(0xB07BA11)
+#define SERIAL_DEVICE "/dev/uart0"
+#define TEMP_PATH "/tmp/upload"
+
+class SerialServer : public QThread
+{
+    Q_OBJECT
+
+public:
+    SerialServer(QObject *parent = 0);
+    ~SerialServer();
+
+    void run();
+    void stop();
+    
+signals:
+    void downloadFinished(QString filename);
+    
+private:
+    SerialPort m_port;
+    QDataStream m_stream;
+    bool  m_quit;
+
+    bool readPacket(QByteArray *packetData);
+
+    void processTransfer(QByteArray& header);
+    void processData(QByteArray& data);
+    void writeFile(QString fileName, QByteArray& fileData);
+    void sendOk();
+    
+    QString createProject(QString projectName);
 };
-
-void DMA_Init(struct dma_dev *channel, AT91PS_PDC base);
-uint16  DMA_Read(struct dma_dev *channel, uint8 *data, uint16 count);
-uint16  DMA_Write(struct dma_dev *channel, uint8 *data, uint16 count);
-void DMA_Flush(struct dma_dev *channel);
-void DMA_FlushInput(struct dma_dev *channel);
-void DMA_FlushOutput(struct dma_dev *channel);
-
-void DMA_WriteBlock(struct dma_dev *channel, uint8 *data, int count);
-
-void DMA_Disable(struct dma_dev *channel);
-void DMA_Enable(struct dma_dev *channel);
-
-int DMA_TransferCount();
-
 
 #endif

@@ -294,15 +294,15 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 			break;
 		case CBOB_CMD_UART_READ:
 			data[1] = UartRead(data[0], (char*)(&(data[2])), data[1]);
-			printf("Read %d bytes\n\r", data[1]);
 			outcount = (data[1]>>1)+2;
 			break;
 		case CBOB_CMD_UART_WRITE:
 			data[1] = UartWrite(data[0], (char*)&(data[2]), data[1]);
-			printf("Wrote %d bytes\n\r", data[1]);
 			outcount += 1;
+			break;
 		case CBOB_CMD_UART_CONFIG:
-			if(data[0] == 0) {
+		  UartSetSigmask(data[0]);
+			/*if(data[0] == 0) {
 				UartSetSigmask(data[1]);
 			}
 			else if(data[0] == 1) {
@@ -311,7 +311,7 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 			}
 			else if(data[0] == 2) {
 				UartReset(data[1]);
-			}
+			}*/
 			break;
 		case CBOB_CMD_STATUS_READ:
 			data[1] = CBOB_VERSION;
@@ -342,17 +342,10 @@ void ChumbySS1(int value)
 	//printf("ChumbySS1(%d)\n\r", value);
 }
 
-void ChumbyWiggle()
-{
-	ChumbySS1(0);
-	ChumbySS1(1);
-	ChumbySS1(0);
-}
-
 static void ChumbyCallback()
 {
 	//printf("callback...\n");
-	ChumbySS1(1);
+	ChumbyBend(1);
   switch(g_ChumbyState) {
     case CHUMBY_STATE_RXT_CMD:
       if((ushort)g_ChumbyCmd[0] == CHUMBY_START) {
@@ -372,5 +365,5 @@ static void ChumbyCallback()
       ChumbySetStateWriteData();
       break;
   }
-	ChumbySS1(0);
+	ChumbyBend(0);
 }

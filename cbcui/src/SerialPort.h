@@ -17,44 +17,40 @@
  *  along with this copy of CBC Firmware.  Check the LICENSE file         *
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
- 
-#ifndef __DMA_H__
-#define __DMA_H__
 
-#include <bob.h>
+#ifndef __SERIAL_PORT_H__
+#define __SERIAL_PORT_H__
 
-#define DMA_BUFFER_SIZE 512
+/* Currenty hard-wired for ReadWrite at 38400 */
 
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned int   uint32;
+#include <QIODevice>
+#include <QString>
 
-struct dma_dev {
-	volatile AT91PS_PDC base;
-	volatile uint8 rx_buf[2][DMA_BUFFER_SIZE];
-	volatile uint8 tx_buf[2][DMA_BUFFER_SIZE];
-	
-	volatile int rx_pos;     // Our current receive buffer position
-	volatile int rx_current; // Our current receive buffer (0 or 1)
-	
-	volatile int tx_pos;       // Our current transmit buffer position
-	volatile int tx_current;   // Our current transmit buffer
-	volatile int tx_switching; // Whether or not we're in the middle of switching buffers
+class SerialPort : public QIODevice
+{
+Q_OBJECT
+public:
+    SerialPort(QString filename, QObject *parent = 0);
+    ~SerialPort();
+    
+    bool open(OpenMode mode = 0);
+    void close();
+
+    qint64 bytesAvailable() const;
+    bool   waitForReadyRead(int msecs);
+    
+    bool isSequential() { return true; }
+
+protected:
+    qint64 readData(char *data, qint64 maxSize);
+    qint64 writeData(const char *data, qint64 maxSize);
+    
+private:
+    QString m_name;
+    int m_fd;
+    
+    bool select(int msecs) const;
 };
 
-void DMA_Init(struct dma_dev *channel, AT91PS_PDC base);
-uint16  DMA_Read(struct dma_dev *channel, uint8 *data, uint16 count);
-uint16  DMA_Write(struct dma_dev *channel, uint8 *data, uint16 count);
-void DMA_Flush(struct dma_dev *channel);
-void DMA_FlushInput(struct dma_dev *channel);
-void DMA_FlushOutput(struct dma_dev *channel);
-
-void DMA_WriteBlock(struct dma_dev *channel, uint8 *data, int count);
-
-void DMA_Disable(struct dma_dev *channel);
-void DMA_Enable(struct dma_dev *channel);
-
-int DMA_TransferCount();
-
-
 #endif
+
