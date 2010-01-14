@@ -52,6 +52,7 @@ void DMA_FlushOutput(struct dma_dev *channel);
 void DMA_WriteBlock(struct dma_dev *channel, uint8 *data, int count);
 
 void DMA_Disable(struct dma_dev *channel);
+void DMA_Enable(struct dma_dev *channel);
 
 int DMA_TransferCount();
 
