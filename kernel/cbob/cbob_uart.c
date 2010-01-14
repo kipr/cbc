@@ -126,7 +126,7 @@ static ssize_t cbob_uart_write(struct tty_struct *tty, const unsigned char *buf,
 	
 	if(count > 64) count = 64;
 	
-	copy_from_user(&(data[2]), buf, count);
+	memcpy(&(data[2]), buf, count);
 	data[0] = index;
 	data[1] = count;
 	
@@ -187,7 +187,7 @@ int cbob_uart_init(void)
   
   cbob_uart_tty_driver->owner = THIS_MODULE;
   cbob_uart_tty_driver->driver_name = "cbob_uart";
-  cbob_uart_tty_driver->name = "cbc/uart";
+  cbob_uart_tty_driver->name = "uart";
   cbob_uart_tty_driver->devfs_name = "cbc/uart%d";
   cbob_uart_tty_driver->major = CBOB_UART_MAJOR;
   cbob_uart_tty_driver->type = TTY_DRIVER_TYPE_SERIAL,
