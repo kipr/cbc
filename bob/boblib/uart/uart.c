@@ -47,14 +47,11 @@ static void UartUsbWrite(void *pArg,
 												 unsigned int transferred,
 												 unsigned int remaining);
 static void UartRefresh();
-static void UpdateBend();
+static void UartWiggle();
 
 int UartInit()
 {
 	CDCDSerialDriver_Initialize();
-  USBD_Connect();
-	
-	UartStartRead();
 	
 	PIO_Configure(g_UartPins, PIO_LISTSIZE(g_UartPins));
 	PMC_EnablePeripheral(AT91C_ID_US0);
@@ -88,7 +85,7 @@ static void UartRefresh()
 		g_Uart1BufferIndex = 0;
 	}
 	
-	UpdateBend();
+	UartWiggle();
 }
 
 void UartSetSigmask(int mask)
@@ -96,23 +93,21 @@ void UartSetSigmask(int mask)
 	g_UartSigmask = mask;
 }
 
-int UartGetSigmask()
-{
-	return g_UartSigmask;
-}
-
-static void UpdateBend()
+static void UartWiggle()
 {
 	int data_ready = 0;
 	
-	if(g_UartSigmask & 1 && g_Uart0ReadIndex != g_Uart0WriteIndex)
+	if(g_Uart0ReadIndex != g_Uart0WriteIndex)
 		data_ready = 1;
 		
-	if(g_UartSigmask & 2 && g_Uart1BufferIndex != g_Uart1BufferReadIndex)
+	if(g_Uart1BufferIndex != g_Uart1BufferReadIndex)
 		data_ready = 1;
 		
-	if(data_ready)  {ChumbySS1(1);}
-	else ChumbySS1(0);
+	if(data_ready) {
+		ChumbySS1(0);
+		ChumbySS1(1);
+		ChumbySS1(0);
+	}
 }
 
 int UartWrite(int uart, char *data, int len)
@@ -136,7 +131,6 @@ int UartWrite(int uart, char *data, int len)
 
 int UartRead(int uart, char *data, int len)
 {
-	UpdateBend();
 	if(uart == 0) {
 		if(g_Uart0ReadIndex == g_Uart0WriteIndex) {
 			return 0;
@@ -153,7 +147,6 @@ int UartRead(int uart, char *data, int len)
 		memcpy(data, &(g_Uart0Buffer[g_Uart0ReadIndex]), len);
 		g_Uart0ReadIndex += len;
 		if(g_Uart0ReadIndex >= UART_BUFFER_SIZE) g_Uart0ReadIndex = 0;
-		UpdateBend();
 		return len;
 	}
 	else if(uart == 1){
@@ -171,7 +164,6 @@ int UartRead(int uart, char *data, int len)
 		memcpy(data, &(g_Uart1Buffer[g_Uart1BufferReadIndex]), len);
 		g_Uart1BufferReadIndex += len;
 		if(g_Uart1BufferReadIndex >= UART_BUFFER_SIZE) g_Uart1BufferReadIndex = 0;
-		UpdateBend();
 		return len;
 	}
 	return 0;
@@ -182,13 +174,11 @@ int UartReset(int uart)
 	if(uart == 0) {
 		g_Uart0WriteIndex = 0;
 		g_Uart0ReadIndex = 0;
-		UpdateBend();
 		return 1;
 	}
 	else {
 		g_Uart1BufferIndex = 0;
 		g_Uart1BufferReadIndex = 0;
-		UpdateBend();
 		return 0;
 	}
 }
@@ -200,6 +190,7 @@ static void UartUsbRead(void *pArg,
 {
 	int copied = 0;
 	
+	
 	if(received + g_Uart0WriteIndex >= UART_BUFFER_SIZE) {
 		copied = UART_BUFFER_SIZE - g_Uart0WriteIndex;
 		memcpy(&(g_Uart0Buffer[g_Uart0WriteIndex]), g_UartUsbReadBuffer, copied);
@@ -208,8 +199,6 @@ static void UartUsbRead(void *pArg,
 	
 	memcpy(&(g_Uart0Buffer[g_Uart0WriteIndex]), &(g_UartUsbReadBuffer[copied]), received - copied);
 	g_Uart0WriteIndex += received - copied;
-	
-	ChumbySS1(1);
 
 	CDCDSerialDriver_Read(g_UartUsbReadBuffer, USB_BUFFER_SIZE, UartUsbRead, 0);
 }
