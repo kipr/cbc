@@ -24,6 +24,7 @@
 #include "ui_Console.h"
 #include "Page.h"
 #include <QString>
+#include <QSound>
 
 #include "SharedMem.h"
 #include "UIData.h"
@@ -55,11 +56,14 @@ public slots:
    void on_ui_rightButton_released();
    void on_ui_aButton_released();
    void on_ui_bButton_released();
+   
+   void bell();
 
 protected:
     void setViewportColors(Qt::GlobalColor text, Qt::GlobalColor background);
 private:
    QString m_consoleData;
+   QSound m_bell;
 
    SharedMem<UIData> m_uiData;
    
