@@ -134,10 +134,10 @@ void cbob_spi_exit(void) {
 
 inline static void cbob_spi_wait()
 {
-  if(imx_gpio_read(GPIO_PORTKP)&1) {
+  //if(imx_gpio_read(GPIO_PORTKP)&1) {
 	  udelay(1500);
 	  while(imx_gpio_read(GPIO_PORTKP)&1) schedule_timeout(1);
-	}
+	//}
 }
 
 int cbob_spi_message(short cmd, short *outbuf, short outcount, short *inbuf, short incount)
