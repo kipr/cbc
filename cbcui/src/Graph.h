@@ -41,6 +41,7 @@ public slots:
     void updateGraph();
     void show();
     void hide();
+    void setDelTime(double dt);
 
 private:
     

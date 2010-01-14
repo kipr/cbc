@@ -38,6 +38,11 @@ Graph::Graph(QWidget *parent) : Page(parent)
 
     m_cbobData = CbobData::instance();
     
+    ui_delTimeBox->setRange(0.1,600.0);
+    ui_delTimeBox->setSuffix("s");
+    ui_delTimeBox->setValue(0.1);
+    ui_delTimeBox->setSingleStep(0.1);
+    QObject::connect(ui_delTimeBox, SIGNAL(valueChanged(double)), this, SLOT(setDelTime(double)));
     m_graph = new GraphWidget(ui_graphWidget);
     
     m_graph->setScale(ACCSCALE, ACCSCALE, ACCSCALE);
@@ -53,7 +58,8 @@ Graph::~Graph()
 
 void Graph::show()
 {
-    m_cbobData->setRefresh(100);
+    //m_cbobData->setRefresh(100);
+    this->setDelTime(ui_delTimeBox->value());
     QObject::connect(m_cbobData, SIGNAL(refresh()), this, SLOT(updateGraph()));  
     Page::show();
 }
@@ -62,6 +68,16 @@ void Graph::hide()
 {
     QObject::disconnect(this, SLOT(updateGraph()));
     Page::hide();
+}
+
+void Graph::setDelTime(double dt)
+{
+    int ms = (int)(dt*1000);
+    m_cbobData->setRefresh(ms);
+    if(dt > 30) ui_delTimeBox->setSingleStep(5.0);
+    else if(dt > 10.0) ui_delTimeBox->setSingleStep(1.0);
+    else if(dt > 5.0) ui_delTimeBox->setSingleStep(0.5);
+    else ui_delTimeBox->setSingleStep(0.1);
 }
 
 void Graph::updateGraph()
