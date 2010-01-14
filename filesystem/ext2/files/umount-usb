@@ -1,9 +1,9 @@
 #!/bin/sh
 
-umount /mnt/usercode >/dev/null 2>&1
-rmdir /mnt/usercode >/dev/null 2>&1
+umount /mnt/browser/usb >/dev/null 2>&1
+rmdir /mnt/browser/usb >/dev/null 2>&1
 
-if [ -e /mnt/usercode ]; then
+if [ -e /mnt/browser/usb ]; then
     exit 1
 else
     exit 0

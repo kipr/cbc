@@ -22,13 +22,14 @@
 
 #include <QProcess>
 
-#define DEFAULT_PATH "/mnt"
+#define DEFAULT_PATH "/mnt/browser"
 
 FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent)
 {
     setupUi(this);
     
     m_dir.setRootPath(DEFAULT_PATH);
+       m_dir.setResolveSymlinks(true);
     ui_directoryBrowser->setModel(&m_dir);
     m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
 
@@ -45,7 +46,7 @@ FileManager::~FileManager()
 
 bool FileManager::isUSBMounted()
 {
-    QFileInfo info("/mnt/usercode");
+    QFileInfo info("/mnt/browser/usb");
 
     return info.exists();
 }
@@ -93,6 +94,7 @@ void FileManager::on_ui_unmountButton_clicked()
     QProcess umount;
 
     ui_directoryBrowser->setRootIndex(m_dir.index(DEFAULT_PATH));
+    m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
 
     umount.start("/mnt/kiss/usercode/umount-usb");
     umount.waitForFinished();
