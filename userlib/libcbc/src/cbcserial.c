@@ -27,11 +27,13 @@
 #include <sys/types.h>
 #include <stdio.h>
 
+#include <termios.h>
+
 int g_cbc_serial_fd = -1;
 
 void serial_init()
 {
-  g_cbc_serial_fd = open(CREATE_UART, O_RDWR);
+  g_cbc_serial_fd = open(CREATE_UART, O_RDWR | O_NONBLOCK);
   
   serial_flush();
   
@@ -70,7 +72,7 @@ void serial_flush()
 {
   char data;
   if(g_cbc_serial_fd > 0) {
-    while(read(g_cbc_serial_fd, &data, 1) == 1);
+    tcflush(g_cbc_serial_fd, TCIOFLUSH);
   }
 }
 
