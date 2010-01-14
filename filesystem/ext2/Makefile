@@ -47,7 +47,6 @@ filesystem: gcc qt
 	(cd files; rsync -a gcc-usercode run stop compile compile-usb mount-usb umount-usb $(DEST)/usercode)
 	(cd files; rsync -a gdb                                  $(DEST)/bin)
 	(cd files; rsync -a ts.conf                              $(DEST)/qt/etc)
-	(cd files; rsync -a beep.wav														 $(DEST))
 
 	# First make sure libcbc is updated
 	make -C $(LIBCBC_DIR)
@@ -61,6 +60,8 @@ filesystem: gcc qt
 	make -C $(INIT_DIR) DEST=$(DEST) install_filesystem
 	make -C $(FIRMWARE_DIR)
 	rsync -a $(FIRMWARE_DIR)/cbcui $(DEST)
+	mkdir -p $(DEST)/sounds
+	(cd files; rsync -a sounds/*.wav $(DEST)/sounds)
 
 clean:
 	rm -rf ../kiss-ext2

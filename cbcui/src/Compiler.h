@@ -23,6 +23,7 @@
 
 #include "ui_Compiler.h"
 #include "Page.h"
+#include "SerialServer.h"
 
 #include <QProcess>
 
@@ -44,6 +45,7 @@ public slots:
 
 private:
     QProcess m_compiler;
+    SerialServer m_serial;
 };
 
 #endif

@@ -23,7 +23,7 @@
 #include <QScrollBar>
 #include <QTimer>
 
-Console::Console(QWidget *parent) : Page(parent), m_uiData("/tmp/cbc_uidata")
+Console::Console(QWidget *parent) : Page(parent), m_uiData("/tmp/cbc_uidata"), m_bell("/mnt/kiss/sounds/beep.wav", this)
 {
     setupUi(this);
     
@@ -62,13 +62,20 @@ void Console::invertColors()
 void Console::updateText(QString text)
 {
     if(text.contains("\a",Qt::CaseInsensitive)){
-        this->invertColors();
-        QTimer::singleShot(200,this,SLOT(invertColors()));
+         bell();
+
     }
     m_consoleData += text;
     m_consoleData = m_consoleData.right(CONSOLE_MAX_LENGTH);
     ui_console->setPlainText(m_consoleData);
     ui_console->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
+}
+
+void Console::bell()
+{
+    this->invertColors();
+    QTimer::singleShot(200,this,SLOT(invertColors()));
+    m_bell.play();
 }
 
 void Console::on_ui_upButton_pressed()

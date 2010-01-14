@@ -125,7 +125,7 @@ void cbob_spi_init(void) {
   
   sema_init(&cbob_spi, 1);
   
-  imx_gpio_mode(GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO);
+  //imx_gpio_mode(GPIO_PORTD | 27 | GPIO_IN | GPIO_GPIO);
   //disable_irq(IRQ_GPIOD(27));
 }
 
@@ -134,8 +134,10 @@ void cbob_spi_exit(void) {
 
 inline static void cbob_spi_wait()
 {
-	mdelay(1);
-	while(imx_gpio_read(GPIO_PORTD | 27)) schedule_timeout(1);
+  if(imx_gpio_read(GPIO_PORTKP)&1) {
+	  udelay(1500);
+	  while(imx_gpio_read(GPIO_PORTKP)&1) schedule_timeout(1);
+	}
 }
 
 int cbob_spi_message(short cmd, short *outbuf, short outcount, short *inbuf, short incount)
