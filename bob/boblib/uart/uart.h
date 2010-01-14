@@ -8,7 +8,6 @@ int UartWrite(int uart, char *data, int len);
 int UartRead(int uart, char *data, int len);
 int UartReset(int uart);
 void UartSetSigmask(int mask);
-int  UartGetSigmask();
 void UartStartRead();
 
 #endif
