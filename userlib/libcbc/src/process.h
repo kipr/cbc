@@ -28,6 +28,7 @@
 
 int  start_process(void (*func)());
 void kill_process(int pid);
+int is_process_running(int pid);
 
 void *__run_process(void *ptr);
 void __init_ptable();

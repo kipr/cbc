@@ -156,3 +156,20 @@ void _shut_down_task()
 	printf(".\n");
 }
 
+// run_for takes a function and runs it for a certain amount of time
+// run_for will return within 1 second of your function exiting, if it
+// exits before the specified time.
+void run_for(void (*funky), float howLong)
+{
+       int pid=start_process(funky);
+       while(howLong >= 1.0){
+               if(!is_process_running(pid)) return;
+               sleep(1.0);
+               howLong=howLong-1.0;
+       }
+       sleep(howLong);
+       kill_process(pid);
+       return;
+}
+
+

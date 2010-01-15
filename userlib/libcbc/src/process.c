@@ -72,6 +72,19 @@ void kill_process(int pid)
 	pthread_mutex_unlock(&__process_mutex);
 }
 
+int is_process_running(int pid)
+{
+	pthread_mutex_lock(&__process_mutex);
+	
+	if(pthread_kill(__process_table[pid].thread, 0)) {
+		pthread_mutex_unlock(&__process_mutex);
+		return 0;
+	}
+	
+	pthread_mutex_unlock(&__process_mutex);
+	return 1;
+}
+
 
 void *__run_process(void *ptr)
 {
