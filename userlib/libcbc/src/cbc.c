@@ -220,6 +220,12 @@ int get_analog_floats()
 	return (~mask)&0xFF;
 }
 
+void set_each_analog_state(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int a7)
+{
+       int mask = a0 | (a1<<1) | (a2<<2) | (a3<<3) | (a4<<4) | (a5<<5) | (a6<<6) | (a7<<7);
+       set_analog_floats(mask);
+}
+
 
 /////////////////////////////////////////////////////////////
 // Accelerometer Functions
@@ -662,98 +668,100 @@ void display_clear()
 //
 // stdarg.h provides macros for accessing a function's argument list ... see K&R
 
-#define _MAPy 7
-#define _MAPx 29  // last column is for \0
-char _display_map[_MAPy][_MAPx]; 
+#define _MAPy 8
+#define _MAPx 30  // last column is for \0
+char _display_map[_MAPy][_MAPx];
 
 #include <stdarg.h>
 #include <string.h>
 
-void cbc_display_clear() {
-  int x,y;
-  printf("\n\n\n\n\n\n\n");  // blow it away and reset map
-  for(y=0;y<_MAPy;y++)       
-    for(x=0;x<_MAPx; x++) _display_map[y][x]=' ';   // blank out the map and
-  for(y=0;y<_MAPy;y++) _display_map[y][_MAPx-1]='\0'; // make each row a string
-  msleep(100);   // needs a brief pause to empty display
+void cbc_printf(int col, int row, char *t, ...) { // column, row, string with format phrases, args
+	va_list argp;    // argp is typed for traversing the variable part of the arg list
+	int i; char *c; double d;  // working variables to receive arg values
+	char *cp, *fmte, sc;  // cp traverses format string t, fmte marks end of each format phrase, sc is switch control
+
+	int y;           // row index
+	char *dp;        // pointer into display
+	int maxw;        // available room on line
+	char fws[_MAPx]; // formatted phrase work area
+	char fmt[_MAPx]; int fl; // fmt is a working string for each format extracted
+
+	va_start (argp,t);  // t is last named argument in cbc_printf's function header;
+	// this initializes argp to point to first variable arg
+
+	dp = &_display_map[row][col]; // starting point for printf
+	maxw=_MAPx-col;               // space remaining on line
+	for (cp = t; *cp; cp++)       // process printf string; stop when *cp = '\0'
+	{
+		if (*cp != '%')           // if not a format phrase
+		{
+			if(strspn(cp,"\n\t\v\b\r\f")>0) {  // is it a spec char? if so treat as if \n
+				for (i=0;i<maxw;i++) { // clear balance of line
+					*dp=' '; dp++;
+				}
+				if (row==_MAPy) break; // out of rows so proceed to display refresh
+				row++;
+				dp = &_display_map[row][0]; maxw=_MAPx; // set up for new line
+			}
+			else { // nothing special about this one so insert it
+				*dp=*cp; dp++;
+				maxw--; if (maxw==0) break; // no more room on line so proceed to display refresh
+			}
+			continue;             // return to top
+		}
+		// OK, if we're here we may have hit a format phrase
+		fmte = strpbrk(cp+1, "dioxXucsfeEgG%"); // look for format end
+		// strpbrk returns the location of 1st character of its argument that is in the scan string
+		if (fmte == NULL)        // what's left is not a format phrase so insert % and return to top
+		{
+			*dp='%'; dp++;
+			maxw--; if (maxw==0) break; // no more room on line so proceed to display refresh
+			continue;            // return to top
+		}
+		// OK, there looks to be a format phrase
+		sc = *fmte;              // set switch control for the case
+		fl = 1+fmte-cp;          // pick off phrase (pointed to by cp)
+		strncpy(fmt,cp,fl);      // capture the format phrase
+		fmt[fl] = '\0';          // make it a string
+		switch (sc)              // process the kind of format specified
+		{
+			case 'd': case 'i': case 'o': case 'x': case 'X': case 'u': case 'c':
+			i = va_arg(argp, int);    // return next parm as type int and step argp
+			sprintf(fws,fmt,i);       // use sprintf to do the formatting to fws
+			break;
+			case 's':
+			c = va_arg(argp, char *); // return next parm as type char * and step argp
+			sprintf(fws,fmt,c);       // use sprintf to do the formatting to fws
+			break;
+			case 'f': case 'e': case 'E': case 'g': case 'G':
+			d = va_arg(argp, double); // return next parm as type double and step argp
+			sprintf(fws,fmt,d);       // use sprintf to do the formatting to fws
+			break;
+			case '%':                 // no format specified between %'s
+			sprintf(fws,fmt);
+			break;
+		}
+		for(i=0; i<strlen(fws); i++) {// insert formatted phrase in display map
+			if (maxw==0) break;       // if no more room get out of this
+		    *dp = fws[i];             // insert next character from formatted phrase
+			dp++; maxw--;
+		}
+		if (maxw==0) break;           // if no more room proceed to display refresh
+		cp = fmte;                    // set cp for next pass
+	}
+	va_end(argp);                     // clean up
+	for(y=0;y<_MAPy; y++) _display_map[y][_MAPx-1]='\0';  // make each row a string
+	for(y=0;y<_MAPy; y++) printf("\n%s",_display_map[y]); // refresh the display
 }
 
-void cbc_printf(int col, int row, char *t, ...) { // column, row, string with format phrases, args
-  va_list argp;    // argp is typed for traversing the variable part of the arg list
-  int i; char *c; double d;  // working variables to receive arg values
-  char *cp, *fmte, sc;  // cp traverses format string t, fmte marks end of each format phrase, sc is switch control
-  
-  int y;           // row index
-  char *dp;        // pointer into display
-  int maxw;        // available room on line
-  char fws[_MAPx]; // formatted phrase work area
-  char fmt[_MAPx]; int fl; // fmt is a working string for each format extracted
-  
-  va_start (argp,t);  // t is last named argument in cbc_printf's function header;
-  // this initializes argp to point to first variable arg
-  
-  dp = &_display_map[row][col]; // starting point for printf
-  maxw=_MAPx-col;               // space remaining on line
-  for (cp = t; *cp; cp++)       // process printf string; stop when *cp = '\0'
-    {
-      if (*cp != '%')           // if not a format phrase 
-	{
-	  if(strspn(cp,"\n\t\v\b\r\f")>0) {  // is it a spec char? if so treat as if \n
-	    for (i=0;i<maxw;i++) { // clear balance of line
-	      *dp=' '; dp++;
-	    }
-	    if (row==_MAPy) break; // out of rows so proceed to display refresh
-	    row++;
-	    dp = &_display_map[row][0]; maxw=_MAPx; // set up for new line
-	  }
-	  else { // nothing special about this one so insert it          
-	    *dp=*cp; dp++;
-	    maxw--; if (maxw==0) break; // no more room on line so proceed to display refresh
-	  }
-	  continue;             // return to top
-	}
-      // OK, if we're here we may have hit a format phrase
-      fmte = strpbrk(cp+1, "dioxXucsfeEgG%"); // look for format end        
-      // strpbrk returns the location of 1st character of its argument that is in the scan string
-      if (fmte == NULL)        // what's left is not a format phrase so insert % and return to top       
-	{                        
-	  *dp='%'; dp++; 
-	  maxw--; if (maxw==0) break; // no more room on line so proceed to display refresh
-	  continue;            // return to top
-	}
-      // OK, there looks to be a format phrase
-      sc = *fmte;              // set switch control for the case 
-      fl = 1+fmte-cp;          // pick off phrase (pointed to by cp)
-      strncpy(fmt,cp,fl);      // capture the format phrase
-      fmt[fl] = '\0';          // make it a string
-      switch (sc)              // process the kind of format specified
-	{
-	case 'd': case 'i': case 'o': case 'x': case 'X': case 'u': case 'c':
-	  i = va_arg(argp, int);    // return next parm as type int and step argp
-	  sprintf(fws,fmt,i);       // use sprintf to do the formatting to fws
-	  break;
-	case 's':
-	  c = va_arg(argp, char *); // return next parm as type char * and step argp
-	  sprintf(fws,fmt,c);       // use sprintf to do the formatting to fws
-	  break;
-	case 'f': case 'e': case 'E': case 'g': case 'G':
-	  d = va_arg(argp, double); // return next parm as type double and step argp
-	  sprintf(fws,fmt,d);       // use sprintf to do the formatting to fws
-	  break;
-	case '%':                 // no format specified between %'s
-	  sprintf(fws,fmt);
-	  break;
-	}
-      for(i=0; i<strlen(fws); i++) {// insert formatted phrase in display map
-	if (maxw==0) break;       // if no more room get out of this
-	*dp = fws[i];             // insert next character from formatted phrase
-	dp++; maxw--;
-      }
-      if (maxw==0) break;           // if no more room proceed to display refresh
-      cp = fmte;                    // set cp for next pass
-    }
-  va_end(argp);                     // clean up
-  for(y=0;y<_MAPy; y++) _display_map[y][_MAPx-1]='\0';  // make each row a string
-  for(y=0;y<_MAPy; y++) printf("\n%s",_display_map[y]); // refresh the display
+void cbc_display_clear() {
+	int i;
+		           //12345678901234567890123456789
+	char bstring[]="                                            ";
+	bstring[_MAPx]='\0';
+	// blow it away and reset map
+	for (i=0;i<_MAPy+1;i++) printf("\n");
+	for (i=0;i<_MAPy;i++)
+		strcpy(_display_map[i],bstring);
 }
 

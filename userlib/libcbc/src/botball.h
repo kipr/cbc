@@ -27,6 +27,7 @@
 
 void wait_for_light(int light_port_);
 void shut_down_in(float delay);
+void run_for(void (*funky), float howLong);
 void _shut_down_task();
 
 #endif
