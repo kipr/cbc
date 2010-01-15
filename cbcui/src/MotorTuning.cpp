@@ -19,6 +19,7 @@
  **************************************************************************/
 
 #include "MotorTuning.h"
+#include "Keypad.h"
 #include <QMessageBox>
 #include <QSettings>
 
@@ -156,7 +157,8 @@ void MotorTuning::on_ui_DivSlider_valueChanged(int value)
 void MotorTuning::on_ui_TargetSpeedLine_selectionChanged()
 {
     Keypad user_keypad(this);
-    //ui_TargetSpeedLine->setStyleSheet("QLineEdit#ui_TargetSpeedLine{background-color:red}");
+
+    ui_TargetSpeedLine->setStyleSheet("QLineEdit#ui_TargetSpeedLine{background-color:red}");
     user_keypad.exec();
     m_targetSpeed = user_keypad.getValue();
 
@@ -169,17 +171,17 @@ void MotorTuning::on_ui_TargetSpeedLine_selectionChanged()
                              QMessageBox::NoButton);
         m_targetSpeed = 0;
     }
-    //ui_TargetSpeedLine->setStyleSheet("QLineEdit#ui_TargetSpeedLine{background-color:white}");
+    ui_TargetSpeedLine->setStyleSheet("QLineEdit#ui_TargetSpeedLine{background-color:white}");
     ui_TargetSpeedLine->setText(QString::number(m_targetSpeed));
 }
 void MotorTuning::on_ui_TargetPositionLine_selectionChanged()
 {
     Keypad user_keypad(this);
-    //ui_TargetPositionLine->setStyleSheet("QLineEdit#ui_TargetPositionLine{background-color:red}");
+    ui_TargetPositionLine->setStyleSheet("QLineEdit#ui_TargetPositionLine{background-color:red}");
     user_keypad.exec();
 
     m_targetPosition = user_keypad.getValue();
-    //ui_TargetPositionLine->setStyleSheet("QLineEdit#ui_TargetPositionLine{background-color:white}");
+    ui_TargetPositionLine->setStyleSheet("QLineEdit#ui_TargetPositionLine{background-color:white}");
     ui_TargetPositionLine->setText(QString::number(m_targetPosition));
 }
 

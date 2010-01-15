@@ -9,6 +9,11 @@
     <height>212</height>
    </rect>
   </property>
+  <property name="font" >
+   <font>
+    <family>Sans Serif</family>
+   </font>
+  </property>
   <property name="windowTitle" >
    <string>Form</string>
   </property>
@@ -30,6 +35,18 @@
      </item>
      <item>
       <widget class="QLabel" name="label" >
+       <property name="minimumSize" >
+        <size>
+         <width>100</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>100</width>
+         <height>30</height>
+        </size>
+       </property>
        <property name="font" >
         <font>
          <pointsize>14</pointsize>
@@ -43,6 +60,9 @@
        </property>
        <property name="text" >
         <string>CBC 2</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>

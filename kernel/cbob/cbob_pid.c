@@ -121,7 +121,8 @@ static int cbob_pid_ioctl(struct inode *inode, struct file *file, unsigned int i
 			break;
 		case CBOB_PID_GET_DONE:
 			request[0] = 4;
-			if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 1, result, 1)) < 0)
+                        request[1] = pid->port;
+                        if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 2, result, 1)) < 0)
 				return error;
 			arg = result[0];
 			copy_to_user((void*)ioctl_param, &arg, sizeof(int));

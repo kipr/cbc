@@ -20,10 +20,12 @@
 
 #include "Graph.h"
 
+#include "Keypad.h"
 #include <QPoint>
 #include <QPainter>
 #include <QRect>
 #include <QString>
+#include <QMessageBox>
 
 #define ACCSCALE8BIT    127
 #define ACCSCALE16BIT   32768
@@ -38,6 +40,8 @@ Graph::Graph(QWidget *parent) : Page(parent)
 
     m_cbobData = CbobData::instance();
     
+    ui_delTimeLine->setText(QString::number(100));
+
     m_graph = new GraphWidget(ui_graphWidget);
     
     m_graph->setScale(ACCSCALE, ACCSCALE, ACCSCALE);
@@ -53,7 +57,8 @@ Graph::~Graph()
 
 void Graph::show()
 {
-    m_cbobData->setRefresh(100);
+    //m_cbobData->setRefresh(100);
+    m_cbobData->setRefresh(ui_delTimeLine->text().toInt());
     QObject::connect(m_cbobData, SIGNAL(refresh()), this, SLOT(updateGraph()));  
     Page::show();
 }
@@ -62,6 +67,29 @@ void Graph::hide()
 {
     QObject::disconnect(this, SLOT(updateGraph()));
     Page::hide();
+}
+
+void Graph::on_ui_delTimeLine_selectionChanged()
+{
+    int ms;
+    Keypad user_keypad(this);
+    ui_delTimeLine->setStyleSheet("QLineEdit#ui_delTimeLine{background-color:red}");
+    user_keypad.exec();
+
+    ms = user_keypad.getValue();
+
+    if(ms < 100){
+        QMessageBox::warning(this,
+                             "Input Error",
+                             "Value must be greater than 100ms\n",
+                             QMessageBox::Ok,
+                             QMessageBox::NoButton);
+        ms = 100;
+    }
+
+    ui_delTimeLine->setStyleSheet("QLineEdit#ui_delTimeLine{background-color:white}");
+    ui_delTimeLine->setText(QString::number(ms));
+    m_cbobData->setRefresh(ms);
 }
 
 void Graph::updateGraph()

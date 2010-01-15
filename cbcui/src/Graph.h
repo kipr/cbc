@@ -41,6 +41,7 @@ public slots:
     void updateGraph();
     void show();
     void hide();
+    void on_ui_delTimeLine_selectionChanged();
 
 private:
     

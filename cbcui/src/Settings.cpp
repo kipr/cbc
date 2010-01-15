@@ -33,7 +33,7 @@ Settings::Settings(QWidget *parent) : Page(parent)
     QObject::connect(ui_cameraDefaultButton, SIGNAL(clicked()), this, SLOT(setCameraDefault()));
 
     QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
-    if(!m_settings.contains("consoleShowOnRun")){
+    if(!QFile::exists("/mnt/user/cbc_v2.config")){
         m_settings.setValue("consoleShowOnRun", true);
         this->resetPID();
     }
