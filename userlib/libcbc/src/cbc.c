@@ -501,6 +501,7 @@ void block_motor_done(int motor)
 		printf("Motor must be 0..3\n");
 		return;
 	}
+        msleep(10);
 	//loop doing nothing while motor position move is in progress
 	while(!get_motor_done(motor)){msleep(10);}
 }

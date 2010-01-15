@@ -22,6 +22,8 @@
 Keypad::Keypad(QWidget *parent) : QDialog(parent)
 {
     setupUi(this);
+    this->move(100,25);
+
 #ifdef QT_ARCH_ARM
     setWindowState(windowState() | Qt::WindowActive);
     setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);

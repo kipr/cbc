@@ -201,7 +201,7 @@ void MotorTest::on_ui_TargetSpeedPowerLine0_selectionChanged()
     int value;
     Keypad user_keypad(this);
 
-    //ui_TargetSpeedPowerLine0->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine0{background-color:red}");
+    ui_TargetSpeedPowerLine0->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine0{background-color:red}");
     user_keypad.exec();
     value = user_keypad.getValue();
 
@@ -228,7 +228,7 @@ void MotorTest::on_ui_TargetSpeedPowerLine0_selectionChanged()
         m_targetSpeed[m_motorNumber] = value;
     }
 
-    //ui_TargetSpeedPowerLine0->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine0{background-color:white}");
+    ui_TargetSpeedPowerLine0->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine0{background-color:white}");
     ui_TargetSpeedPowerLine0->setText(QString::number(value));
 }
 void MotorTest::on_ui_TargetSpeedPowerLine1_selectionChanged()
@@ -236,7 +236,7 @@ void MotorTest::on_ui_TargetSpeedPowerLine1_selectionChanged()
     int value;
     Keypad user_keypad(this);
 
-    //ui_TargetSpeedPowerLine1->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine1{background-color:red}");
+    ui_TargetSpeedPowerLine1->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine1{background-color:red}");
     user_keypad.exec();
     value = user_keypad.getValue();
 
@@ -263,7 +263,7 @@ void MotorTest::on_ui_TargetSpeedPowerLine1_selectionChanged()
         m_targetSpeed[m_motorNumber] = value;
     }
 
-    //ui_TargetSpeedPowerLine1->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine1{background-color:white}");
+    ui_TargetSpeedPowerLine1->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine1{background-color:white}");
     ui_TargetSpeedPowerLine1->setText(QString::number(value));
 }
 void MotorTest::on_ui_TargetSpeedPowerLine2_selectionChanged()
@@ -271,7 +271,7 @@ void MotorTest::on_ui_TargetSpeedPowerLine2_selectionChanged()
     int value;
     Keypad user_keypad(this);
 
-    //ui_TargetSpeedPowerLine2->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine2{background-color:red}");
+    ui_TargetSpeedPowerLine2->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine2{background-color:red}");
     user_keypad.exec();
     value = user_keypad.getValue();
 
@@ -298,7 +298,7 @@ void MotorTest::on_ui_TargetSpeedPowerLine2_selectionChanged()
         m_targetSpeed[m_motorNumber] = value;
     }
 
-    //ui_TargetSpeedPowerLine2->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine2{background-color:white}");
+    ui_TargetSpeedPowerLine2->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine2{background-color:white}");
     ui_TargetSpeedPowerLine2->setText(QString::number(value));
 }
 void MotorTest::on_ui_TargetSpeedPowerLine3_selectionChanged()
@@ -306,7 +306,7 @@ void MotorTest::on_ui_TargetSpeedPowerLine3_selectionChanged()
     int value;
     Keypad user_keypad(this);
 
-    //ui_TargetSpeedPowerLine3->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine3{background-color:red}");
+    ui_TargetSpeedPowerLine3->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine3{background-color:red}");
     user_keypad.exec();
     value = user_keypad.getValue();
 
@@ -333,7 +333,7 @@ void MotorTest::on_ui_TargetSpeedPowerLine3_selectionChanged()
         m_targetSpeed[m_motorNumber] = value;
     }
 
-    //ui_TargetSpeedPowerLine3->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine3{background-color:white}");
+    ui_TargetSpeedPowerLine3->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine3{background-color:white}");
     ui_TargetSpeedPowerLine3->setText(QString::number(value));
 }
 
@@ -341,44 +341,44 @@ void MotorTest::on_ui_TargetPositionLine0_selectionChanged()
 {
     Keypad user_keypad(this);
 
-    //ui_TargetPositionLine0->setStyleSheet("QLineEdit#ui_TargetPositionLine0{background-color:red}");
+    ui_TargetPositionLine0->setStyleSheet("QLineEdit#ui_TargetPositionLine0{background-color:red}");
     user_keypad.exec();
 
     m_targetPosition[m_motorNumber] = user_keypad.getValue();
-    //ui_TargetPositionLine0->setStyleSheet("QLineEdit#ui_TargetPositionLine0{background-color:white}");
+    ui_TargetPositionLine0->setStyleSheet("QLineEdit#ui_TargetPositionLine0{background-color:white}");
     ui_TargetPositionLine0->setText(QString::number(user_keypad.getValue()));
 }
 void MotorTest::on_ui_TargetPositionLine1_selectionChanged()
 {
     Keypad user_keypad(this);
 
-    //ui_TargetPositionLine1->setStyleSheet("QLineEdit#ui_TargetPositionLine1{background-color:red}");
+    ui_TargetPositionLine1->setStyleSheet("QLineEdit#ui_TargetPositionLine1{background-color:red}");
     user_keypad.exec();
 
     m_targetPosition[m_motorNumber] = user_keypad.getValue();
-    //ui_TargetPositionLine1->setStyleSheet("QLineEdit#ui_TargetPositionLine1{background-color:white}");
+    ui_TargetPositionLine1->setStyleSheet("QLineEdit#ui_TargetPositionLine1{background-color:white}");
     ui_TargetPositionLine1->setText(QString::number(user_keypad.getValue()));
 }
 void MotorTest::on_ui_TargetPositionLine2_selectionChanged()
 {
     Keypad user_keypad(this);
 
-    //ui_TargetPositionLine2->setStyleSheet("QLineEdit#ui_TargetPositionLine2{background-color:red}");
+    ui_TargetPositionLine2->setStyleSheet("QLineEdit#ui_TargetPositionLine2{background-color:red}");
     user_keypad.exec();
 
     m_targetPosition[m_motorNumber] = user_keypad.getValue();
-    //ui_TargetPositionLine2->setStyleSheet("QLineEdit#ui_TargetPositionLine2{background-color:white}");
+    ui_TargetPositionLine2->setStyleSheet("QLineEdit#ui_TargetPositionLine2{background-color:white}");
     ui_TargetPositionLine2->setText(QString::number(user_keypad.getValue()));
 }
 void MotorTest::on_ui_TargetPositionLine3_selectionChanged()
 {
     Keypad user_keypad(this);
 
-    //ui_TargetPositionLine3->setStyleSheet("QLineEdit#ui_TargetPositionLine3{background-color:red}");
+    ui_TargetPositionLine3->setStyleSheet("QLineEdit#ui_TargetPositionLine3{background-color:red}");
     user_keypad.exec();
 
     m_targetPosition[m_motorNumber] = user_keypad.getValue();
-    //ui_TargetPositionLine3->setStyleSheet("QLineEdit#ui_TargetPositionLine3{background-color:white}");
+    ui_TargetPositionLine3->setStyleSheet("QLineEdit#ui_TargetPositionLine3{background-color:white}");
     ui_TargetPositionLine3->setText(QString::number(user_keypad.getValue()));
 }
 
