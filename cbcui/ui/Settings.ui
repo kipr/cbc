@@ -55,6 +55,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="ui_recalibrateMotorsButton" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
        <property name="minimumSize" >
         <size>
          <width>160</width>
@@ -101,6 +104,9 @@ font-size:12pt;
      </item>
      <item>
       <widget class="QPushButton" name="ui_recalibrateAccelerometerButton" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
        <property name="minimumSize" >
         <size>
          <width>160</width>

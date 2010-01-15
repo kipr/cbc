@@ -66,6 +66,7 @@ void UserProgram::programStarted()
 void UserProgram::programFinished(int, QProcess::ExitStatus)
 {
   CbobData::instance()->resetPullups();
+  CbobData::instance()->allStop();
   emit stateChange(0);
   emit stopped();
 }

@@ -15,6 +15,9 @@
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <widget class="QPushButton" name="ui_createButton" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
        <horstretch>0</horstretch>

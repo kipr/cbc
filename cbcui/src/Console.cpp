@@ -36,6 +36,7 @@ Console::Console(QWidget *parent) : Page(parent), m_uiData("/tmp/cbc_uidata"), m
     m_uiData.shared().down_button = 0;
     m_uiData.shared().left_button = 0;
     m_uiData.shared().right_button = 0;
+    m_bell.play();
 }
 
 Console::~Console()
