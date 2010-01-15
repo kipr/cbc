@@ -41,7 +41,7 @@ public slots:
     void updateGraph();
     void show();
     void hide();
-    void setDelTime(double dt);
+    void on_ui_delTimeLine_selectionChanged();
 
 private:
     

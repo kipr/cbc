@@ -28,7 +28,6 @@
 #include <QTimer>
 
 #include "CbobData.h"
-#include "Keypad.h"
 
 class MotorTuning : public Page, private Ui::MotorTuning
 {

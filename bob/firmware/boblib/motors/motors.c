@@ -310,6 +310,10 @@ int GetTargetTPC(int motor)
 	return g_TargetTPC[motor];
 }
 
+int GetMotorControlState(int motor)
+{
+	return g_MotorCtrlType[motor];
+}
 
 void GetPIDGains(short num, short *PM, short *IM, short *DM, short *PD, short *ID, short *DD)
 {
@@ -320,17 +324,6 @@ void GetPIDGains(short num, short *PM, short *IM, short *DM, short *PD, short *I
 	*ID = g_MotorGains[num][4];
 	*DD = g_MotorGains[num][5];
 }
-/*
-void GetPIDGains(short *PM, short *IM, short *DM, short *PD, short *ID, short *DD)
-{
-	int num = 0;
-	*PM = g_MotorGains[num][0];
-	*IM = g_MotorGains[num][1];
-	*DM = g_MotorGains[num][2];
-	*PD = g_MotorGains[num][3];
-	*ID = g_MotorGains[num][4];
-	*DD = g_MotorGains[num][5];
-} */
 
 void SetPIDGains(int num, short PM, short IM, short DM, short PD, short ID, short DD)
 {
@@ -410,6 +403,7 @@ int IsMotorDone(int motor)
 int GetMotorCounter(int motor)
 {
 	return (g_MotorCounter[motor]/MC_POSITION_SCALE);
+	//return (g_MotorCounter[motor]);
 }
 
 int ClearMotorCounter(int motor)

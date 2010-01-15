@@ -20,4 +20,5 @@ void SetPIDAllGains(short PM, short IM, short DM, short PD, short ID, short DD);
 int GetMotorError(int motor);
 int GetMotorTPC(int motor);
 int GetTargetTPC(int motor);
+int GetMotorControlState(int motor);
 #endif

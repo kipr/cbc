@@ -620,9 +620,24 @@ font:bold;</string>
       </spacer>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="ui_delTimeBox" >
-       <property name="readOnly" >
-        <bool>false</bool>
+      <widget class="QLineEdit" name="ui_delTimeLine" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>60</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="layoutDirection" >
+        <enum>Qt::RightToLeft</enum>
+       </property>
+       <property name="text" >
+        <string>600</string>
        </property>
       </widget>
      </item>

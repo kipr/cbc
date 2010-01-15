@@ -37,7 +37,7 @@
 #define MC_PID_PERIOD	10			// Loop every 10ms
 #define MC_INDUCTION_SPIKE	600		// microsecond delay once motors are turned off
 
-#define MC_POSITION_SCALE 51
+#define MC_POSITION_SCALE 44
 
 // Measuers the battery voltage every MC_PID_PERIOD*n milliseconds
 #define BATTV_PERIOD 5
