@@ -33,16 +33,10 @@ int main()
 	ChumbyBend(0);
 	ChumbySS1(0);
 	
-/*	while(1) {
-		while(BlackButton()) nop();
-		ChumbySS1(0);
-		while(!BlackButton()) nop();
-		ChumbySS1(1);
-	}*/
-	
 	USBD_Connect();
- UartStartRead();
+ 	UartStartRead();
 	
+	//MoveAtVelocity(0,100);
 	while(1){
 		/*while(!BlackButton());
 		ChumbySS1(1);
@@ -52,22 +46,18 @@ int main()
 		while(USBD_GetState() == USBD_STATE_CONFIGURED) nop();
 		while(USBD_GetState() != USBD_STATE_CONFIGURED) nop();
 		UartStartRead();
-		/*
+		
+	// testing functions
+	/*
 		if(BlackButton()){
-			//max = min = 0;
-			if(i) i=0;
-			else i=1;
-			DigitalPullup(0,i);
-			DigitalPullup(1,i);
-			usleep(20000);
+			ClearMotorCounter(0);
+			//MoveToPosition(0,100,1000);
 		}
-		//val = Accel_Y();
-		//if(max< val) max = val;
-		//if(min> val) min = val;
-		//printf("X %d\tY %d\r\n",Accel_X(),Accel_Y());//,max,min);
+		//if(IsMotorDone(0)) MoveAtVelocity(0,0);
+		printf("P%d\tTPC%d\tdone-%d %d\r\n",GetMotorCounter(0), GetMotorTPC(0),IsMotorDone(0),GetMotorControlState(0));
 		//printf("%d D0-%d\t D1-%d \t D6-%d\t D7-%d\r\n",i,Digital(0),Digital(1),Digital(6),Digital(7));
 		usleep(100000);
-		*/
+	*/	
 	}
 	
 	return 1;
