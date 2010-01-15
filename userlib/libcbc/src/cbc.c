@@ -89,9 +89,9 @@ void libcbc_init()
 		g_servo[i] = open(devname, O_RDWR);
 	}
 	
-	g_accX = open("/dev/cbc/accX", O_RDONLY);
-	g_accY = open("/dev/cbc/accY", O_RDONLY);
-	g_accZ = open("/dev/cbc/accZ", O_RDONLY);
+	g_accX = open("/dev/cbc/accelX", O_RDONLY);
+	g_accY = open("/dev/cbc/accelY", O_RDONLY);
+	g_accZ = open("/dev/cbc/accelZ", O_RDONLY);
 	
 	g_uidata_sm = shared_mem_create("/tmp/cbc_uidata", sizeof(UIData));
 	assert(g_uidata_sm);
@@ -257,20 +257,21 @@ int accel_z()
 
 int sonar(int port)
 {
-	if(port > 4 && port < 8) {
-	  return ((int)((float)analog10(port)*8.79));
-	}        
-	printf("Sonar port must be between 5 and 7\n");
+	if(port >= 0 && port < 8) {
+		return ((int)((float)analog10(port)*8.79));
+	}
+	
+	printf("Sonar port must be between 0 and 7\n");
 	return -1;
 }
 
 // returns distance in inches
 int sonar_inches(int port)
 {
-	if(port > 4 && port < 8) {
+	if(port >= 0 && port < 8) {
 	  return ((int)(0.346*(float)analog10(port)));
 	}        
-	printf("Sonar port must be between 5 and 7\n");
+	printf("Sonar port must be between 0 and 7\n");
 	return -1;
 }
 
