@@ -1,4 +1,4 @@
-THESEE DIRECTIONS ARE OUTDATED, THEY WILL BE UPDATED SOON
+THESE DIRECTIONS ARE OUTDATED, THEY WILL BE UPDATED SOON
 =========================================================
 
 CBC Firmware
