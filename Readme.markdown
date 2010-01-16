@@ -1,3 +1,6 @@
+THESEE DIRECTIONS ARE OUTDATED, THEY WILL BE UPDATED SOON
+=========================================================
+
 CBC Firmware
 ============
 First off, remember that by following these instructions you may brick your CBC and void your warranty.  You have been warned.
