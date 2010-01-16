@@ -462,34 +462,47 @@ color:white;
          <item>
           <widget class="QPushButton" name="UpButton" >
            <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
              <horstretch>30</horstretch>
              <verstretch>30</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize" >
             <size>
-             <width>27</width>
-             <height>27</height>
+             <width>30</width>
+             <height>30</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>27</width>
-             <height>27</height>
+             <width>30</width>
+             <height>30</height>
             </size>
            </property>
            <property name="styleSheet" >
             <string>QPushButton{
-icon-size:27px;
 border:0px;
+background-image:url(:/actions/arrowUp-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowUp-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
            </property>
            <property name="text" >
             <string/>
            </property>
-           <property name="icon" >
-            <iconset resource="../rc/images.qrc" >:/actions/arrowUp.png</iconset>
+           <property name="iconSize" >
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
            </property>
            <property name="autoRepeat" >
             <bool>true</bool>
@@ -524,29 +537,48 @@ border:0px;
          </property>
          <item>
           <widget class="QPushButton" name="LeftButton" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>27</width>
-             <height>27</height>
+             <width>30</width>
+             <height>30</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>27</width>
-             <height>27</height>
+             <width>30</width>
+             <height>30</height>
             </size>
            </property>
            <property name="styleSheet" >
             <string>QPushButton{
-icon-size:27px;
 border:0px;
+background-image:url(:/actions/arrowLf-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowLf-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
            </property>
            <property name="text" >
             <string/>
            </property>
-           <property name="icon" >
-            <iconset resource="../rc/images.qrc" >:/actions/arrowLf-27.png</iconset>
+           <property name="iconSize" >
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
            </property>
            <property name="autoRepeat" >
             <bool>true</bool>
@@ -561,29 +593,48 @@ border:0px;
          </item>
          <item>
           <widget class="QPushButton" name="RightButton" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>27</width>
-             <height>27</height>
+             <width>30</width>
+             <height>30</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>27</width>
-             <height>27</height>
+             <width>30</width>
+             <height>30</height>
             </size>
            </property>
            <property name="styleSheet" >
             <string>QPushButton{
-icon-size:27px;
 border:0px;
+background-image:url(:/actions/arrowRt-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowRt-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
            </property>
            <property name="text" >
             <string/>
            </property>
-           <property name="icon" >
-            <iconset resource="../rc/images.qrc" >:/actions/arrowRt-27.png</iconset>
+           <property name="iconSize" >
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
            </property>
            <property name="autoRepeat" >
             <bool>true</bool>
@@ -618,29 +669,48 @@ border:0px;
          </item>
          <item>
           <widget class="QPushButton" name="DownButton" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>27</width>
-             <height>27</height>
+             <width>30</width>
+             <height>30</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>27</width>
-             <height>27</height>
+             <width>30</width>
+             <height>30</height>
             </size>
            </property>
            <property name="styleSheet" >
             <string>QPushButton{
-icon-size:27px;
 border:0px;
+background-image:url(:/actions/arrowDn-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowDn-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
            </property>
            <property name="text" >
             <string/>
            </property>
-           <property name="icon" >
-            <iconset resource="../rc/images.qrc" >:/actions/arrowDn.png</iconset>
+           <property name="iconSize" >
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
            </property>
            <property name="autoRepeat" >
             <bool>true</bool>

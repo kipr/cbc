@@ -32,7 +32,7 @@
     <number>0</number>
    </property>
    <property name="topMargin" >
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="rightMargin" >
     <number>0</number>
@@ -58,27 +58,34 @@
        </property>
        <property name="minimumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="styleSheet" >
         <string>QPushButton{
-icon-size:35px;
 border:0px;
+background-image:url(:/actions/arrowLf-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowLf-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
        </property>
        <property name="text" >
         <string/>
-       </property>
-       <property name="icon" >
-        <iconset resource="../rc/images.qrc" >:/actions/arrowLf-40.png</iconset>
        </property>
        <property name="iconSize" >
         <size>
@@ -145,27 +152,34 @@ font-size:20pt;</string>
        </property>
        <property name="minimumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="styleSheet" >
         <string>QPushButton{
-icon-size:35px;
 border:0px;
+background-image:url(:/actions/arrowRt-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowRt-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
        </property>
        <property name="text" >
         <string/>
-       </property>
-       <property name="icon" >
-        <iconset resource="../rc/images.qrc" >:/actions/arrowRt-40.png</iconset>
        </property>
        <property name="iconSize" >
         <size>

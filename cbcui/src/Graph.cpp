@@ -102,6 +102,13 @@ void Graph::updateGraph()
     int yScale = getScale(yIndex);
     int zScale = getScale(zIndex);
     
+    if(xIndex == 0) m_graph->setDrawXLine(false);
+    else m_graph->setDrawXLine(true);
+    if(yIndex == 0) m_graph->setDrawYLine(false);
+    else m_graph->setDrawYLine(true);
+    if(zIndex == 0) m_graph->setDrawZLine(false);
+    else m_graph->setDrawZLine(true);
+
     int xValue = getValue(xIndex);
     int yValue = getValue(yIndex);
     int zValue = getValue(zIndex);

@@ -31,6 +31,7 @@ GraphWidget::GraphWidget(QWidget *parent) : QWidget(parent), m_xScale(0), m_ySca
 {
     int i;
 
+    m_drawX = m_drawY = m_drawZ = true;
     scan_index = 0;
     for(i=0;i<100;i++){
         pointsX[i] = QPoint(i,0);
@@ -59,6 +60,19 @@ void GraphWidget::setYScale(int scale)
 void GraphWidget::setZScale(int scale)
 {
     if(scale) m_zScale = scale;
+}
+
+void GraphWidget::setDrawXLine(bool state)
+{
+    m_drawX = state;
+}
+void GraphWidget::setDrawYLine(bool state)
+{
+    m_drawY = state;
+}
+void GraphWidget::setDrawZLine(bool state)
+{
+    m_drawZ = state;
 }
 
 void GraphWidget::setScale(int xScale, int yScale, int zScale)
@@ -103,15 +117,15 @@ void GraphWidget::paintEvent(QPaintEvent *)
     sketcher.setPen(QPen(Qt::white,0));
     sketcher.drawLine(scan_index,50,scan_index,-50);
 
-    if(m_xScale){
+    if(m_xScale && m_drawX){
         sketcher.setPen(QPen(Qt::green,0));
         sketcher.drawPolyline(pointsX,100);
     }
-    if(m_yScale){
+    if(m_yScale && m_drawY){
         sketcher.setPen(QPen(Qt::yellow,0));
         sketcher.drawPolyline(pointsY,100);
     }
-    if(m_zScale){
+    if(m_zScale && m_drawZ){
         sketcher.setPen(QPen(Qt::red,0));
         sketcher.drawPolyline(pointsZ,100);
     }

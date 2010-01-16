@@ -181,6 +181,12 @@ font:bold;
      </item>
      <item>
       <widget class="QPushButton" name="ui_estopButton" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize" >
         <size>
          <width>95</width>

@@ -80,15 +80,28 @@
          </property>
          <property name="styleSheet" >
           <string>QPushButton{
-icon-size:30px;
 border:0px;
+background-image:url(:/actions/arrowLf-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowLf-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
          </property>
          <property name="text" >
           <string/>
          </property>
-         <property name="icon" >
-          <iconset resource="../rc/images.qrc" >:/actions/arrowLf-27.png</iconset>
+         <property name="iconSize" >
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -122,15 +135,28 @@ border:0px;
            </property>
            <property name="styleSheet" >
             <string>QPushButton{
-icon-size:30px;
 border:0px;
+background-image:url(:/actions/arrowUp-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowUp-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
            </property>
            <property name="text" >
             <string/>
            </property>
-           <property name="icon" >
-            <iconset resource="../rc/images.qrc" >:/actions/arrowUp.png</iconset>
+           <property name="iconSize" >
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -156,15 +182,28 @@ border:0px;
            </property>
            <property name="styleSheet" >
             <string>QPushButton{
-icon-size:30px;
 border:0px;
+background-image:url(:/actions/arrowDn-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowDn-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
            </property>
            <property name="text" >
             <string/>
            </property>
-           <property name="icon" >
-            <iconset resource="../rc/images.qrc" >:/actions/arrowDn.png</iconset>
+           <property name="iconSize" >
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -192,15 +231,28 @@ border:0px;
          </property>
          <property name="styleSheet" >
           <string>QPushButton{
-icon-size:30px;
 border:0px;
+background-image:url(:/actions/arrowRt-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowRt-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
          </property>
          <property name="text" >
           <string/>
          </property>
-         <property name="icon" >
-          <iconset resource="../rc/images.qrc" >:/actions/arrowRt-27.png</iconset>
+         <property name="iconSize" >
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -237,14 +289,14 @@ border:0px;
         <string>QPushButton{
 border:0px;
 background-image:url(:/actions/rivet80x30L.png);
-color:white;
+color:black;
 font:bold;
 font-size:12pt;
 }
 QPushButton:pressed{
 border:0px;
 background-image:url(:/actions/rivet80x30D.png);
-color:black;
+color:white;
 font:bold;
 font-size:12pt;
 }</string>
@@ -285,14 +337,14 @@ font-size:12pt;
         <string>QPushButton{
 border:0px;
 background-image:url(:/actions/rivet80x30L.png);
-color:white;
+color:black;
 font:bold;
 font-size:12pt;
 }
 QPushButton:pressed{
 border:0px;
 background-image:url(:/actions/rivet80x30D.png);
-color:black;
+color:white;
 font:bold;
 font-size:12pt;
 }</string>
