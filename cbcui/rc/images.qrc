@@ -8,12 +8,6 @@
         <file>close-wide.png</file>
         <file>back.png</file>
         <file>close.png</file>
-        <file>arrowDn.png</file>
-        <file>arrowLf-27.png</file>
-        <file>arrowLf-40.png</file>
-        <file>arrowRt-27.png</file>
-        <file>arrowRt-40.png</file>
-        <file>arrowUp.png</file>
         <file>rivet30x30L.png</file>
         <file>rivet30x30D.png</file>
         <file>rivet30x30Go.png</file>
@@ -27,5 +21,14 @@
         <file>rivet95x30Green.png</file>
         <file>rivet80x30Red.png</file>
         <file>rivet95x30Red.png</file>
+        <file>arrowDn-30D.png</file>
+        <file>arrowDn-30L.png</file>
+        <file>arrowLf-30D.png</file>
+        <file>arrowLf-30L.png</file>
+        <file>arrowRt-30D.png</file>
+        <file>arrowRt-30L.png</file>
+        <file>arrowUp-30D.png</file>
+        <file>arrowUp-30L.png</file>
+        <file>cbc_2.png</file>
     </qresource>
 </RCC>

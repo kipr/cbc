@@ -24,6 +24,7 @@ MainMenu::MainMenu(QWidget *parent) : Page(parent), m_programs(parent), m_vision
 {
     setupUi(this);
     
+    ui_cbcLabel->setText(" ");
     QObject::connect(ui_programsButton, SIGNAL(clicked()), &m_programs, SLOT(raisePage()));
     QObject::connect(ui_visionButton, SIGNAL(clicked()), &m_vision, SLOT(raisePage()));
     QObject::connect(ui_sensorsmotorsButton, SIGNAL(clicked()), &m_sensorsmotors, SLOT(raisePage()));

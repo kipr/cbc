@@ -32,7 +32,7 @@
     <number>0</number>
    </property>
    <property name="topMargin" >
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="rightMargin" >
     <number>0</number>
@@ -55,27 +55,34 @@
        </property>
        <property name="minimumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="styleSheet" >
         <string>QPushButton{
-icon-size:35px;
 border:0px;
+background-image:url(:/actions/arrowLf-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowLf-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
        </property>
        <property name="text" >
         <string/>
-       </property>
-       <property name="icon" >
-        <iconset resource="../rc/images.qrc" >:/actions/arrowLf-40.png</iconset>
        </property>
        <property name="iconSize" >
         <size>
@@ -142,27 +149,34 @@ font-size:20pt;</string>
        </property>
        <property name="minimumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="styleSheet" >
         <string>QPushButton{
-icon-size:35px;
 border:0px;
+background-image:url(:/actions/arrowRt-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowRt-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
        </property>
        <property name="text" >
         <string/>
-       </property>
-       <property name="icon" >
-        <iconset resource="../rc/images.qrc" >:/actions/arrowRt-40.png</iconset>
        </property>
        <property name="iconSize" >
         <size>
@@ -306,7 +320,7 @@ font-size:20pt;</string>
    <item>
     <layout class="QGridLayout" >
      <property name="horizontalSpacing" >
-      <number>0</number>
+      <number>5</number>
      </property>
      <property name="verticalSpacing" >
       <number>0</number>
@@ -315,27 +329,34 @@ font-size:20pt;</string>
       <widget class="QPushButton" name="ui_ServoLeftButton" >
        <property name="minimumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="styleSheet" >
         <string>QPushButton{
-icon-size:30px;
 border:0px;
+background-image:url(:/actions/arrowLf-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowLf-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
        </property>
        <property name="text" >
         <string/>
-       </property>
-       <property name="icon" >
-        <iconset resource="../rc/images.qrc" >:/actions/arrowLf-40.png</iconset>
        </property>
        <property name="iconSize" >
         <size>
@@ -367,7 +388,7 @@ border:0px;
        </property>
        <property name="sizeHint" >
         <size>
-         <width>61</width>
+         <width>65</width>
          <height>20</height>
         </size>
        </property>
@@ -415,27 +436,34 @@ border:0px;
       <widget class="QPushButton" name="ui_ServoRightButton" >
        <property name="minimumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="styleSheet" >
         <string>QPushButton{
-icon-size:30px;
 border:0px;
+background-image:url(:/actions/arrowRt-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowRt-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
        </property>
        <property name="text" >
         <string/>
-       </property>
-       <property name="icon" >
-        <iconset resource="../rc/images.qrc" >:/actions/arrowRt-40.png</iconset>
        </property>
        <property name="iconSize" >
         <size>

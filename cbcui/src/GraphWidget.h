@@ -35,6 +35,9 @@ public:
     void setXScale(int scale);
     void setYScale(int scale);
     void setZScale(int scale);
+    void setDrawXLine(bool state);
+    void setDrawYLine(bool state);
+    void setDrawZLine(bool state);
     void setScale(int xScale, int yScale, int zScale);
 
 public slots:
@@ -49,6 +52,10 @@ private:
     int m_xScale;
     int m_yScale;
     int m_zScale;
+
+    bool m_drawX;
+    bool m_drawY;
+    bool m_drawZ;
     
     QPoint pointsX[100];
     QPoint pointsY[100];

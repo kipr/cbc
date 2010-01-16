@@ -34,7 +34,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label" >
+      <widget class="QLabel" name="ui_cbcLabel" >
        <property name="minimumSize" >
         <size>
          <width>100</width>
@@ -48,15 +48,13 @@
         </size>
        </property>
        <property name="font" >
-        <font>
-         <pointsize>14</pointsize>
-         <weight>50</weight>
-         <italic>false</italic>
-         <bold>false</bold>
-        </font>
+        <font/>
        </property>
        <property name="styleSheet" >
-        <string>font:14pt;</string>
+        <string>QLabel{
+border:0px;
+background-image:url(:/actions/cbc_2.png);
+}</string>
        </property>
        <property name="text" >
         <string>CBC 2</string>
@@ -106,7 +104,7 @@
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>20</height>
+           <height>10</height>
           </size>
          </property>
         </spacer>
@@ -228,7 +226,7 @@ font-size:12pt;
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>20</height>
+           <height>10</height>
           </size>
          </property>
         </spacer>

@@ -68,7 +68,7 @@ void MainWindow::updateBatteryDisplay()
 
 void MainWindow::batteryWarning(float volts)
 {
-    if(volts < 5.9){
+    if(volts <= 5.9){
         QMessageBox::critical(this,
                              "Low Battery!",
                              "Shutdown imminent!",

@@ -32,7 +32,7 @@
     <number>0</number>
    </property>
    <property name="topMargin" >
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="rightMargin" >
     <number>0</number>
@@ -55,27 +55,34 @@
        </property>
        <property name="minimumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="styleSheet" >
         <string>QPushButton{
-icon-size:35px;
 border:0px;
+background-image:url(:/actions/arrowLf-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowLf-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
        </property>
        <property name="text" >
         <string/>
-       </property>
-       <property name="icon" >
-        <iconset resource="../rc/images.qrc" >:/actions/arrowLf-40.png</iconset>
        </property>
        <property name="iconSize" >
         <size>
@@ -142,27 +149,34 @@ font-size:20pt;</string>
        </property>
        <property name="minimumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize" >
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>30</width>
+         <height>30</height>
         </size>
        </property>
        <property name="styleSheet" >
         <string>QPushButton{
-icon-size:35px;
 border:0px;
+background-image:url(:/actions/arrowRt-30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/arrowRt-30D.png);
+color:white;
+font:bold;
+font-size:12pt;
 }</string>
        </property>
        <property name="text" >
         <string/>
-       </property>
-       <property name="icon" >
-        <iconset resource="../rc/images.qrc" >:/actions/arrowRt-40.png</iconset>
        </property>
        <property name="iconSize" >
         <size>
@@ -250,7 +264,7 @@ font-size:20pt;</string>
    <item>
     <widget class="QStackedWidget" name="ui_MotorStack" >
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page_0" >
       <layout class="QVBoxLayout" >
@@ -419,6 +433,12 @@ font-size:20pt;</string>
              <height>20</height>
             </size>
            </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="text" >
             <string>0</string>
            </property>
@@ -432,6 +452,12 @@ font-size:20pt;</string>
            <property name="minimumSize" >
             <size>
              <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
              <height>20</height>
             </size>
            </property>
@@ -469,7 +495,7 @@ font-size:20pt;</string>
            </property>
           </spacer>
          </item>
-         <item row="1" column="1" colspan="2" >
+         <item rowspan="2" row="3" column="1" colspan="2" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
@@ -480,12 +506,12 @@ font-size:20pt;</string>
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>14</height>
+             <height>10</height>
             </size>
            </property>
           </spacer>
          </item>
-         <item rowspan="2" row="3" column="1" colspan="2" >
+         <item row="1" column="1" colspan="2" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
@@ -794,7 +820,17 @@ background-image:url(:/actions/rivet30x30Stop.png);
          <item row="4" column="2" >
           <widget class="QLabel" name="ui_MotorPositionLabel1" >
            <property name="font" >
-            <font/>
+            <font>
+             <pointsize>12</pointsize>
+             <weight>75</weight>
+             <italic>false</italic>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet" >
+            <string>color:black;
+font:bold;
+font-size:12pt;</string>
            </property>
            <property name="text" >
             <string>0</string>
@@ -812,6 +848,12 @@ background-image:url(:/actions/rivet30x30Stop.png);
              <height>20</height>
             </size>
            </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="text" >
             <string>0</string>
            </property>
@@ -825,6 +867,12 @@ background-image:url(:/actions/rivet30x30Stop.png);
            <property name="minimumSize" >
             <size>
              <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
              <height>20</height>
             </size>
            </property>
@@ -1184,6 +1232,12 @@ background-image:url(:/actions/rivet30x30Stop.png);
              <height>20</height>
             </size>
            </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="text" >
             <string>0</string>
            </property>
@@ -1197,6 +1251,12 @@ background-image:url(:/actions/rivet30x30Stop.png);
            <property name="minimumSize" >
             <size>
              <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
              <height>20</height>
             </size>
            </property>
@@ -1556,6 +1616,12 @@ background-image:url(:/actions/rivet30x30Stop.png);
              <height>20</height>
             </size>
            </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="text" >
             <string>0</string>
            </property>
@@ -1569,6 +1635,12 @@ background-image:url(:/actions/rivet30x30Stop.png);
            <property name="minimumSize" >
             <size>
              <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
              <height>20</height>
             </size>
            </property>
