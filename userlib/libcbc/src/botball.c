@@ -91,16 +91,13 @@ void wait_for_light(int light_port_)
 			printf("Good CalibrationDiff=%d Waiting\n",(l_off_-l_on_));
 			good=1;
 			while(analog(light_port_)>l_mid_) 
-			tone(440.,100);
 		}
 		else{
 			if(l_off_<128){
 				printf("Bad Calibration Add Shielding!!\n");
-				for(t=100; t<10000; t=t+200) tone((float)t,50);
 			}
 			else{
 				printf("Bad Calibration Aim sensor!!\n");
-				for(t=10000; t>200; t=t-200) tone((float)t,50);
 			}
 		}
 	}
@@ -159,7 +156,7 @@ void _shut_down_task()
 // run_for takes a function and runs it for a certain amount of time
 // run_for will return within 1 second of your function exiting, if it
 // exits before the specified time.
-void run_for(void (*funky), float howLong)
+void run_for(float howLong, void (*funky))
 {
        int pid=start_process(funky);
        while(howLong >= 1.0){
