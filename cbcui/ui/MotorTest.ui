@@ -344,132 +344,111 @@ font-size:20pt;</string>
         </layout>
        </item>
        <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
         <layout class="QGridLayout" >
-         <property name="horizontalSpacing" >
-          <number>0</number>
-         </property>
          <property name="verticalSpacing" >
-          <number>0</number>
+          <number>15</number>
          </property>
-         <item row="0" column="1" >
+         <item row="1" column="1" >
           <widget class="QLabel" name="ui_TargetSpeedPowerLabel0" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>0</width>
-             <height>20</height>
+             <width>90</width>
+             <height>28</height>
             </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>90</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="layoutDirection" >
+            <enum>Qt::RightToLeft</enum>
            </property>
            <property name="text" >
             <string>Target Speed</string>
            </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <widget class="QLineEdit" name="ui_TargetSpeedPowerLine0" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>28</height>
+            </size>
            </property>
           </widget>
          </item>
          <item row="2" column="1" >
           <widget class="QLabel" name="ui_TargetPositionLabel0" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>0</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="text" >
-            <string>Target Position</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1" >
-          <widget class="QLabel" name="label_3" >
-           <property name="font" >
-            <font/>
-           </property>
-           <property name="text" >
-            <string>Position</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="2" >
-          <widget class="QLabel" name="ui_MotorPositionLabel0" >
-           <property name="font" >
-            <font/>
-           </property>
-           <property name="text" >
-            <string>0</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2" >
-          <widget class="QLineEdit" name="ui_TargetSpeedPowerLine0" >
-           <property name="minimumSize" >
-            <size>
-             <width>0</width>
-             <height>20</height>
+             <width>90</width>
+             <height>28</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>16777215</width>
-             <height>20</height>
+             <width>90</width>
+             <height>28</height>
             </size>
            </property>
-           <property name="text" >
-            <string>0</string>
+           <property name="layoutDirection" >
+            <enum>Qt::RightToLeft</enum>
            </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <property name="text" >
+            <string>Target Position</string>
            </property>
           </widget>
          </item>
          <item row="2" column="2" >
           <widget class="QLineEdit" name="ui_TargetPositionLine0" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>0</width>
-             <height>20</height>
+             <width>100</width>
+             <height>28</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>16777215</width>
-             <height>20</height>
+             <width>100</width>
+             <height>28</height>
             </size>
-           </property>
-           <property name="text" >
-            <string>0</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
-         <item rowspan="6" row="0" column="0" >
+         <item rowspan="2" row="1" column="0" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -482,7 +461,7 @@ font-size:20pt;</string>
            </property>
           </spacer>
          </item>
-         <item rowspan="6" row="0" column="3" >
+         <item rowspan="2" row="1" column="3" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -495,34 +474,28 @@ font-size:20pt;</string>
            </property>
           </spacer>
          </item>
-         <item rowspan="2" row="3" column="1" colspan="2" >
+         <item row="0" column="0" colspan="4" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>10</height>
+             <height>40</height>
             </size>
            </property>
           </spacer>
          </item>
-         <item row="1" column="1" colspan="2" >
+         <item row="3" column="0" colspan="4" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>10</height>
+             <height>40</height>
             </size>
            </property>
           </spacer>
@@ -608,6 +581,18 @@ font-size:12pt;
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="label_2" >
+           <property name="styleSheet" >
+            <string>color:black;
+font:bold;
+font-size:12pt;</string>
+           </property>
+           <property name="text" >
+            <string>Position</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -615,10 +600,43 @@ font-size:12pt;
            <property name="sizeHint" >
             <size>
              <width>40</width>
-             <height>10</height>
+             <height>20</height>
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="ui_MotorPositionLabel0" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="layoutDirection" >
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="styleSheet" >
+            <string>color:black;
+font:bold;
+font-size:12pt;</string>
+           </property>
+           <property name="text" >
+            <string>100000</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="ui_PlayButton0" >
@@ -749,142 +767,111 @@ background-image:url(:/actions/rivet30x30Stop.png);
         </layout>
        </item>
        <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
         <layout class="QGridLayout" >
-         <property name="horizontalSpacing" >
-          <number>0</number>
-         </property>
          <property name="verticalSpacing" >
-          <number>0</number>
+          <number>15</number>
          </property>
-         <item row="0" column="1" >
+         <item row="1" column="1" >
           <widget class="QLabel" name="ui_TargetSpeedPowerLabel1" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>0</width>
-             <height>20</height>
+             <width>90</width>
+             <height>28</height>
             </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>90</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="layoutDirection" >
+            <enum>Qt::RightToLeft</enum>
            </property>
            <property name="text" >
             <string>Target Speed</string>
            </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <widget class="QLineEdit" name="ui_TargetSpeedPowerLine1" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>28</height>
+            </size>
            </property>
           </widget>
          </item>
          <item row="2" column="1" >
           <widget class="QLabel" name="ui_TargetPositionLabel1" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>0</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="text" >
-            <string>Target Position</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1" >
-          <widget class="QLabel" name="label_4" >
-           <property name="font" >
-            <font/>
-           </property>
-           <property name="text" >
-            <string>Position</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="2" >
-          <widget class="QLabel" name="ui_MotorPositionLabel1" >
-           <property name="font" >
-            <font>
-             <pointsize>12</pointsize>
-             <weight>75</weight>
-             <italic>false</italic>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="styleSheet" >
-            <string>color:black;
-font:bold;
-font-size:12pt;</string>
-           </property>
-           <property name="text" >
-            <string>0</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2" >
-          <widget class="QLineEdit" name="ui_TargetSpeedPowerLine1" >
-           <property name="minimumSize" >
-            <size>
-             <width>0</width>
-             <height>20</height>
+             <width>90</width>
+             <height>28</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>16777215</width>
-             <height>20</height>
+             <width>90</width>
+             <height>28</height>
             </size>
            </property>
-           <property name="text" >
-            <string>0</string>
+           <property name="layoutDirection" >
+            <enum>Qt::RightToLeft</enum>
            </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <property name="text" >
+            <string>Target Position</string>
            </property>
           </widget>
          </item>
          <item row="2" column="2" >
           <widget class="QLineEdit" name="ui_TargetPositionLine1" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>0</width>
-             <height>20</height>
+             <width>100</width>
+             <height>28</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>16777215</width>
-             <height>20</height>
+             <width>100</width>
+             <height>28</height>
             </size>
-           </property>
-           <property name="text" >
-            <string>0</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
-         <item rowspan="5" row="0" column="0" >
+         <item rowspan="2" row="1" column="0" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -897,7 +884,7 @@ font-size:12pt;</string>
            </property>
           </spacer>
          </item>
-         <item rowspan="5" row="0" column="3" >
+         <item rowspan="2" row="1" column="3" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -910,34 +897,28 @@ font-size:12pt;</string>
            </property>
           </spacer>
          </item>
-         <item row="1" column="1" colspan="2" >
+         <item row="0" column="0" colspan="4" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>10</height>
+             <height>40</height>
             </size>
            </property>
           </spacer>
          </item>
-         <item row="3" column="1" colspan="2" >
+         <item row="3" column="0" colspan="4" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>10</height>
+             <height>40</height>
             </size>
            </property>
           </spacer>
@@ -1002,6 +983,18 @@ font-size:12pt;
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="label" >
+           <property name="styleSheet" >
+            <string>color:black;
+font:bold;
+font-size:12pt;</string>
+           </property>
+           <property name="text" >
+            <string>Position</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -1013,6 +1006,33 @@ font-size:12pt;
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="ui_MotorPositionLabel1" >
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="layoutDirection" >
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="styleSheet" >
+            <string>color:black;
+font:bold;
+font-size:12pt;</string>
+           </property>
+           <property name="text" >
+            <string>100000</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="ui_PlayButton1" >
@@ -1143,132 +1163,111 @@ background-image:url(:/actions/rivet30x30Stop.png);
         </layout>
        </item>
        <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
         <layout class="QGridLayout" >
-         <property name="horizontalSpacing" >
-          <number>0</number>
-         </property>
          <property name="verticalSpacing" >
-          <number>0</number>
+          <number>15</number>
          </property>
-         <item row="0" column="1" >
+         <item row="1" column="1" >
           <widget class="QLabel" name="ui_TargetSpeedPowerLabel2" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>0</width>
-             <height>20</height>
+             <width>90</width>
+             <height>28</height>
             </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>90</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="layoutDirection" >
+            <enum>Qt::RightToLeft</enum>
            </property>
            <property name="text" >
             <string>Target Speed</string>
            </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <widget class="QLineEdit" name="ui_TargetSpeedPowerLine2" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>28</height>
+            </size>
            </property>
           </widget>
          </item>
          <item row="2" column="1" >
           <widget class="QLabel" name="ui_TargetPositionLabel2" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>0</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="text" >
-            <string>Target Position</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1" >
-          <widget class="QLabel" name="label_5" >
-           <property name="font" >
-            <font/>
-           </property>
-           <property name="text" >
-            <string>Position</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="2" >
-          <widget class="QLabel" name="ui_MotorPositionLabel2" >
-           <property name="font" >
-            <font/>
-           </property>
-           <property name="text" >
-            <string>0</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2" >
-          <widget class="QLineEdit" name="ui_TargetSpeedPowerLine2" >
-           <property name="minimumSize" >
-            <size>
-             <width>0</width>
-             <height>20</height>
+             <width>90</width>
+             <height>28</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>16777215</width>
-             <height>20</height>
+             <width>90</width>
+             <height>28</height>
             </size>
            </property>
-           <property name="text" >
-            <string>0</string>
+           <property name="layoutDirection" >
+            <enum>Qt::RightToLeft</enum>
            </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <property name="text" >
+            <string>Target Position</string>
            </property>
           </widget>
          </item>
          <item row="2" column="2" >
           <widget class="QLineEdit" name="ui_TargetPositionLine2" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>0</width>
-             <height>20</height>
+             <width>100</width>
+             <height>28</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>16777215</width>
-             <height>20</height>
+             <width>100</width>
+             <height>28</height>
             </size>
-           </property>
-           <property name="text" >
-            <string>0</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
-         <item rowspan="5" row="0" column="0" >
+         <item rowspan="2" row="1" column="0" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -1281,7 +1280,7 @@ background-image:url(:/actions/rivet30x30Stop.png);
            </property>
           </spacer>
          </item>
-         <item rowspan="5" row="0" column="3" >
+         <item rowspan="2" row="1" column="3" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -1294,34 +1293,28 @@ background-image:url(:/actions/rivet30x30Stop.png);
            </property>
           </spacer>
          </item>
-         <item row="1" column="1" colspan="2" >
+         <item row="0" column="0" colspan="4" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>10</height>
+             <height>40</height>
             </size>
            </property>
           </spacer>
          </item>
-         <item row="3" column="1" colspan="2" >
+         <item row="3" column="0" colspan="4" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>10</height>
+             <height>40</height>
             </size>
            </property>
           </spacer>
@@ -1386,6 +1379,18 @@ font-size:12pt;
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="label_3" >
+           <property name="styleSheet" >
+            <string>color:black;
+font:bold;
+font-size:12pt;</string>
+           </property>
+           <property name="text" >
+            <string>Position</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -1397,6 +1402,33 @@ font-size:12pt;
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="ui_MotorPositionLabel2" >
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="layoutDirection" >
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="styleSheet" >
+            <string>color:black;
+font:bold;
+font-size:12pt;</string>
+           </property>
+           <property name="text" >
+            <string>100000</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="ui_PlayButton2" >
@@ -1527,132 +1559,111 @@ background-image:url(:/actions/rivet30x30Stop.png);
         </layout>
        </item>
        <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
         <layout class="QGridLayout" >
-         <property name="horizontalSpacing" >
-          <number>0</number>
-         </property>
          <property name="verticalSpacing" >
-          <number>0</number>
+          <number>15</number>
          </property>
-         <item row="0" column="1" >
+         <item row="1" column="1" >
           <widget class="QLabel" name="ui_TargetSpeedPowerLabel3" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>0</width>
-             <height>20</height>
+             <width>90</width>
+             <height>28</height>
             </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>90</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="layoutDirection" >
+            <enum>Qt::RightToLeft</enum>
            </property>
            <property name="text" >
             <string>Target Speed</string>
            </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <widget class="QLineEdit" name="ui_TargetSpeedPowerLine3" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>28</height>
+            </size>
            </property>
           </widget>
          </item>
          <item row="2" column="1" >
           <widget class="QLabel" name="ui_TargetPositionLabel3" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>0</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="text" >
-            <string>Target Position</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1" >
-          <widget class="QLabel" name="label_6" >
-           <property name="font" >
-            <font/>
-           </property>
-           <property name="text" >
-            <string>Position</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="2" >
-          <widget class="QLabel" name="ui_MotorPositionLabel3" >
-           <property name="font" >
-            <font/>
-           </property>
-           <property name="text" >
-            <string>0</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2" >
-          <widget class="QLineEdit" name="ui_TargetSpeedPowerLine3" >
-           <property name="minimumSize" >
-            <size>
-             <width>0</width>
-             <height>20</height>
+             <width>90</width>
+             <height>28</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>16777215</width>
-             <height>20</height>
+             <width>90</width>
+             <height>28</height>
             </size>
            </property>
-           <property name="text" >
-            <string>0</string>
+           <property name="layoutDirection" >
+            <enum>Qt::RightToLeft</enum>
            </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <property name="text" >
+            <string>Target Position</string>
            </property>
           </widget>
          </item>
          <item row="2" column="2" >
           <widget class="QLineEdit" name="ui_TargetPositionLine3" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize" >
             <size>
-             <width>0</width>
-             <height>20</height>
+             <width>100</width>
+             <height>28</height>
             </size>
            </property>
            <property name="maximumSize" >
             <size>
-             <width>16777215</width>
-             <height>20</height>
+             <width>100</width>
+             <height>28</height>
             </size>
-           </property>
-           <property name="text" >
-            <string>0</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
-         <item rowspan="5" row="0" column="0" >
+         <item rowspan="2" row="1" column="0" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -1665,7 +1676,7 @@ background-image:url(:/actions/rivet30x30Stop.png);
            </property>
           </spacer>
          </item>
-         <item rowspan="5" row="0" column="3" >
+         <item rowspan="2" row="1" column="3" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -1678,34 +1689,28 @@ background-image:url(:/actions/rivet30x30Stop.png);
            </property>
           </spacer>
          </item>
-         <item row="1" column="1" colspan="2" >
+         <item row="0" column="0" colspan="4" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>10</height>
+             <height>40</height>
             </size>
            </property>
           </spacer>
          </item>
-         <item row="3" column="1" colspan="2" >
+         <item row="3" column="0" colspan="4" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>10</height>
+             <height>40</height>
             </size>
            </property>
           </spacer>
@@ -1770,6 +1775,18 @@ font-size:12pt;
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="label_4" >
+           <property name="styleSheet" >
+            <string>color:black;
+font:bold;
+font-size:12pt;</string>
+           </property>
+           <property name="text" >
+            <string>Position</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -1781,6 +1798,33 @@ font-size:12pt;
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="ui_MotorPositionLabel3" >
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="layoutDirection" >
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="styleSheet" >
+            <string>color:black;
+font:bold;
+font-size:12pt;</string>
+           </property>
+           <property name="text" >
+            <string>100000</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="ui_PlayButton3" >

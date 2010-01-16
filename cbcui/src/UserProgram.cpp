@@ -37,7 +37,7 @@ void UserProgram::toggleState()
     }
   }
   else {
-    emit consoleOutput(QString("Stopping program..\n"));
+    emit consoleOutput(QString("Program Stopped!\n"));
     m_userProgram.kill();
     emit stopped();
   }
