@@ -73,8 +73,14 @@ void UserProgram::programFinished(int, QProcess::ExitStatus)
 
 void UserProgram::compileFinished(int eCode, QProcess::ExitStatus eStatus)
 {
-    if(eStatus == QProcess::NormalExit) this->updateProgramName();
-    else programName = "Compile Err.";
+    if(!eCode) {
+      m_isLoaded = true;
+      this->updateProgramName();
+    }
+    else {
+      m_isLoaded = false;
+      m_programName = "Compile Err.";
+    }
     emit stateChange(0);
 }
 
@@ -99,17 +105,22 @@ void UserProgram::updateProgramName()
     if(fn.exists()){
         fn.open(QIODevice::ReadOnly);
         QString path(fn.readLine());
-        programName = path.section('/',-1);
+        m_programName = path.section('/',-1);
         fn.close();
     }
     else{
-        programName = "----";
+        m_programName = "----";
     }
+}
+
+bool UserProgram::isLoaded()
+{
+  return m_isLoaded;
 }
 
 QString UserProgram::getProgramName()
 {
-    return programName;
+    return m_programName;
 }
 
 bool UserProgram::isRunning()

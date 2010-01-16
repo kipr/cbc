@@ -15,6 +15,10 @@ elif [ "$1" == "--type" ]; then
   exit 0
 fi
 
+if [ -e /etc/rfs2 ]
+	exit 0
+fi
+
 echo "CBC Firmware Version $VERSION" | $PRINT --echo
 
 if [ ! -e /psp/rfs1/rcS ]; then

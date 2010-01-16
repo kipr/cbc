@@ -29,7 +29,7 @@ FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent)
     setupUi(this);
     
     m_dir.setRootPath(DEFAULT_PATH);
-       m_dir.setResolveSymlinks(true);
+    m_dir.setResolveSymlinks(true);
     ui_directoryBrowser->setModel(&m_dir);
     m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
 
@@ -51,10 +51,10 @@ bool FileManager::isUSBMounted()
     return info.exists();
 }
 
-void FileManager::on_ui_directoryBrowser_clicked(const QModelIndex &index)
+void FileManager::on_ui_directoryBrowser_clicked(const QModelIndex&)
 {
     
-    if(m_dir.isDir(index)) {
+    if(m_dir.isDir(ui_directoryBrowser->currentIndex())) {
         ui_compileButton->hide();
         ui_openButton->show();
     }
