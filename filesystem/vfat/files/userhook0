@@ -2,7 +2,8 @@
 
 ROOT=/mnt/usb
 
-PRINT=$ROOT/fb_print
+#PRINT=$ROOT/fb_print
+PRINT=echo
 VERSION=`cat $ROOT/FIRMWARE_VERSION`
 
 
@@ -39,6 +40,8 @@ INTERNAL_DEVICE=$1
 # Set up loopback
 #
 ifconfig lo 127.0.0.1
+
+dd if=/mnt/usb/splash_screen.bin of=/dev/fb0
 
 #
 # Set up wired network
@@ -118,8 +121,8 @@ echo "Disabling touchscreen touchclick"
 echo 0 > /proc/chumby/touchscreen/touchclick
 
 echo "Loading CBOB SPI module"
-insmod /mnt/usb/cbob_spi.ko
-mknod /dev/cbob c 251 0
+insmod /mnt/usb/cbob.ko
+sh /mnt/usb/mkdev.sh
 
 KISS=/mnt/kiss
 USER=/mnt/user
@@ -150,6 +153,9 @@ mkdir -p $USER
 
 mount ${KISS_DEV} ${KISS} -t ext2 -o ro
 mount ${USER_DEV} ${USER} -t ext2
+
+mkdir -p /mnt/browser/code
+mount --bind /mnt/user/code /mnt/browser/code
 
 save_time
 

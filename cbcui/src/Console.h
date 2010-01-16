@@ -22,16 +22,16 @@
 #define __CONSOLE_H__
 
 #include "ui_Console.h"
-#include <QDialog>
+#include "Page.h"
+#include <QString>
+#include <QSound>
 
-#include <QProcess>
-
-#include "cbc_data.h"
 #include "SharedMem.h"
+#include "UIData.h"
 
 #define CONSOLE_MAX_LENGTH 5000
 
-class Console : public QDialog, private Ui::Console
+class Console : public Page, private Ui::Console
 {
     Q_OBJECT
 
@@ -40,34 +40,34 @@ public:
     ~Console();
 
 public slots:
-    void on_ui_RunButton_clicked(bool checked = false);
-    void on_ui_StopButton_clicked(bool checked = false);
+   void invertColors();
+   void updateText(QString text);
+   
+   void on_ui_upButton_pressed();
+   void on_ui_downButton_pressed();
+   void on_ui_leftButton_pressed();
+   void on_ui_rightButton_pressed();
+   void on_ui_aButton_pressed();
+   void on_ui_bButton_pressed();
 
-    void on_ui_UpButton_pressed();
-    void on_ui_UpButton_released();
-    void on_ui_DownButton_pressed();
-    void on_ui_DownButton_released();
-    void on_ui_LeftButton_pressed();
-    void on_ui_LeftButton_released();
-    void on_ui_RightButton_pressed();
-    void on_ui_RightButton_released();
-    void on_ui_AButton_pressed();
-    void on_ui_AButton_released();
-    void on_ui_BButton_pressed();
-    void on_ui_BButton_released();
+  void on_ui_upButton_released();
+   void on_ui_downButton_released();
+   void on_ui_leftButton_released();
+   void on_ui_rightButton_released();
+   void on_ui_aButton_released();
+   void on_ui_bButton_released();
+   
+   void bell();
 
-    void readStandardError();
-    void readStandardOutput();
-
-    void userProgramFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    
-    void updateText(QString string);
-    void clearText();
+protected:
+    void setViewportColors(Qt::GlobalColor text, Qt::GlobalColor background);
 private:
-    QProcess m_userProgram;
-    QString m_consoleData;
+   QString m_consoleData;
+   QSound m_bell;
 
-    SharedMem<cbc_data> m_data;
+   SharedMem<UIData> m_uiData;
+   
+
 };
 
 #endif

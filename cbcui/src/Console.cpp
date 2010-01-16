@@ -19,142 +19,123 @@
  **************************************************************************/
 
 #include "Console.h"
-
-#include <QFileInfo>
+#include "UserProgram.h"
 #include <QScrollBar>
+#include <QTimer>
 
-Console::Console(QWidget *parent) : QDialog(parent), m_data("/tmp/cbc_data")
+Console::Console(QWidget *parent) : Page(parent), m_uiData("/tmp/cbc_uidata"), m_bell("/mnt/kiss/sounds/beep.wav", this)
 {
     setupUi(this);
-
-#ifdef QT_ARCH_ARM
-    setWindowState(windowState() | Qt::WindowFullScreen);
-#endif
-
-    QObject::connect(&m_userProgram, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));
-    QObject::connect(&m_userProgram, SIGNAL(readyReadStandardOutput()), this, SLOT(readStandardOutput()));
-
-    QObject::connect(&m_userProgram, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(userProgramFinished(int, QProcess::ExitStatus)));
+    
+    QObject::connect(UserProgram::instance(), SIGNAL(consoleOutput(QString)), this, SLOT(updateText(QString)));
+    QObject::connect(UserProgram::instance(), SIGNAL(consoleRaise()), this, SLOT(raisePage()));
+    
+    m_uiData.shared().a_button = 0;
+    m_uiData.shared().b_button = 0;
+    m_uiData.shared().up_button = 0;
+    m_uiData.shared().down_button = 0;
+    m_uiData.shared().left_button = 0;
+    m_uiData.shared().right_button = 0;
+    m_bell.play();
 }
 
 Console::~Console()
 {
 }
 
-void Console::readStandardError()
+void Console::setViewportColors(Qt::GlobalColor text, Qt::GlobalColor background)
 {
-    updateText(QString(m_userProgram.readAllStandardError()));
+    //set the background and text color of the console
+    QPalette p(ui_console->viewport()->palette());
+    p.setColor(QPalette::Active,QPalette::Base, background);
+    p.setColor(QPalette::Active,QPalette::Text, text);
+    ui_console->viewport()->setPalette(p);
 }
 
-void Console::readStandardOutput()
+void Console::invertColors()
 {
-    updateText(QString(m_userProgram.readAllStandardOutput()));
+    if(ui_console->viewport()->palette().color(QPalette::Base) == Qt::white)
+        this->setViewportColors(Qt::white,Qt::black);
+    else
+        this->setViewportColors(Qt::black,Qt::white);
 }
 
 void Console::updateText(QString text)
 {
+    if(text.contains("\a",Qt::CaseInsensitive)){
+         bell();
+
+    }
     m_consoleData += text;
     m_consoleData = m_consoleData.right(CONSOLE_MAX_LENGTH);
-    ui_Output->setPlainText(m_consoleData);
-    ui_Output->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
+    ui_console->setPlainText(m_consoleData);
+    ui_console->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }
 
-void Console::clearText()
+void Console::bell()
 {
-    m_consoleData.clear();
-    ui_Output->setPlainText(m_consoleData);
+    this->invertColors();
+    QTimer::singleShot(200,this,SLOT(invertColors()));
+    m_bell.play();
 }
 
-void Console::on_ui_RunButton_clicked(bool)
+void Console::on_ui_upButton_pressed()
 {
-    QFileInfo robot("/mnt/user/bin/robot");
-
-    if (robot.exists()) {
-        if (m_userProgram.state() == QProcess::NotRunning) {
-            clearText();
-            m_userProgram.start("/mnt/user/bin/robot");
-        }
-        else
-            updateText("Program already running...\n");
-    }
-    else {
-        updateText("Program not compiled!\n");
-    }
+  m_uiData.shared().up_button = 1;
+}
+   
+void Console::on_ui_downButton_pressed()
+{
+  m_uiData.shared().down_button = 1; 
 }
 
-void Console::on_ui_StopButton_clicked(bool)
+void Console::on_ui_leftButton_pressed()
 {
-    if (m_userProgram.state() != QProcess::NotRunning)
-        m_userProgram.kill();
+  m_uiData.shared().left_button = 1; 
 }
 
-void Console::userProgramFinished(int , QProcess::ExitStatus)
+void Console::on_ui_rightButton_pressed()
 {
-    int i;
-
-    for (i = 0;i < 4;i++) {
-        m_data.shared().motor_pwm[i] = 0;
-        m_data.shared().motor_tps[i] = 0;
-    }
+  m_uiData.shared().right_button = 1; 
 }
 
-void Console::on_ui_UpButton_pressed()
+void Console::on_ui_aButton_pressed()
 {
-    m_data.shared().up = 1;
+  m_uiData.shared().a_button = 1; 
 }
 
-void Console::on_ui_UpButton_released()
+void Console::on_ui_bButton_pressed()
 {
-    m_data.shared().up = 0;
+  m_uiData.shared().b_button = 1; 
 }
 
-void Console::on_ui_DownButton_pressed()
+void Console::on_ui_upButton_released()
 {
-    m_data.shared().down = 1;
+  m_uiData.shared().up_button = 0; 
+}
+   
+void Console::on_ui_downButton_released()
+{
+  m_uiData.shared().down_button = 0; 
 }
 
-void Console::on_ui_DownButton_released()
+void Console::on_ui_leftButton_released()
 {
-    m_data.shared().down = 0;
+  m_uiData.shared().left_button = 0; 
 }
 
-void Console::on_ui_LeftButton_pressed()
+void Console::on_ui_rightButton_released()
 {
-    m_data.shared().left = 1;
+  m_uiData.shared().right_button = 0; 
 }
 
-void Console::on_ui_LeftButton_released()
+void Console::on_ui_aButton_released()
 {
-    m_data.shared().left = 0;
+  m_uiData.shared().a_button = 0; 
 }
 
-void Console::on_ui_RightButton_pressed()
+void Console::on_ui_bButton_released()
 {
-    m_data.shared().right = 1;
-}
-
-void Console::on_ui_RightButton_released()
-{
-    m_data.shared().right = 0;
-}
-
-void Console::on_ui_AButton_pressed()
-{
-    m_data.shared().a = 1;
-}
-
-void Console::on_ui_AButton_released()
-{
-    m_data.shared().a = 0;
-}
-
-void Console::on_ui_BButton_pressed()
-{
-    m_data.shared().b = 1;
-}
-
-void Console::on_ui_BButton_released()
-{
-    m_data.shared().b = 0;
+  m_uiData.shared().b_button = 0; 
 }
 

@@ -23,7 +23,7 @@
 
 // Local includes
 #include "ctdebug.h"
-
+#include <stdio.h>
 // Self
 #include "Pixel565toHSV.h"
 

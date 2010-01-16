@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>AdjustColorWidget</class>
- <widget class="QWidget" name="AdjustColorWidget" >
-  <property name="geometry" >
+ <widget class="QWidget" name="AdjustColorWidget">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,24 +10,24 @@
     <height>240</height>
    </rect>
   </property>
-  <property name="minimumSize" >
+  <property name="minimumSize">
    <size>
     <width>320</width>
     <height>240</height>
    </size>
   </property>
-  <property name="maximumSize" >
+  <property name="maximumSize">
    <size>
     <width>320</width>
     <height>240</height>
    </size>
   </property>
-  <property name="palette" >
+  <property name="palette">
    <palette>
     <active>
-     <colorrole role="Shadow" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Shadow">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>220</red>
         <green>0</green>
         <blue>7</blue>
@@ -35,9 +36,9 @@
      </colorrole>
     </active>
     <inactive>
-     <colorrole role="Shadow" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Shadow">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>220</red>
         <green>0</green>
         <blue>7</blue>
@@ -46,9 +47,9 @@
      </colorrole>
     </inactive>
     <disabled>
-     <colorrole role="Shadow" >
-      <brush brushstyle="SolidPattern" >
-       <color alpha="255" >
+     <colorrole role="Shadow">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
         <red>220</red>
         <green>0</green>
         <blue>7</blue>
@@ -58,29 +59,33 @@
     </disabled>
    </palette>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Color Adjust</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_7" >
-   <property name="spacing" >
+  <property name="styleSheet">
+   <string>QDialog{background-image:url(:/actions/background.png)}
+QPushButton{background-color:black; color:white}</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_7">
+   <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin" >
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_6" >
-     <property name="spacing" >
+    <layout class="QVBoxLayout" name="verticalLayout_6">
+     <property name="spacing">
       <number>0</number>
      </property>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" >
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <spacer name="horizontalSpacer" >
-         <property name="orientation" >
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
            <height>20</height>
@@ -89,102 +94,87 @@
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout" >
+        <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QToolButton" name="RawButton" >
-           <property name="minimumSize" >
+          <widget class="QToolButton" name="RawButton">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="text">
+            <string>Raw</string>
+           </property>
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="text" >
-            <string>...</string>
-           </property>
-           <property name="icon" >
-            <iconset resource="../../ui/icons/icons.qrc" >
-             <normaloff>:/actions/RawOff.png</normaloff>
-             <normalon>:/actions/RawOn.png</normalon>:/actions/RawOff.png</iconset>
-           </property>
-           <property name="iconSize" >
-            <size>
-             <width>30</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="checkable" >
+           <property name="checkable">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="MatchButton" >
-           <property name="minimumSize" >
+          <widget class="QToolButton" name="MatchButton">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="text">
+            <string>Mat</string>
+           </property>
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="text" >
-            <string>...</string>
-           </property>
-           <property name="icon" >
-            <iconset resource="../../ui/icons/icons.qrc" >
-             <normaloff>:/actions/MatOff.png</normaloff>
-             <normalon>:/actions/MatOn.png</normalon>:/actions/MatOff.png</iconset>
-           </property>
-           <property name="iconSize" >
-            <size>
-             <width>30</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="checkable" >
+           <property name="checkable">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="TrackButton" >
-           <property name="minimumSize" >
+          <widget class="QToolButton" name="TrackButton">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="text">
+            <string>Trk</string>
+           </property>
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="text" >
-            <string>...</string>
-           </property>
-           <property name="icon" >
-            <iconset resource="../../ui/icons/icons.qrc" >
-             <normaloff>:/actions/TrkOff.png</normaloff>
-             <normalon>:/actions/TrkOn.png</normalon>:/actions/TrkOff.png</iconset>
-           </property>
-           <property name="iconSize" >
-            <size>
-             <width>30</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="checkable" >
+           <property name="checkable">
             <bool>true</bool>
            </property>
           </widget>
@@ -192,169 +182,149 @@
         </layout>
        </item>
        <item>
-        <widget class="QStackedWidget" name="image" >
-         <property name="minimumSize" >
+        <widget class="QStackedWidget" name="image">
+         <property name="minimumSize">
           <size>
            <width>160</width>
            <height>120</height>
           </size>
          </property>
-         <property name="maximumSize" >
+         <property name="maximumSize">
           <size>
            <width>160</width>
            <height>120</height>
           </size>
          </property>
-         <property name="autoFillBackground" >
+         <property name="autoFillBackground">
           <bool>false</bool>
          </property>
-         <property name="frameShape" >
+         <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
-         <property name="frameShadow" >
+         <property name="frameShadow">
           <enum>QFrame::Plain</enum>
          </property>
-         <property name="lineWidth" >
+         <property name="lineWidth">
           <number>0</number>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2" >
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QToolButton" name="Model0Button" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <widget class="QToolButton" name="Model0Button">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize" >
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="text">
+            <string>0</string>
+           </property>
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="text" >
-            <string>...</string>
-           </property>
-           <property name="icon" >
-            <iconset resource="../../ui/icons/icons.qrc" >
-             <normaloff>:/actions/ZeroOff.png</normaloff>
-             <normalon>:/actions/ZeroOn.png</normalon>:/actions/ZeroOff.png</iconset>
-           </property>
-           <property name="iconSize" >
-            <size>
-             <width>30</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="checkable" >
+           <property name="checkable">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="Model1Button" >
-           <property name="minimumSize" >
+          <widget class="QToolButton" name="Model1Button">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="text">
+            <string>1</string>
+           </property>
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="text" >
-            <string>...</string>
-           </property>
-           <property name="icon" >
-            <iconset resource="../../ui/icons/icons.qrc" >
-             <normaloff>:/actions/OneOff.png</normaloff>
-             <normalon>:/actions/OneOn.png</normalon>:/actions/OneOff.png</iconset>
-           </property>
-           <property name="iconSize" >
-            <size>
-             <width>30</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="checkable" >
+           <property name="checkable">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="Model2Button" >
-           <property name="minimumSize" >
+          <widget class="QToolButton" name="Model2Button">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="text">
+            <string>2</string>
+           </property>
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="text" >
-            <string>...</string>
-           </property>
-           <property name="icon" >
-            <iconset resource="../../ui/icons/icons.qrc" >
-             <normaloff>:/actions/TwoOff.png</normaloff>
-             <normalon>:/actions/TwoOn.png</normalon>:/actions/TwoOff.png</iconset>
-           </property>
-           <property name="iconSize" >
-            <size>
-             <width>30</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="checkable" >
+           <property name="checkable">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="Model3Button" >
-           <property name="minimumSize" >
+          <widget class="QToolButton" name="Model3Button">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="text">
+            <string>3</string>
+           </property>
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="text" >
-            <string>...</string>
-           </property>
-           <property name="icon" >
-            <iconset resource="../../ui/icons/icons.qrc" >
-             <normaloff>:/actions/ThreeOff.png</normaloff>
-             <normalon>:/actions/ThreeOn.png</normalon>:/actions/ThreeOff.png</iconset>
-           </property>
-           <property name="iconSize" >
-            <size>
-             <width>30</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="checkable" >
+           <property name="checkable">
             <bool>true</bool>
            </property>
           </widget>
@@ -362,11 +332,11 @@
         </layout>
        </item>
        <item>
-        <spacer name="horizontalSpacer_2" >
-         <property name="orientation" >
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
            <height>20</height>
@@ -375,45 +345,45 @@
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_5" >
+        <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
-          <widget class="QPushButton" name="ui_CloseButton" >
-           <property name="minimumSize" >
+          <widget class="QPushButton" name="ui_CloseButton">
+           <property name="minimumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="text" >
+           <property name="text">
             <string/>
            </property>
-           <property name="icon" >
-            <iconset resource="../../ui/icons/icons.qrc" >
+           <property name="icon">
+            <iconset resource="../../ui/icons/icons.qrc">
              <normaloff>:/actions/Crystal_Clear_action_button_cancel.png</normaloff>:/actions/Crystal_Clear_action_button_cancel.png</iconset>
            </property>
-           <property name="iconSize" >
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="flat" >
+           <property name="flat">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer" >
-           <property name="orientation" >
+          <spacer name="verticalSpacer">
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>40</height>
@@ -426,74 +396,64 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" >
-       <property name="spacing" >
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="spacing">
         <number>0</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_3" >
+        <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QToolButton" name="TopLeftButton" >
-           <property name="minimumSize" >
+          <widget class="QToolButton" name="TopLeftButton">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="text">
+            <string>Tl</string>
+           </property>
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="text" >
-            <string>...</string>
-           </property>
-           <property name="icon" >
-            <iconset resource="../../ui/icons/icons.qrc" >
-             <normaloff>:/actions/TLOff.png</normaloff>
-             <normalon>:/actions/TLOn.png</normalon>:/actions/TLOff.png</iconset>
-           </property>
-           <property name="iconSize" >
-            <size>
-             <width>30</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="checkable" >
+           <property name="checkable">
             <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="BottomRightButton" >
-           <property name="minimumSize" >
+          <widget class="QToolButton" name="BottomRightButton">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="text">
+            <string>Br</string>
+           </property>
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="text" >
-            <string>...</string>
-           </property>
-           <property name="icon" >
-            <iconset resource="../../ui/icons/icons.qrc" >
-             <normaloff>:/actions/BROff.png</normaloff>
-             <normalon>:/actions/BROn.png</normalon>:/actions/BROff.png</iconset>
-           </property>
-           <property name="iconSize" >
-            <size>
-             <width>30</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="checkable" >
+           <property name="checkable">
             <bool>true</bool>
            </property>
           </widget>
@@ -501,43 +461,43 @@
         </layout>
        </item>
        <item>
-        <widget class="QStackedWidget" name="HSV" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+        <widget class="QStackedWidget" name="HSV">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize" >
+         <property name="minimumSize">
           <size>
            <width>220</width>
            <height>118</height>
           </size>
          </property>
-         <property name="frameShape" >
+         <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
-         <property name="frameShadow" >
+         <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_4" >
+        <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4" >
-           <property name="spacing" >
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <property name="spacing">
             <number>0</number>
            </property>
            <item>
-            <spacer name="horizontalSpacer_5" >
-             <property name="orientation" >
+            <spacer name="horizontalSpacer_5">
+             <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeType" >
+             <property name="sizeType">
               <enum>QSizePolicy::MinimumExpanding</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>15</width>
                <height>15</height>
@@ -546,45 +506,59 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="UpButton" >
-             <property name="minimumSize" >
+            <widget class="QPushButton" name="UpButton">
+             <property name="minimumSize">
               <size>
                <width>30</width>
                <height>30</height>
               </size>
              </property>
-             <property name="maximumSize" >
+             <property name="maximumSize">
               <size>
                <width>30</width>
                <height>30</height>
               </size>
              </property>
-             <property name="baseSize" >
+             <property name="baseSize">
               <size>
                <width>30</width>
                <height>30</height>
               </size>
              </property>
-             <property name="text" >
-              <string>U</string>
+             <property name="text">
+              <string/>
              </property>
-             <property name="autoRepeat" >
+             <property name="icon">
+              <iconset resource="../../ui/icons/icons.qrc">
+               <normaloff>:/actions/uparrow.png</normaloff>
+               <normalon>:/actions/upredarrow.png</normalon>:/actions/uparrow.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="autoRepeat">
               <bool>true</bool>
              </property>
-             <property name="autoRepeatInterval" >
+             <property name="autoRepeatInterval">
               <number>50</number>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_6" >
-             <property name="orientation" >
+            <spacer name="horizontalSpacer_6">
+             <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeType" >
+             <property name="sizeType">
               <enum>QSizePolicy::MinimumExpanding</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>15</width>
                <height>15</height>
@@ -595,47 +569,61 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3" >
-           <property name="spacing" >
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="spacing">
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="LeftButton" >
-             <property name="minimumSize" >
+            <widget class="QPushButton" name="LeftButton">
+             <property name="minimumSize">
               <size>
                <width>30</width>
                <height>30</height>
               </size>
              </property>
-             <property name="maximumSize" >
+             <property name="maximumSize">
               <size>
                <width>30</width>
                <height>30</height>
               </size>
              </property>
-             <property name="baseSize" >
+             <property name="baseSize">
               <size>
                <width>30</width>
                <height>30</height>
               </size>
              </property>
-             <property name="text" >
-              <string>L</string>
+             <property name="text">
+              <string/>
              </property>
-             <property name="autoRepeat" >
+             <property name="icon">
+              <iconset resource="../../ui/icons/icons.qrc">
+               <normaloff>:/actions/leftarrow.png</normaloff>
+               <normalon>:/actions/leftredarrow.png</normalon>:/actions/leftarrow.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="autoRepeat">
               <bool>true</bool>
              </property>
-             <property name="autoRepeatInterval" >
+             <property name="autoRepeatInterval">
               <number>50</number>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_9" >
-             <property name="orientation" >
+            <spacer name="horizontalSpacer_9">
+             <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>15</width>
                <height>15</height>
@@ -644,55 +632,69 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="RightButton" >
-             <property name="minimumSize" >
+            <widget class="QPushButton" name="RightButton">
+             <property name="minimumSize">
               <size>
                <width>30</width>
                <height>30</height>
               </size>
              </property>
-             <property name="maximumSize" >
+             <property name="maximumSize">
               <size>
                <width>30</width>
                <height>30</height>
               </size>
              </property>
-             <property name="baseSize" >
+             <property name="baseSize">
               <size>
                <width>30</width>
                <height>30</height>
               </size>
              </property>
-             <property name="text" >
-              <string>R</string>
+             <property name="text">
+              <string/>
              </property>
-             <property name="checkable" >
+             <property name="icon">
+              <iconset resource="../../ui/icons/icons.qrc">
+               <normaloff>:/actions/rightarrow.png</normaloff>
+               <normalon>:/actions/rightredarrow.png</normalon>:/actions/rightarrow.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="checkable">
               <bool>false</bool>
              </property>
-             <property name="autoRepeat" >
+             <property name="autoRepeat">
               <bool>true</bool>
              </property>
-             <property name="autoRepeatInterval" >
+             <property name="autoRepeatInterval">
               <number>50</number>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5" >
-           <property name="spacing" >
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <property name="spacing">
             <number>0</number>
            </property>
            <item>
-            <spacer name="horizontalSpacer_8" >
-             <property name="orientation" >
+            <spacer name="horizontalSpacer_8">
+             <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeType" >
+             <property name="sizeType">
               <enum>QSizePolicy::MinimumExpanding</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>15</width>
                <height>15</height>
@@ -701,51 +703,65 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="DownButton" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+            <widget class="QPushButton" name="DownButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="minimumSize" >
+             <property name="minimumSize">
               <size>
                <width>30</width>
                <height>30</height>
               </size>
              </property>
-             <property name="maximumSize" >
+             <property name="maximumSize">
               <size>
                <width>30</width>
                <height>30</height>
               </size>
              </property>
-             <property name="baseSize" >
+             <property name="baseSize">
               <size>
                <width>30</width>
                <height>30</height>
               </size>
              </property>
-             <property name="text" >
-              <string>D</string>
+             <property name="text">
+              <string/>
              </property>
-             <property name="autoRepeat" >
+             <property name="icon">
+              <iconset resource="../../ui/icons/icons.qrc">
+               <normaloff>:/actions/downarrow.png</normaloff>
+               <normalon>:/actions/downredarrow.png</normalon>:/actions/downarrow.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="autoRepeat">
               <bool>true</bool>
              </property>
-             <property name="autoRepeatInterval" >
+             <property name="autoRepeatInterval">
               <number>50</number>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_7" >
-             <property name="orientation" >
+            <spacer name="horizontalSpacer_7">
+             <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeType" >
+             <property name="sizeType">
               <enum>QSizePolicy::MinimumExpanding</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>15</width>
                <height>15</height>
@@ -764,7 +780,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../ui/icons/icons.qrc" />
+  <include location="../../ui/icons/icons.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -773,11 +789,11 @@
    <receiver>AdjustColorWidget</receiver>
    <slot>close()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>301</x>
      <y>17</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>159</x>
      <y>119</y>
     </hint>

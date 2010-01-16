@@ -19,158 +19,122 @@
  **************************************************************************/
 
 #include "MainWindow.h"
-
+#include "MainMenu.h"
+#include "Page.h"
+#include "UserProgram.h"
+#include "CbobData.h"
 #include <QMessageBox>
-#include <QProcess>
 
-MainWindow::MainWindow(QWidget *parent) :
-        QDialog(parent),
-        m_cbob(this),
-        m_adjustColorWidget(NULL, &m_vision.m_colorTracker),
-        m_programs(this),
-        m_sensors(&m_cbobData, this), 
-        m_console(this),
-        m_serialServer(this),
-        m_settings(this)
+MainWindow::MainWindow(QWidget *parent) : QDialog(parent), m_mainMenu(0)
 {
     setupUi(this);
 
-#ifdef QT_ARCH_ARM
     setWindowState(windowState() | Qt::WindowFullScreen);
-#endif
-
-    m_adjustColorWidget.close();
-    m_console.close();
-    m_programs.close();
-    m_settings.close();
-    m_sensors.close();
     
-    m_cbob.start();
-    usleep(5000);
-    m_serialServer.start();
-
-    ui_VersionLabel->setText("CBC Firmware Version " + QApplication::applicationVersion());
-
-    QObject::connect(&m_programs, SIGNAL(run()), this, SLOT(runProgram()));
-    QObject::connect(&m_programs, SIGNAL(stop()), this, SLOT(stopProgram()));
-    QObject::connect(&m_serialServer, SIGNAL(downloadFinished(QString)), this, SLOT(compileProgram(QString)));
-    QObject::connect(&m_settings, SIGNAL(downloadsToggled(bool)), this, SLOT(toggleSerialServer(bool)));
+    m_mainMenu = new MainMenu(ui_widget);
+    
+    m_mainMenu->raisePage();
+    
+    QObject::connect(ui_runstopButton, SIGNAL(clicked()), UserProgram::instance(), SLOT(toggleState()));
+    QObject::connect(CbobData::instance(), SIGNAL(refresh()), this, SLOT(updateBatteryDisplay()));
+    QObject::connect(CbobData::instance(), SIGNAL(lowBattery(float)), this, SLOT(batteryWarning(float)));
+    QObject::connect(UserProgram::instance(), SIGNAL(stateChange(int)), this, SLOT(userProgramStateChange(int)));
+    
+    updateBatteryDisplay();
+    CbobData::instance()->resetPullups();
+    
+    userProgramStateChange(0);
 }
 
 MainWindow::~MainWindow()
 {
-    m_cbob.stop();
+    delete m_mainMenu;
 }
 
-void MainWindow::on_ui_ProgramsButton_clicked(bool)
+
+void MainWindow::updateBatteryDisplay()
 {
-    m_programs.show();
-    m_programs.raise();
-#ifdef QT_ARCH_ARM
-    m_programs.setWindowState(windowState() | Qt::WindowFullScreen);
-#endif
+    int percentage;
+    // The close button has an image with the close X set as the background
+    // the text that is placed on top of the button is the battery percentage however,
+    // it has been shifted to the left to make it look like it is not part of the button
+    // the voltage percent calculation is based on the cutoff voltage of 5.8v
+    // then scaled up to the maximum voltage 8.4v (8.4v - 5.8v = 2.6)
+    percentage = (int)((CbobData::instance()->batteryVoltage()-5.8)*(100.0/2.6));
+    if(percentage > 100) percentage = 100;
+
+    ui_closeButton->setText(QString::number(percentage) + "%");
 }
 
-void MainWindow::on_ui_SensorsButton_clicked(bool)
+void MainWindow::batteryWarning(float volts)
 {
-    m_sensors.show();
-    m_sensors.raise();
-#ifdef QT_ARCH_ARM
-    m_sensors.setWindowState(windowState() | Qt::WindowFullScreen);
-#endif
-}
-
-void MainWindow::on_ui_ConsoleButton_clicked(bool)
-{
-    m_console.show();
-    m_console.raise();
-#ifdef QT_ARCH_ARM
-    m_sensors.setWindowState(windowState() | Qt::WindowFullScreen);
-#endif
-}
-
-void MainWindow::on_ui_VisionButton_clicked(bool)
-{
-    m_adjustColorWidget.show();
-#ifdef QT_ARCH_ARM
-    m_adjustColorWidget.setWindowState(windowState() | Qt::WindowFullScreen);
-#endif
-}
-
-void MainWindow::on_ui_AboutButton_clicked(bool)
-{
-    QString aboutString = "CBC Firmware Version " + QApplication::applicationVersion() + "\n\n";
-    aboutString += "Copyright (C) 2009 KISS Institute for Practical Robotics\n";
-    aboutString += "http://www.kipr.org/\nhttp://www.botball.org/\n";
-    QMessageBox::about(this, "CBC Firmware", aboutString);
-}
-
-void MainWindow::on_ui_SettingsButton_clicked(bool)
-{
-    m_settings.show();
-#ifdef QT_ARCH_ARM
-    m_settings.setWindowState(windowState() | Qt::WindowFullScreen);
-#endif
-}
-
-void MainWindow::on_ui_PowerButton_clicked(bool)
-{
-    QMessageBox shutdownDialog(0);
-    QTimer timer;
-    QProcess shutdown;
-
-    QMessageBox::StandardButton ret = QMessageBox::question(this, "Power Off", "Are you sure you'd like to power off?", QMessageBox::Yes | QMessageBox::No);
-
-    if (ret == QMessageBox::Yes) {
-        shutdown.start("/mnt/kiss/shutdown.sh");
-
-        timer.setSingleShot(true);
-
-        shutdownDialog.setStandardButtons(QMessageBox::NoButton);
-        shutdownDialog.setText("Shuting down in 3...");
-        shutdownDialog.show();
-        timer.start(1000);
-
-
-        while (timer.isActive()) QApplication::processEvents();
-        shutdownDialog.setText("Shutting down in 2...");
-        timer.start(1000);
-
-        while (timer.isActive()) QApplication::processEvents();
-        shutdownDialog.setText("Shutting down in 1...");
-        timer.start(1000);
-
-        while (timer.isActive()) QApplication::processEvents();
-
-        shutdownDialog.setText("Now :)");
-
-        while (1) QApplication::processEvents();
+    if(volts < 5.9){
+        QMessageBox::critical(this,
+                             "Low Battery!",
+                             "Shutdown imminent!",
+                             QMessageBox::Ok,
+                             QMessageBox::NoButton);
+    }
+    else{
+        QMessageBox::warning(this,
+                             "Low Battery!",
+                             "Low Battery - Please Charge Me!",
+                             QMessageBox::Ok,
+                             QMessageBox::NoButton);
     }
 }
 
-void MainWindow::runProgram()
+void MainWindow::on_ui_backButton_clicked(bool)
 {
-    m_console.on_ui_RunButton_clicked();
-    on_ui_ConsoleButton_clicked();
+   Page::currentPage()->raiseLastPage();
 }
 
-void MainWindow::stopProgram()
+void MainWindow::on_ui_closeButton_clicked(bool)
 {
-    m_console.on_ui_StopButton_clicked();
+    Page::currentPage()->lower();
+    m_mainMenu->raisePage();
 }
 
-void MainWindow::compileProgram(QString filename)
+void MainWindow::on_ui_estopButton_clicked(bool)
 {
-    on_ui_ProgramsButton_clicked();
-    m_programs.compileFile(filename);
+    // turn off motors
+    // disable servos
+    CbobData::instance()->allStop();
+    // kill user program
+    UserProgram::instance()->stop();
+    // hide estop button
+    //ui_estopButton->hide();
 }
 
-void MainWindow::toggleSerialServer(bool enabled)
+void MainWindow::userProgramStateChange(int state)
 {
-    if(m_serialServer.isRunning() && !enabled)
-        m_serialServer.stop();
-    else if(!m_serialServer.isRunning() && enabled)
-        m_serialServer.start();
+    QString name(UserProgram::instance()->getProgramName());
+    int lastChar = name.count() - 1;
+    name.remove(lastChar,1);
+
+    int n = name.count() - 15;
+    if(n > 0) {
+        name.remove(12,n+3);
+        name.append("...");
+    }
+
+    if(state) {
+        name.prepend("Running\n");
+        ui_runstopButton->setChecked(true);
+        ui_runstopButton->setText(name);
+        //ui_estopButton->show();
+    }
+    else {
+        name.prepend("Run\n");
+        ui_runstopButton->setText(name);
+        ui_runstopButton->setChecked(false);
+        //this->hideEStop();
+    }
 }
 
-
+void MainWindow::hideEStop()
+{
+    if(UserProgram::instance()->isRunning()) return;
+    //|| motorTest is running || motorTune is running || servo is running)
+    else ui_estopButton->hide();
+}

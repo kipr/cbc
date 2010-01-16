@@ -1,0 +1,31 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>background-inverted.png</file>
+        <file>background.png</file>
+    </qresource>
+    <qresource prefix="/actions" >
+        <file>back-wide.png</file>
+        <file>close-wide.png</file>
+        <file>back.png</file>
+        <file>close.png</file>
+        <file>arrowDn.png</file>
+        <file>arrowLf-27.png</file>
+        <file>arrowLf-40.png</file>
+        <file>arrowRt-27.png</file>
+        <file>arrowRt-40.png</file>
+        <file>arrowUp.png</file>
+        <file>rivet30x30L.png</file>
+        <file>rivet30x30D.png</file>
+        <file>rivet30x30Go.png</file>
+        <file>rivet30x30Stop.png</file>
+        <file>rivet80x30D.png</file>
+        <file>rivet80x30L.png</file>
+        <file>rivet95x30D.png</file>
+        <file>rivet95x30L.png</file>
+        <file>rivet160x30D.png</file>
+        <file>rivet160x30L.png</file>
+        <file>rivet95x30Green.png</file>
+        <file>rivet80x30Red.png</file>
+        <file>rivet95x30Red.png</file>
+    </qresource>
+</RCC>

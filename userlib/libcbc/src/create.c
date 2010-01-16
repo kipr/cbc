@@ -46,11 +46,10 @@ int gc_mode=0;
 // If Create is connected, power light goes yellow and play led turns on
 int create_connect()
 {
-	gc_mode=0;    
+	gc_mode=0;
 	serial_init();
 	create_start();
 	create_safe(); //allows create to be commanded and turns LED orange
-	create_clear_serial_buffer();
 	create_mode();//gets mode and sets global gc_mode
 	if (gc_mode!=2) {       // if not safe mode, connection not established
 		printf("Create connect failed, mode is %d\n", gc_mode);
@@ -365,7 +364,6 @@ int create_battery_charge()
   char buffer[11];
   char *bptr = buffer;
 	CREATE_BUSY;
-	create_clear_serial_buffer();
 	create_write_byte(149);
 	create_write_byte(7);
 	create_write_byte(21);
@@ -937,12 +935,6 @@ void create_script_end() {
 
 void create_script_run() {
 	create_write_byte(153); // run script
-}
-
-void create_clear_serial_buffer()
-{
-  char byte;
-  while(serial_read(&byte, 1));
 }
 
 int create_read_block(char *data, int count)

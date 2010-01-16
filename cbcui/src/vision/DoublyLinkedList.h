@@ -21,6 +21,8 @@
 #ifndef INCLUDE_DoublyLinkedList_h
 #define INCLUDE_DoublyLinkedList_h
 
+#include <stdio.h>
+
 template <class T>
 class DoublyLinkedList {
 public:

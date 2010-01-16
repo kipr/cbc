@@ -35,6 +35,7 @@
 
 extern int __pid_defaults[6];
 
+int set_digital_port_direction(int port, int direction);
 void tone(int frequency, int duration); /* makes a sound at frequency for duration ms */
 void beep(); /* make a beep */
 int digital(int port); /* returns a 1 or 0 reflecting the state of port (0 to 7) */
@@ -60,6 +61,7 @@ int mtp(int motor, int speed, int goal_pos);/* move motor (0 to 3) at speed to g
 int move_relative_position(int motor, int speed, int delta_pos);/* move motor (0 to 3) at speed by delta_pos */
 int mrp(int motor, int speed, int delta_pos);/* move motor (0 to 3) at speed by delta_pos */
 void set_pid_gains(int motor, int p, int i, int d, int pd, int id, int dd);/* set PID gains */
+void get_pid_gains(int motor, int *p, int *i, int *d, int *pd, int *id, int *dd);
 int freeze(int motor);/* keep motor (0 to 3) at current position */
 int get_motor_done(int motor); /* returns 1 if motor (0 to 3) is moving to a goal and 0 otherwise */
 void block_motor_done(int motor); /* returns when motor (0 to 3) has reached goal */
@@ -71,6 +73,9 @@ void bk(int motor); /* motor (0 to 3) at full reverse */
 void motor (int motor, int percent);/* motor (0 to 3) at percent % of full (-100 to 100)*/
 void off(int motor); /* turns motor (0 to 3) off */
 void ao(); /* turns all motors off */
+
+void libcbc_init();
+void libcbc_exit();
 
 int up_button();
 int down_button();
@@ -88,6 +93,9 @@ int black_button();/* returns value of hardware button on CBC */
 void display_clear(); /* Clears display and pust cursor in upper left*/
 void cbc_display_clear();/*Clears console display on CBC*/
 void cbc_printf(int col, int row, char *t, ...);/*Does printf at col,row */
+void set_analog_floats(int mask);
+int get_analog_floats();
+void set_each_analog_state(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int a7);
 
 #define SIMPLEWORLD 0
 #define BB08WORLD 1

@@ -18,22 +18,15 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#ifndef __MAIN_DIALOG_H__
-#define __MAIN_DIALOG_H__
+#ifndef __MAIN_WINDOW_H__
+#define __MAIN_WINDOW_H__
 
 #include "ui_MainWindow.h"
 #include <QDialog>
+#include <QVBoxLayout>
+#include <QTimer>
 
-#include "Cbob.h"
-#include "AdjustColorWidget.h"
-#include "ColorTracker.h"
-#include "Vision.h"
-#include "ProgramSelect.h"
-#include "CbobData.h"
-#include "Sensors.h"
-#include "Console.h"
-#include "SerialServer.h"
-#include "Settings.h"
+#include "MainMenu.h"
 
 class MainWindow : public QDialog, private Ui::MainWindow
 {
@@ -42,35 +35,18 @@ class MainWindow : public QDialog, private Ui::MainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    enum {NUM_COLOR_CHANNELS=4};
-
 
 public slots:
-    void on_ui_ProgramsButton_clicked(bool checked = false);
-    void on_ui_SensorsButton_clicked(bool checked = false);
-    void on_ui_ConsoleButton_clicked(bool checked = false);
-    void on_ui_VisionButton_clicked(bool checked = false);
-    void on_ui_AboutButton_clicked(bool checked = false);
-    void on_ui_SettingsButton_clicked(bool checked = false);
-    void on_ui_PowerButton_clicked(bool checked = false);
-
-    void runProgram();
-    void stopProgram();
-    void compileProgram(QString name);
-    
-    void toggleSerialServer(bool enabled);
+   void on_ui_backButton_clicked(bool checked = false);
+   void on_ui_closeButton_clicked(bool checked = false);
+   void on_ui_estopButton_clicked(bool checked = false);
+   void updateBatteryDisplay();
+   void userProgramStateChange(int state);
+   void batteryWarning(float volts);
 
 private:
-    Cbob m_cbob;
-    CbobData m_cbobData;
-    Vision m_vision;
-    AdjustColorWidget m_adjustColorWidget;
-    ProgramSelect    m_programs;
-    Sensors m_sensors;
-    Console m_console;
-    SerialServer m_serialServer;
-    Settings m_settings;
+   MainMenu *m_mainMenu;
+   void hideEStop();
 };
 
 #endif
-

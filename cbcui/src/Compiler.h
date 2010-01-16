@@ -22,11 +22,12 @@
 #define __COMPILER_H__
 
 #include "ui_Compiler.h"
-#include <QDialog>
+#include "Page.h"
+#include "SerialServer.h"
 
 #include <QProcess>
 
-class Compiler : public QDialog, private Ui::Compiler
+class Compiler : public Page, private Ui::Compiler
 {
     Q_OBJECT
 
@@ -35,7 +36,6 @@ public:
     ~Compiler();
 
 public slots:
-    void on_ui_runButton_clicked(bool checked = false);
 
     void readStandardError();
     void readStandardOutput();
@@ -43,12 +43,9 @@ public slots:
     void compileFile(QString filename);
     void compileFromUSB();
 
-signals:
-    void run();
-    void stop();
-
 private:
     QProcess m_compiler;
+    SerialServer m_serial;
 };
 
 #endif

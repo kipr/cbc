@@ -23,54 +23,55 @@
 #include <QFileInfo>
 #include <QScrollBar>
 
-Compiler::Compiler(QWidget *parent) : QDialog(parent)
+#include "UserProgram.h"
+
+Compiler::Compiler(QWidget *parent) : Page(parent), m_serial(this)
 {
     setupUi(this);
 
-#ifdef QT_ARCH_ARM
-    setWindowState(windowState() | Qt::WindowFullScreen);
-#endif
-
     QObject::connect(&m_compiler, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));
     QObject::connect(&m_compiler, SIGNAL(readyReadStandardOutput()), this, SLOT(readStandardOutput()));
+    QObject::connect(&m_compiler, SIGNAL(finished(int, QProcess::ExitStatus)), UserProgram::instance(), SLOT(compileFinished(int, QProcess::ExitStatus)));
+    QObject::connect(&m_serial, SIGNAL(downloadFinished(QString)), this, SLOT(compileFile(QString)));
+    
+    m_serial.start();
 }
 
 Compiler::~Compiler()
 {
+   m_serial.stop();
 }
 
 void Compiler::compileFromUSB()
 {
     if(m_compiler.state() == QProcess::NotRunning) {
-        emit stop();
+        qWarning("compile from usb");
+        UserProgram::instance()->stop();
         ui_output->clear();
         m_compiler.start("/mnt/kiss/usercode/compile-usb");
     }
 }
 
-void Compiler::on_ui_runButton_clicked(bool)
-{
-    qWarning("run...");
-    emit run();
-    close();
-}
-
 void Compiler::readStandardError()
 {
+    qWarning("readStandardError");
     ui_output->insertPlainText(QString(m_compiler.readAllStandardError()));
     ui_output->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }
 
 void Compiler::readStandardOutput()
 {
+    qWarning("readStandardOutput()");
     ui_output->insertPlainText(QString(m_compiler.readAllStandardOutput()));
     ui_output->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }
 
 void Compiler::compileFile(QString filename)
 {
+    qWarning("compileFile");
+    raisePage();
     if(m_compiler.state() == QProcess::NotRunning) {
-        emit stop();
+        UserProgram::instance()->stop();
         ui_output->clear();
         m_compiler.start("/mnt/kiss/usercode/compile", QStringList() << filename);
     }

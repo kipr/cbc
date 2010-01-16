@@ -27,7 +27,7 @@
 #include <QVector>
 #include <QDataStream>
 
-#include "QNamedPipe.h"
+#include "SerialPort.h"
 
 typedef struct {
     QStringList filenames;
@@ -39,8 +39,7 @@ typedef struct {
 #define SERIAL_START        ((quint16)0xCBC)
 
 #define HEADER_KEY (quint32)(0xB07BA11)
-#define OUTPUT_PIPE "/tmp/uart0tx"
-#define INPUT_PIPE "/tmp/uart0rx"
+#define SERIAL_DEVICE "/dev/uart0"
 #define TEMP_PATH "/tmp/upload"
 
 class SerialServer : public QThread
@@ -58,8 +57,8 @@ signals:
     void downloadFinished(QString filename);
     
 private:
-    QNamedPipe m_in, m_out;
-    QDataStream m_inStream, m_outStream;
+    SerialPort m_port;
+    QDataStream m_stream;
     bool  m_quit;
 
     bool readPacket(QByteArray *packetData);

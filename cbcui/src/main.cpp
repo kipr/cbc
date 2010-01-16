@@ -20,25 +20,12 @@
 
 #include <QApplication>
 #include <QCursor>
-#include <QFile>
 
 #include "MainWindow.h"
 
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
-
-#ifdef QT_ARCH_ARM
-    QFile versionFile("/mnt/usb/FIRMWARE_VERSION");
-
-    versionFile.open(QIODevice::ReadOnly);
-    QString versionString(versionFile.readAll());
-    versionFile.close();
-
-    QApplication::setApplicationVersion(versionString);
-#else
-    app.setApplicationVersion("DBG");
-#endif
 
     MainWindow dialog;
 

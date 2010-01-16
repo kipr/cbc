@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 PRINT="/mnt/usb/fb_print --skiptop 50"
 PROG=/mnt/user/code/robot

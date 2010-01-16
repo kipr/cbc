@@ -22,16 +22,18 @@
 #define __CBOB_DATA_H__
 
 #include <QObject>
-#include "SharedMem.h"
-#include "cbc_data.h"
+#include <QTimer>
+
+#define CBOB_REFRESH_FAST 100
+#define CBOB_REFRESH_SLOW 2000
 
 class CbobData : public QObject
 {
     Q_OBJECT
 
 public:
-    CbobData();
-    ~CbobData();
+
+    static CbobData *instance();
 
     /* Sensor inputs */
     int analog(int port);
@@ -39,16 +41,67 @@ public:
     int accelerometerX();
     int accelerometerY();
     int accelerometerZ();
+    void accelerometerRecalibrate();
+    int analogPullups();
 
     float batteryVoltage();
 
+    // motors
     int motorPosition(int motor);
     int motorVelocity(int motor);
     int motorPWM(int motor);
+    void motorsRecalibrate();
+
+    void motorGains(int motor,int *gains);
+    void motorSetGains(int motor,int *gains);
+    void moveMotorPower(int motor,int power);
+    void moveAtVelocity(int motor,int velocity);
+    void moveToPosition(int motor,int speed,int target_position);
+    void clearMotorCounter(int motor);
+    void defaultPIDgains(int motor);
+
+    // servos
+    void setServoPosition(int servo, int pos);
+    int getServoPosition(int servo);
+
+    void setFastRefresh();
+    void setSlowRefresh();
+    void setRefresh(int delay);
+
+signals:
+    void refresh();
+    void lowBattery(float volts);
+
+public slots:
+    void resetPullups();
+    void motorsOff();
+    void disableServos();
+    void allStop();
+
+signals:
+    void eStop();
+
+protected:
+    CbobData();
+    ~CbobData();
+
+protected slots:
+    void updateSensors();
 
 private:
-    SharedMem<cbc_data> m_cbobData;
+    int m_sensors;
+    int m_angPullups;
+    int m_allPID;
+    int m_pid[4];
+    int m_allPWM;
+    int m_pwm[4];
+    int m_servo[4];
+    short m_sensorData[14];
+    int   m_pidData[4];
+    signed char   m_pwmData[4];
+    QTimer m_timer;
 
+    //static CbobData *inst;
 };
 
 #endif

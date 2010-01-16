@@ -27,10 +27,8 @@
 #include <QDir>
 
 SerialServer::SerialServer(QObject *parent) : QThread(parent), 
-                                              m_in(INPUT_PIPE, this), 
-                                              m_out(OUTPUT_PIPE, this),
-                                              m_inStream(&m_in),
-                                              m_outStream(&m_out),
+                                              m_port(SERIAL_DEVICE, this),
+                                              m_stream(&m_port),
                                               m_quit(false)
 {
 }
@@ -42,8 +40,7 @@ SerialServer::~SerialServer()
 
 void SerialServer::run()
 {
-    m_in.open(QIODevice::ReadOnly);
-    m_out.open(QIODevice::WriteOnly);
+    m_port.open(QIODevice::ReadWrite);
     mkdir(TEMP_PATH, 0);
 
     qWarning("SerialServer::run() looping");
@@ -55,8 +52,7 @@ void SerialServer::run()
         }
     }
     m_quit = false;
-    m_in.close();
-    m_out.close();
+    m_port.close();
 }
 
 void SerialServer::stop()
@@ -155,16 +151,18 @@ void SerialServer::writeFile(QString fileName, QByteArray& fileData)
         quint16     checksum = 2 bytes */
 bool SerialServer::readPacket(QByteArray *packetData)
 {
+   qWarning("SerialServer::readPacket");
     while(1){
         QByteArray data;
         quint32 key = 0;
         quint16 checksum = 0xFFFF;
         
-        m_inStream >> key;
-
+        qWarning("reading stream");
+        m_stream >> key;
+        qWarning("checking key");
         if (key == HEADER_KEY) {
-            m_inStream >> data;
-            m_inStream >> checksum;
+            m_stream >> data;
+            m_stream >> checksum;
             qWarning("data.size()=%d", data.size());
             qWarning("checksum=%x", checksum);
             if(checksum == qChecksum(data, data.size())) {
@@ -173,8 +171,8 @@ bool SerialServer::readPacket(QByteArray *packetData)
                 return true;
             }
         }
-        m_inStream.skipRawData(512);
-        m_inStream.resetStatus();
+        m_stream.skipRawData(512);
+        m_stream.resetStatus();
         qWarning("Retry...");
         if(m_quit) return false;
     }
@@ -183,5 +181,5 @@ bool SerialServer::readPacket(QByteArray *packetData)
 
 void SerialServer::sendOk()
 {
-    m_outStream << SERIAL_MESSAGE_OK;
+    m_stream << SERIAL_MESSAGE_OK;
 }

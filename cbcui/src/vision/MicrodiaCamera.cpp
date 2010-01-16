@@ -46,7 +46,7 @@ MicrodiaCamera::MicrodiaCamera()
   system("insmod /mnt/usb/videodev.ko");
   system("rmmod microdia");
 
-  int exposure=5000;
+  int exposure=1000;
   char buf[100];
   printf("Using exposure %d\n", exposure);
   sprintf(buf, "insmod /mnt/usb/microdia.ko max_urbs=20 exposure=%d",
@@ -163,7 +163,7 @@ void MicrodiaCamera::backgroundLoop()
       } else {
         check_heap();
         m_processOneFrame = false;
-        printf("Got frame from camera, len=%d\n", len);
+        //printf("Got frame from camera, len=%d\n", len);
         // Copy to image
         Pixel565 *out = image.scanLine(0);
         unsigned char *in = buffer;

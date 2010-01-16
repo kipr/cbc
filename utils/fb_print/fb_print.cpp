@@ -20,6 +20,8 @@
 
 #include <stdio.h>
 #include <string>
+#include <string.h>
+#include <stdlib.h>
 #include "fb.h"
 
 bool read_coords(int &x, int &y)
@@ -49,9 +51,9 @@ int main(int argc, char **argv)
   bool echo=false;
   for (int i= 1; i < argc; i++) {
     char *arg = argv[i];
-    if (!strcmp(arg, "--echo")) echo = true;
+    if (!::strcmp(arg, "--echo")) echo = true;
     else if (!strcmp(arg, "--skiptop")) {
-      skiptop = atoi(argv[++i]);
+      skiptop = ::atoi(argv[++i]);
     }
   }
   fb_init(skiptop);
