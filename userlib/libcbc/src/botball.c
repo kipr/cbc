@@ -90,7 +90,7 @@ void wait_for_light(int light_port_)
 			l_mid_=(l_on_+l_off_)/2;
 			printf("Good CalibrationDiff=%d Waiting\n",(l_off_-l_on_));
 			good=1;
-			while(analog(light_port_)>l_mid_) 
+			while(analog(light_port_)>l_mid_);
 		}
 		else{
 			if(l_off_<128){
