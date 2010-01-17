@@ -42,40 +42,20 @@ public slots:
         void on_ui_MotorIncButton_clicked(bool checked = false);
         void updateCounters();
         void resetMotorCounter();
+        void updateGUI();
         void allStop();
         void show();
         void hide();
 
-        void on_ui_TargetSpeedPowerLine0_selectionChanged();
-        void on_ui_TargetSpeedPowerLine1_selectionChanged();
-        void on_ui_TargetSpeedPowerLine2_selectionChanged();
-        void on_ui_TargetSpeedPowerLine3_selectionChanged();
+        void on_ui_TargetSpeedPowerLine_selectionChanged();
 
-        void on_ui_TargetPositionLine0_selectionChanged();
-        void on_ui_TargetPositionLine1_selectionChanged();
-        void on_ui_TargetPositionLine2_selectionChanged();
-        void on_ui_TargetPositionLine3_selectionChanged();
+        void on_ui_TargetPositionLine_selectionChanged();
 
-        void on_ui_PlayButton0_toggled(bool state);
-        void on_ui_PlayButton1_toggled(bool state);
-        void on_ui_PlayButton2_toggled(bool state);
-        void on_ui_PlayButton3_toggled(bool state);
+        void on_ui_PlayButton_toggled(bool state);
 
-        void on_ui_PowerRadio0_clicked();
-        void on_ui_VelocityRadio0_clicked();
-        void on_ui_PositionRadio0_clicked();
-
-        void on_ui_PowerRadio1_clicked();
-        void on_ui_VelocityRadio1_clicked();
-        void on_ui_PositionRadio1_clicked();
-
-        void on_ui_PowerRadio2_clicked();
-        void on_ui_VelocityRadio2_clicked();
-        void on_ui_PositionRadio2_clicked();
-
-        void on_ui_PowerRadio3_clicked();
-        void on_ui_VelocityRadio3_clicked();
-        void on_ui_PositionRadio3_clicked();
+        void on_ui_PowerRadio_clicked();
+        void on_ui_VelocityRadio_clicked();
+        void on_ui_PositionRadio_clicked();
 
 private:
         CbobData *m_cbobData;
@@ -84,6 +64,8 @@ private:
         int m_targetPower[4];
         int m_targetSpeed[4];
         int m_targetPosition[4];
+        int m_controlState[4];
+        bool m_playState[4];
 };
 
 #endif
