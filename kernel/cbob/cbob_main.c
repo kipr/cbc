@@ -36,6 +36,7 @@ static int __init cbob_init(void)
   }
   else cbob_analog_initted = 1;
   
+	cbob_accel_init();
   cbob_sensors_init();
   cbob_pid_init();
   cbob_pwm_init();
@@ -51,6 +52,7 @@ static void __exit cbob_exit(void) {
   if(cbob_analog_initted)  cbob_analog_exit();
   cbob_sensors_exit();
   cbob_pid_exit();
+	cbob_accel_exit();
   cbob_pwm_exit();
   cbob_servo_exit();
   cbob_uart_exit();
