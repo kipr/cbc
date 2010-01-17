@@ -12,6 +12,7 @@
 #include "cbob_servo.h"
 #include "cbob_uart.h"
 #include "cbob_status.h"
+#include "cbob_accel.h"
 
 
 MODULE_AUTHOR("jorge@kipr.org");
