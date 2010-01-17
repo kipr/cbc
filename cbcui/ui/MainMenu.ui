@@ -60,7 +60,10 @@ background-image:url(:/actions/cbc_2.png);
 }</string>
        </property>
        <property name="text" >
-        <string>CBC 2</string>
+        <string/>
+       </property>
+       <property name="pixmap" >
+        <pixmap resource="../rc/images.qrc" >:/actions/cbc_2.png</pixmap>
        </property>
        <property name="alignment" >
         <set>Qt::AlignCenter</set>
@@ -454,6 +457,8 @@ font-size:10pt;
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../rc/images.qrc" />
+ </resources>
  <connections/>
 </ui>

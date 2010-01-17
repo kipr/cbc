@@ -81,6 +81,7 @@ void Keypad::on_ui_nineButton_clicked(bool)
 }
 void Keypad::on_ui_zeroButton_clicked(bool)
 {
+    if(ui_outputLine->text() == "" || ui_outputLine->text().toInt() == 0) return;
     ui_outputLine->insert(QString::number(0));
 }
 void Keypad::on_ui_negateButton_clicked(bool)
