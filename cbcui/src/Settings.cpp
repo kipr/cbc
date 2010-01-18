@@ -48,22 +48,32 @@ Settings::~Settings()
 
 void Settings::recalibrateMotors()
 {
-    QMessageBox::warning(this,
-                             "Calibrate Motors",
-                             "Do not move motors during calibration\n",
-                             QMessageBox::Ok,
-                             QMessageBox::NoButton);
+    QMessageBox msgBox;
+    msgBox.setText("Do not move motors during calibration");
+    msgBox.addButton(tr("Calibrate"), QMessageBox::ActionRole);
+    msgBox.exec();
+
     CbobData::instance()->motorsRecalibrate();
+
+    msgBox.setText("Calibration Done");
+    msgBox.removeButton(msgBox.buttons().first());
+    msgBox.addButton(tr("Ok"), QMessageBox::ActionRole);
+    msgBox.exec();
 }
 
 void Settings::recalibrateAccel()
 {
-    QMessageBox::warning(this,
-                             "Accel Calibration",
-                             "Place CBC on level surface\n",
-                             QMessageBox::Ok,
-                             QMessageBox::NoButton);
+    QMessageBox msgBox;
+    msgBox.setText("Place CBC on level surface");
+    msgBox.addButton(tr("Calibrate"), QMessageBox::ActionRole);
+    msgBox.exec();
+
     CbobData::instance()->accelerometerRecalibrate();
+
+    msgBox.setText("Calibration Done");
+    msgBox.removeButton(msgBox.buttons().first());
+    msgBox.addButton(tr("Ok"), QMessageBox::ActionRole);
+    msgBox.exec();
 }
 
 void Settings::resetPID()
