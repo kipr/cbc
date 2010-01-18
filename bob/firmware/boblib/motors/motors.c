@@ -193,6 +193,22 @@ int MotorCalibration(void)
 	return 0;
 }
 
+void GetMotorCal(short *calVal)
+{
+	calVal[0] = g_MotorCal[0];
+	calVal[1] = g_MotorCal[1];
+	calVal[2] = g_MotorCal[2];
+	calVal[3] = g_MotorCal[3];
+}
+
+void SetMotorCal(short *calVal)
+{
+	g_MotorCal[0] = calVal[0];
+	g_MotorCal[1] = calVal[1];
+	g_MotorCal[2] = calVal[2];
+	g_MotorCal[3] = calVal[3];
+}
+
 static void MotorCallback(void)
 {
 	static int i;
