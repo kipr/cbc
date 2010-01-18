@@ -59,8 +59,8 @@ void Settings::recalibrateMotors()
 void Settings::recalibrateAccel()
 {
     QMessageBox::warning(this,
-                             "Accelerometer Calibration",
-                             "Place CBC on flat surface\n",
+                             "Accel Calibration",
+                             "Place CBC on level surface\n",
                              QMessageBox::Ok,
                              QMessageBox::NoButton);
     CbobData::instance()->accelerometerRecalibrate();

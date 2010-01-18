@@ -74,11 +74,11 @@ void UserProgram::programFinished(int, QProcess::ExitStatus)
 void UserProgram::compileFinished(int eCode, QProcess::ExitStatus eStatus)
 {
     if(!eCode) {
-      m_isLoaded = true;
+      emit loadedState(true);
       this->updateProgramName();
     }
     else {
-      m_isLoaded = false;
+      emit loadedState(false);
       m_programName = "Compile Err.";
     }
     emit stateChange(0);
@@ -107,15 +107,17 @@ void UserProgram::updateProgramName()
         QString path(fn.readLine());
         m_programName = path.section('/',-1);
         fn.close();
+        emit loadedState(true);
     }
     else{
         m_programName = "----";
+        emit loadedState(false);
     }
 }
 
-bool UserProgram::isLoaded()
+void UserProgram::loading(bool state)
 {
-  return m_isLoaded;
+    emit loadedState(state);
 }
 
 QString UserProgram::getProgramName()
