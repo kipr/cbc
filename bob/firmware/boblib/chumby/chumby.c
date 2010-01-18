@@ -11,11 +11,17 @@
 #include <servos/servos.h>
 #include <string.h>
 
+#include <usb/device/cdc-serial/CDCDSerialDriver.h>
+#include <usb/device/cdc-serial/CDCDSerialDriverDescriptors.h>
+
 #include "cbob_cmd.h"
 #include "chumby_spi.h"
 
 //typedef unsigned short
 typedef unsigned char uchar;
+
+volatile int g_RecalibrateAccelerometer = 0;
+volatile int g_RecalibrateMotors = 0;
 
 static Pin g_ChumbyPins[] = {CHUMBY};
 static Pin g_ChumbyBend = CHUMBY_BEND;
@@ -42,6 +48,9 @@ void ChumbyInit()
   
   ChumbySetStateCmd();
 	ChumbyBend(0);
+	
+	USBD_Connect();
+ 	UartStartRead();
 }
 
 static void ChumbySetStateCmd()
@@ -164,7 +173,7 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 		case CBOB_CMD_ACCEL_CONFIG:
 				if(data[0] == 0) {
 					// Accelerometer Calibration
-					AccelCalibration();
+					g_RecalibrateAccelerometer = 1;
 				}
 			break;
     case CBOB_CMD_SENSORS_READ:
@@ -272,7 +281,7 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 			}
 			else if(data[0] == 6) {
 				// Recalibrate Motors
-				MotorCalibration();
+				g_RecalibrateMotors = 1;
 			}
 			break;
 		case CBOB_CMD_SERVO_READ:
@@ -366,4 +375,25 @@ static void ChumbyCallback()
       break;
   }
 	ChumbyBend(0);
+}
+
+void ChumbyRecalibrate()
+{
+	if(g_RecalibrateMotors) {
+		MotorCalibration();
+		g_RecalibrateMotors = 0;
+	}
+	if(g_RecalibrateAccelerometer) {
+		AccelCalibration();
+		g_RecalibrateAccelerometer = 0;
+	}
+}
+
+void ChumbyRun()
+{
+	while(1){
+		while(USBD_GetState() == USBD_STATE_CONFIGURED) ChumbyRecalibrate();
+		while(USBD_GetState() != USBD_STATE_CONFIGURED) ChumbyRecalibrate();
+		UartStartRead();
+	}
 }

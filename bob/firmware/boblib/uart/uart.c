@@ -66,6 +66,8 @@ int UartInit()
 	
 	SetPitCallback(UartRefresh, 2);
 	
+	ChumbySS1(0);
+	
 	return 1;
 }
 

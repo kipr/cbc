@@ -58,9 +58,9 @@ void MainWindow::updateBatteryDisplay()
     // The close button has an image with the close X set as the background
     // the text that is placed on top of the button is the battery percentage however,
     // it has been shifted to the left to make it look like it is not part of the button
-    // the voltage percent calculation is based on the cutoff voltage of 5.8v
-    // then scaled up to the maximum voltage 8.4v (8.4v - 5.8v = 2.6)
-    percentage = (int)((CbobData::instance()->batteryVoltage()-5.8)*(100.0/2.6));
+    // the voltage percent calculation is based on the cutoff voltage of 6.0v
+    // then scaled up to the maximum voltage 8.4v (8.4v - 6.0v = 2.4)
+    percentage = (int)((CbobData::instance()->batteryVoltage()-6.0)*(100.0/2.4));
     if(percentage > 100) percentage = 100;
 
     ui_closeButton->setText(QString::number(percentage) + "%");
@@ -111,6 +111,8 @@ void MainWindow::userProgramStateChange(int state)
     QString name(UserProgram::instance()->getProgramName());
     int lastChar = name.count() - 1;
     name.remove(lastChar,1);
+    
+    ui_runstopButton->setEnabled(UserProgram::instance()->isLoaded());
 
     int n = name.count() - 15;
     if(n > 0) {

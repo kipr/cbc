@@ -45,7 +45,7 @@ Compiler::~Compiler()
 void Compiler::compileFromUSB()
 {
     if(m_compiler.state() == QProcess::NotRunning) {
-        qWarning("compile from usb");
+        //qWarning("compile from usb");
         UserProgram::instance()->stop();
         ui_output->clear();
         m_compiler.start("/mnt/kiss/usercode/compile-usb");
@@ -54,21 +54,21 @@ void Compiler::compileFromUSB()
 
 void Compiler::readStandardError()
 {
-    qWarning("readStandardError");
+    //qWarning("readStandardError");
     ui_output->insertPlainText(QString(m_compiler.readAllStandardError()));
     ui_output->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }
 
 void Compiler::readStandardOutput()
 {
-    qWarning("readStandardOutput()");
+    //qWarning("readStandardOutput()");
     ui_output->insertPlainText(QString(m_compiler.readAllStandardOutput()));
     ui_output->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }
 
 void Compiler::compileFile(QString filename)
 {
-    qWarning("compileFile");
+    //qWarning("compileFile");
     raisePage();
     if(m_compiler.state() == QProcess::NotRunning) {
         UserProgram::instance()->stop();

@@ -39,7 +39,7 @@ SerialPort::~SerialPort()
 
 bool SerialPort::open(OpenMode mode)
 {
-    qWarning("SerialPort::open");
+    //qWarning"SerialPort::open");
    if(isOpen())
       return true;
    else if(mode == QIODevice::ReadWrite) {
@@ -69,7 +69,7 @@ void SerialPort::close()
 
 qint64 SerialPort::bytesAvailable() const
 {
-   qWarning("SerialPort::bytesAvailable");
+   //qWarning"SerialPort::bytesAvailable");
     if(isOpen()) {
         int byteCount = 0;
         if(ioctl(m_fd, FIONREAD, &byteCount) == 0)
@@ -82,7 +82,7 @@ qint64 SerialPort::bytesAvailable() const
 
 bool SerialPort::waitForReadyRead(int msecs)
 {
-    qWarning("SerialPort::waitForReadyRead");
+    //qWarning"SerialPort::waitForReadyRead");
     if(isOpen()) {
         if(bytesAvailable()) return true;
         return select(msecs);
@@ -92,7 +92,7 @@ bool SerialPort::waitForReadyRead(int msecs)
 
 bool SerialPort::select(int msecs) const
 {
-    qWarning("SerialPort::select m_fd = %d", m_fd);
+    //qWarning"SerialPort::select m_fd = %d", m_fd);
     fd_set fds;
     struct timeval timeout;
     
@@ -102,25 +102,25 @@ bool SerialPort::select(int msecs) const
     timeout.tv_sec  = (msecs / 1000);
     timeout.tv_usec = (msecs % 1000) * 1000;
     
-    qWarning("::select");
+    //qWarning"::select");
     int n = ::select(m_fd + 1, &fds, 0, 0, &timeout);
     
-    qWarning("SerialPort::select return");
+    //qWarning"SerialPort::select return");
     if(n == 1) return true;
     return false;
 }
 
 qint64 SerialPort::readData(char *data, qint64 maxSize)
 {
-    qWarning("SerialPort::readData");
+    //qWarning"SerialPort::readData");
     if(isOpen()) {
         //if(select(250)){
-            qWarning("::read");
+            //qWarning"::read");
             int ret = ::read(m_fd, data, maxSize);
-            qWarning("return");
+            //qWarning"return");
             if(ret >= 0) return ret;
         //}
-        qWarning("return 0");
+        //qWarning"return 0");
         return 0;
     }
     return -1;
@@ -128,7 +128,7 @@ qint64 SerialPort::readData(char *data, qint64 maxSize)
 
 qint64 SerialPort::writeData(const char *data, qint64 maxSize)
 {
-    qWarning("SerialPort::writeData");
+    //qWarning"SerialPort::writeData");
     if(isOpen()) {
         int ret = ::write(m_fd, data, maxSize);
         if(ret >= 0) return ret;

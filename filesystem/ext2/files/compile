@@ -12,7 +12,9 @@ echo "Compiling ${1}"
 if [ -e $PROG ]; then
   echo "Compile succeeded." 
   echo "${1}" > $NAME
+	exit 0
 else
   echo "Compile failed."
+	exit 1
 fi
 

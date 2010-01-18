@@ -8,8 +8,11 @@ rmdir /mnt/usercode >/dev/null 2>&1
 
 if [ -e /mnt/usercode ]; then
   /mnt/kiss/usercode/compile /mnt/usercode/robot.c 2>&1
+	exit $?
 else
-  echo "Can't find USB key" 
+  echo "Can't find USB key"
 fi
 
 umount /mnt/usercode >/dev/null 2>&1
+
+exit 1

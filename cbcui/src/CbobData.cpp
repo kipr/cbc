@@ -115,7 +115,7 @@ int CbobData::accelerometerZ()
 }
 void CbobData::accelerometerRecalibrate()
 {
-    qWarning("accel recal");
+    //qWarning("accel recal");
     int accel = open("/dev/cbc/accel", O_RDWR);
     ioctl(accel, CBOB_ACCEL_RECALIBRATE);
     close(accel);
@@ -154,7 +154,7 @@ int CbobData::motorPWM(int motor)
 }
 void CbobData::motorsRecalibrate()
 {
-    qWarning("motors recal");
+    //qWarning("motors recal");
     ioctl(m_allPID, CBOB_PID_RECALIBRATE);
 }
 void CbobData::motorGains(int motor,int *gains)

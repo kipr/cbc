@@ -21,4 +21,6 @@ void ChumbyInit();
 inline void ChumbyBend(int value);
 inline void ChumbySS1(int value);
 
+void ChumbyRun();
+
 #endif

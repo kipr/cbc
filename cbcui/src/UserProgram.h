@@ -14,6 +14,7 @@ public:
   static UserProgram *instance();
   QString getProgramName();
   bool isRunning();
+	bool isLoaded();
 
 public slots:
   void toggleState();
@@ -41,8 +42,8 @@ private slots:
 
 private:
   QProcess m_userProgram;
-  QString programName;
-  bool state;
+  QString m_programName;
+	bool m_isLoaded;
 };
 
 #endif
