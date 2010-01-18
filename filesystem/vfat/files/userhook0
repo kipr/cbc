@@ -15,7 +15,7 @@ elif [ "$1" == "--type" ]; then
   exit 0
 fi
 
-if [ -e /etc/rfs2 ]
+if [ -e /etc/rfs2 ]; then
 	exit 0
 fi
 
