@@ -47,6 +47,7 @@ private:
     
     // gets a valid sensor value/scale for a specific combo box index
     int getValue(int index);
+    int getOffsetValue(int index);
     int getScale(int index);
     
     CbobData *m_cbobData;

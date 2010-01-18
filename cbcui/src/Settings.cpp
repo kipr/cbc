@@ -22,6 +22,7 @@
 #include "CbobData.h"
 #include <QFile>
 #include <QSettings>
+#include <QMessageBox>
 
 Settings::Settings(QWidget *parent) : Page(parent)
 {
@@ -47,12 +48,22 @@ Settings::~Settings()
 
 void Settings::recalibrateMotors()
 {
-    //CbobData::instance()->motorsRecalibrate();
+    QMessageBox::warning(this,
+                             "Calibrate Motors",
+                             "Do not move motors during calibration\n",
+                             QMessageBox::Ok,
+                             QMessageBox::NoButton);
+    CbobData::instance()->motorsRecalibrate();
 }
 
 void Settings::recalibrateAccel()
 {
-    //CbobData::instance()->accelerometerRecalibrate();
+    QMessageBox::warning(this,
+                             "Accelerometer Calibration",
+                             "Place CBC on flat surface\n",
+                             QMessageBox::Ok,
+                             QMessageBox::NoButton);
+    CbobData::instance()->accelerometerRecalibrate();
 }
 
 void Settings::resetPID()

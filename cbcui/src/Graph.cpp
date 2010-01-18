@@ -32,7 +32,7 @@
 #define ACCSCALE        ACCSCALE8BIT
 #define DIGSCALE        2
 #define ANGSCALE        1024
-#define ANGOFF          -512
+#define ANGOFF          512
 
 Graph::Graph(QWidget *parent) : Page(parent)
 {
@@ -43,7 +43,9 @@ Graph::Graph(QWidget *parent) : Page(parent)
     ui_delTimeLine->setText(QString::number(100));
 
     m_graph = new GraphWidget(ui_graphWidget);
-    
+
+    QObject::connect(ui_resetButton, SIGNAL(clicked()), m_graph, SLOT(resetScan()));
+
     m_graph->setScale(ACCSCALE, ACCSCALE, ACCSCALE);
     
     ui_graphWidget->show();
@@ -109,19 +111,19 @@ void Graph::updateGraph()
     if(zIndex == 0) m_graph->setDrawZLine(false);
     else m_graph->setDrawZLine(true);
 
-    int xValue = getValue(xIndex);
-    int yValue = getValue(yIndex);
-    int zValue = getValue(zIndex);
-    
+    ui_xValue->setText(QString::number(getValue(xIndex)));
+    ui_yValue->setText(QString::number(getValue(yIndex)));
+    ui_zValue->setText(QString::number(getValue(zIndex)));
+
+    int xValue = getOffsetValue(xIndex);
+    int yValue = getOffsetValue(yIndex);
+    int zValue = getOffsetValue(zIndex);
+
     m_graph->setXScale(xScale);
     m_graph->setYScale(yScale);
     m_graph->setZScale(zScale);
     
     m_graph->addValues(xValue, yValue, zValue);
-   
-    ui_xValue->setText(QString::number(xValue));
-    ui_yValue->setText(QString::number(yValue));
-    ui_zValue->setText(QString::number(zValue));
 }
 
 int Graph::getValue(int index)
@@ -129,7 +131,20 @@ int Graph::getValue(int index)
     if(index == 1) return m_cbobData->accelerometerX();
     if(index == 2) return m_cbobData->accelerometerY();
     if(index == 3) return m_cbobData->accelerometerZ();
-    if(index >= 4 && index <= 11) return ANGOFF + m_cbobData->analog(index-4);
+    if(index >= 4 && index <= 11) return m_cbobData->analog(index-4);
+    if(index >= 12 && index <= 19) {
+      if(m_cbobData->digital(index-12)) return 1;
+      else                             return 0;
+    }
+    return 0;
+}
+
+int Graph::getOffsetValue(int index)
+{
+    if(index == 1) return m_cbobData->accelerometerX();
+    if(index == 2) return m_cbobData->accelerometerY();
+    if(index == 3) return m_cbobData->accelerometerZ();
+    if(index >= 4 && index <= 11) return m_cbobData->analog(index-4) - ANGOFF;
     if(index >= 12 && index <= 19) {
       if(m_cbobData->digital(index-12)) return 1;
       else                             return -1;

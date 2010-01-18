@@ -42,6 +42,7 @@ public:
 
 public slots:
     void addValues(int x, int y, int z);
+    void resetScan();
 
 protected:
     void paintEvent(QPaintEvent *event);

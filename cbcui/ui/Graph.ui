@@ -514,6 +514,41 @@
       <number>0</number>
      </property>
      <item>
+      <widget class="QPushButton" name="ui_resetButton" >
+       <property name="minimumSize" >
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet" >
+        <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet80x30L.png);
+color:black;
+font:bold;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet80x30D.png);
+color:white;
+font:bold;
+font-size:12pt;
+}</string>
+       </property>
+       <property name="text" >
+        <string>Reset</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer>
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
@@ -541,6 +576,9 @@ font:bold;</string>
        </property>
        <property name="text" >
         <string>9999</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -573,6 +611,9 @@ font:bold;</string>
        <property name="text" >
         <string>9999</string>
        </property>
+       <property name="alignment" >
+        <set>Qt::AlignCenter</set>
+       </property>
       </widget>
      </item>
      <item>
@@ -603,6 +644,9 @@ font:bold;</string>
        </property>
        <property name="text" >
         <string>9999</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -638,6 +682,13 @@ font:bold;</string>
        </property>
        <property name="text" >
         <string>600</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>ms</string>
        </property>
       </widget>
      </item>

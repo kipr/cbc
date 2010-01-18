@@ -97,6 +97,18 @@ void GraphWidget::addValues(int x, int y, int z)
     update();
 }
 
+void GraphWidget::resetScan()
+{
+    int i;
+    scan_index = 0;
+
+    for(i=0;i<100;i++){
+        pointsX[i] = QPoint(i,0);
+        pointsY[i] = QPoint(i,0);
+        pointsZ[i] = QPoint(i,0);
+    }
+}
+
 void GraphWidget::paintEvent(QPaintEvent *)
 {
     QPainter sketcher(this);
