@@ -267,6 +267,7 @@ int MotorPositionControl(int motor)
 	// is the difference in position within the threshold values
 	if((diffPosition > -g_MotorThreshold[0]) && (diffPosition < g_MotorThreshold[0]))
 	{
+		g_MotorIError[motor] = 0;
 		g_MotorInMotion &= ~(1<<motor);		// clear the Motor in motion bit
 		//g_MotorCtrlType[motor] = 0;			// turn motor position control off
 	}
@@ -353,11 +354,11 @@ void SetPIDGains(int num, short PM, short IM, short DM, short PD, short ID, shor
 
 void SetPIDGainsDefault(int num)
 {
-	g_MotorGains[num][0] = 4;
-	g_MotorGains[num][1] = 1;
-	g_MotorGains[num][2] = -1;
+	g_MotorGains[num][0] = 3;
+	g_MotorGains[num][1] = 3;
+	g_MotorGains[num][2] = -2;
 	g_MotorGains[num][3] = 1;
-	g_MotorGains[num][4] = 1;// 5;
+	g_MotorGains[num][4] = 2;// 5;
 	g_MotorGains[num][5] = 3;
 }
 
