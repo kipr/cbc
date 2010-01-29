@@ -28,8 +28,8 @@ Build:
 
 Building the software is simple:
 
-cd cbc
-make
+    cd cbc
+    make
 
 You should now have a userhook0 file in filesystem/upgrade.  Happy Hacking!
 
