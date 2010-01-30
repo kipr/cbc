@@ -72,6 +72,7 @@ void Compiler::compileFile(QString filename)
     raisePage();
     if(m_compiler.state() == QProcess::NotRunning) {
         UserProgram::instance()->stop();
+        UserProgram::instance()->loading();
         ui_output->clear();
         m_compiler.start("/mnt/kiss/usercode/compile", QStringList() << filename);
     }

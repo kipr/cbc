@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent), m_mainMenu(0)
     QObject::connect(ui_runstopButton, SIGNAL(clicked()), UserProgram::instance(), SLOT(toggleState()));
     QObject::connect(CbobData::instance(), SIGNAL(refresh()), this, SLOT(updateBatteryDisplay()));
     QObject::connect(CbobData::instance(), SIGNAL(lowBattery(float)), this, SLOT(batteryWarning(float)));
+    QObject::connect(UserProgram::instance(), SIGNAL(loadedState(bool)), ui_runstopButton, SLOT(setEnabled(bool)));
     QObject::connect(UserProgram::instance(), SIGNAL(stateChange(int)), this, SLOT(userProgramStateChange(int)));
     
     updateBatteryDisplay();
@@ -111,8 +112,6 @@ void MainWindow::userProgramStateChange(int state)
     QString name(UserProgram::instance()->getProgramName());
     int lastChar = name.count() - 1;
     name.remove(lastChar,1);
-    
-    ui_runstopButton->setEnabled(UserProgram::instance()->isLoaded());
 
     int n = name.count() - 15;
     if(n > 0) {

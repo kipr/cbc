@@ -29,6 +29,7 @@ Console::Console(QWidget *parent) : Page(parent), m_uiData("/tmp/cbc_uidata"), m
     
     QObject::connect(UserProgram::instance(), SIGNAL(consoleOutput(QString)), this, SLOT(updateText(QString)));
     QObject::connect(UserProgram::instance(), SIGNAL(consoleRaise()), this, SLOT(raisePage()));
+    QObject::connect(UserProgram::instance(), SIGNAL(started()), ui_console, SLOT(clear()));
     
     m_uiData.shared().a_button = 0;
     m_uiData.shared().b_button = 0;
@@ -64,11 +65,10 @@ void Console::updateText(QString text)
 {
     if(text.contains("\a",Qt::CaseInsensitive)){
          bell();
-
+        text.remove("\a");
     }
-    m_consoleData += text;
-    m_consoleData = m_consoleData.right(CONSOLE_MAX_LENGTH);
-    ui_console->setPlainText(m_consoleData);
+
+    ui_console->insertPlainText(text);
     ui_console->verticalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }
 

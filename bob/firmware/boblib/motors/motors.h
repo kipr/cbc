@@ -17,6 +17,8 @@ void GetPIDGains(short num, short *PM, short *IM, short *DM, short *PD, short *I
 void SetPIDGains(int num, short PM, short IM, short DM, short PD, short ID, short DD);
 void SetPIDGainsDefault(int num);
 void SetPIDAllGains(short PM, short IM, short DM, short PD, short ID, short DD);
+void GetMotorCal(short *calVal);
+void SetMotorCal(short *calVal);
 int GetMotorError(int motor);
 int GetMotorTPC(int motor);
 int GetTargetTPC(int motor);

@@ -62,7 +62,6 @@ public slots:
 protected:
     void setViewportColors(Qt::GlobalColor text, Qt::GlobalColor background);
 private:
-   QString m_consoleData;
    QSound m_bell;
 
    SharedMem<UIData> m_uiData;

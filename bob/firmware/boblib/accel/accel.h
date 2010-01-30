@@ -3,7 +3,8 @@
 
 unsigned char AccelInit(void);
 void AccelCalibration(void);
-void AccelCalvalues(int *v);
+void GetAccelCal(short *calVal);
+void SetAccelCal(short *calVal);
 void AccelSetCalibration(void);
 
 int Accel_X(void);
@@ -20,3 +21,4 @@ unsigned char AccelSetScale(int gsel);
 
 unsigned char WriteAccelData(unsigned int iaddress, char *bytes, unsigned int num);
 unsigned char ReadAccelData(unsigned int iaddress, char *bytes, unsigned int num);
+

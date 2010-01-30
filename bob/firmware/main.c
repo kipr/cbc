@@ -13,9 +13,6 @@
 
 int main()
 {
-	//int i=0;
-	//int max = 0,min = 0;
-	//int val;
 	DigitalInit();
 	if(BlackButton()) Bootloader();
 	
@@ -25,7 +22,7 @@ int main()
 	printf("Boot!!!!\n\r");
 	
 	ChumbyRun();
-	
+
 	return 1;
 }
 

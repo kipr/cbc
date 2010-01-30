@@ -117,11 +117,18 @@ void AccelCalibration(void)
 #endif
 }
 
-void AccelCalvalues(int *v)
+void GetAccelCal(short *calVal)
 {
-	v[0] = g_calValues[0];
-	v[1] = g_calValues[1];
-	v[2] = g_calValues[2];
+	calVal[0] = g_calValues[0];
+	calVal[1] = g_calValues[1];
+	calVal[2] = g_calValues[2];
+}
+
+void SetAccelCal(short *calVal)
+{
+	g_calValues[0] = calVal[0];
+	g_calValues[1] = calVal[1];
+	g_calValues[2] = calVal[2];
 }
 
 void AccelSetCalibration(void)

@@ -252,7 +252,7 @@ int accel_z()
 {
 	short data;
 	
-	read(g_accY, &data, 2);
+        read(g_accZ, &data, 2);
 	
 	return data;
 }

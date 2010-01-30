@@ -370,26 +370,25 @@ font-size:20pt;</string>
          <property name="minimumSize" >
           <size>
            <width>100</width>
-           <height>20</height>
+           <height>26</height>
           </size>
          </property>
          <property name="maximumSize" >
           <size>
            <width>100</width>
-           <height>20</height>
+           <height>26</height>
           </size>
          </property>
          <property name="font" >
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="layoutDirection" >
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="styleSheet" >
-          <string>color:black;
-font-size:16pt;</string>
+          <string/>
          </property>
          <property name="text" >
           <string>0</string>
@@ -441,26 +440,25 @@ font-size:16pt;</string>
          <property name="minimumSize" >
           <size>
            <width>100</width>
-           <height>20</height>
+           <height>26</height>
           </size>
          </property>
          <property name="maximumSize" >
           <size>
            <width>100</width>
-           <height>20</height>
+           <height>26</height>
           </size>
          </property>
          <property name="font" >
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="layoutDirection" >
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="styleSheet" >
-          <string>color:black;
-font-size:16pt;</string>
+          <string/>
          </property>
          <property name="text" >
           <string>0</string>
