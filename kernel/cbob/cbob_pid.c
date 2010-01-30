@@ -138,6 +138,15 @@ static int cbob_pid_ioctl(struct inode *inode, struct file *file, unsigned int i
 		  if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 1, 0, 0)) < 0)
 				return error;
 			break;
+		case CBOB_PID_GET_CALIBRATION:
+			request[0] = 7;
+			if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 1, result, 4)) < 0)
+				return error;
+			break;
+		case CBOB_PID_SET_CALIBRATION:
+			request[0] = 7;
+			if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 1, 0, 0)) < 0)
+			break;
 	}
   return 0;
 }
