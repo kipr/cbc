@@ -59,7 +59,7 @@ void UserProgram::programStarted()
   emit started();
 
   QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
-  if(m_settings.value("consoleShowOnRun").toBool())
+  if(m_settings.value("consoleShowOnRun", true).toBool())
       emit consoleRaise();
 }
 

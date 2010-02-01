@@ -33,13 +33,20 @@ Settings::Settings(QWidget *parent) : Page(parent)
     QObject::connect(ui_resetPIDButton, SIGNAL(clicked()), this, SLOT(resetPID()));
     QObject::connect(ui_cameraDefaultButton, SIGNAL(clicked()), this, SLOT(setCameraDefault()));
 
-    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
     if(!QFile::exists("/mnt/user/cbc_v2.config")){
-        m_settings.setValue("consoleShowOnRun", true);
+        storePidCal();
+        storeAccelCal();
         this->resetPID();
+        ::system("sync");
+        ::system("sync");
+    }
+    else {
+        loadPidCal();
+        loadAccelCal();
     }
 
-    ui_consoleShowBox->setChecked(m_settings.value("consoleShowOnRun").toBool());
+    QSettings settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    ui_consoleShowBox->setChecked(settings.value("consoleShowOnRun", true).toBool());
 }
 
 Settings::~Settings()
@@ -55,10 +62,14 @@ void Settings::recalibrateMotors()
 
     CbobData::instance()->motorsRecalibrate();
 
+    ::sleep(1);
+
     msgBox.setText("Calibration Done");
     msgBox.removeButton(msgBox.buttons().first());
     msgBox.addButton(tr("Ok"), QMessageBox::ActionRole);
     msgBox.exec();
+
+    storePidCal();
 }
 
 void Settings::recalibrateAccel()
@@ -70,10 +81,14 @@ void Settings::recalibrateAccel()
 
     CbobData::instance()->accelerometerRecalibrate();
 
+    ::sleep(1);
+
     msgBox.setText("Calibration Done");
     msgBox.removeButton(msgBox.buttons().first());
     msgBox.addButton(tr("Ok"), QMessageBox::ActionRole);
     msgBox.exec();
+
+    storeAccelCal();
 }
 
 void Settings::resetPID()
@@ -93,11 +108,59 @@ void Settings::setCameraDefault()
 
 void Settings::on_ui_consoleShowBox_clicked(bool checked)
 {
-    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    QSettings settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
 
-    m_settings.setValue("consoleShowOnRun",checked);
-    m_settings.sync();
+    settings.setValue("consoleShowOnRun",checked);
+    settings.sync();
     ::system("sync");
     ::system("sync");
+}
+
+void Settings::loadAccelCal()
+{
+    QSettings settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    short data[3];
+
+    for(int i = 0;i < 3;i++) {
+        data[i] = settings.value("accelCal" + QString::number(i)).toInt();
+    }
+
+    CbobData::instance()->accelerometerSetCal(data);
+}
+
+void Settings::storeAccelCal()
+{
+    QSettings settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    short data[3];
+
+    CbobData::instance()->accelerometerGetCal(data);
+
+    for(int i = 0;i < 3;i++) {
+        settings.setValue("accelCal" + QString::number(i), data[i]);
+    }
+}
+
+void Settings::loadPidCal()
+{
+    QSettings settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    short data[4];
+
+    for(int i = 0;i < 4;i++) {
+        data[i] = settings.value("motorCal" + QString::number(i)).toInt();
+    }
+
+    CbobData::instance()->motorsSetCal(data);
+}
+
+void Settings::storePidCal()
+{
+    QSettings settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    short data[4];
+
+    CbobData::instance()->motorsGetCal(data);
+
+    for(int i = 0;i < 4;i++) {
+        settings.setValue("motorCal"+QString::number(i), data[i]);
+    }
 }
 
