@@ -110,8 +110,8 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
         g_ChumbyData[1] = BlackButton();
       else
         g_ChumbyData[1] = AllDigitals() | (BlackButton()<<8);
-      outcount = 1;
-			break;
+        outcount = 1;
+      break;
 		case CBOB_CMD_DIGITAL_WRITE:
 			if(data[0] >= 0 && data[0] <= 7)
 				DigitalOut(data[0], data[1]);
@@ -171,10 +171,17 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 			}
 			break;
 		case CBOB_CMD_ACCEL_CONFIG:
-				if(data[0] == 0) {
-					// Accelerometer Calibration
-					g_RecalibrateAccelerometer = 1;
-				}
+			if(data[0] == 0) {
+				// Accelerometer Calibration
+				g_RecalibrateAccelerometer = 1;
+			}
+      else if(data[0] == 1) {
+        GetAccelCal(&(data[1]));
+        outcount += 3;
+      }
+      else if(data[0] == 2) {
+        SetAccelCal(&(data[1]));
+      }
 			break;
     case CBOB_CMD_SENSORS_READ:
       g_ChumbyData[1] = AllDigitals() | (BlackButton()<<8);
@@ -283,6 +290,13 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 				// Recalibrate Motors
 				g_RecalibrateMotors = 1;
 			}
+      else if(data[0] == 7) {
+        GetMotorCal(&(data[1]));
+        outcount += 4;
+      }
+      else if(data[0] == 8) {
+        SetMotorCal(&(data[1]));
+      }
 			break;
 		case CBOB_CMD_SERVO_READ:
 			if(data[0] >= 0 && data[0] < 4) {

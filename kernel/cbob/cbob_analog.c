@@ -66,7 +66,6 @@ static ssize_t cbob_analog_read(struct file *file, char *buf, size_t count, loff
 
 static int cbob_analog_ioctl(struct inode *inode, struct file *file, unsigned int ioctl_num, unsigned long ioctl_param)
 {
-	struct analog_port *analog = file->private_data;
 	short request[2];
 	short retval;
 	int arg, error;
