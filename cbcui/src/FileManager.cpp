@@ -116,6 +116,9 @@ void FileManager::on_ui_compileButton_clicked()
 
 void FileManager::on_ui_deleteButton_clicked()
 {
+    QString deleteString = "rm -rf " + m_dir.filePath(ui_directoryBrowser->currentIndex());
+
+    ::system(deleteString.toLocal8Bit());
 }
 
 
