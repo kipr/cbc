@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>VisionTracking</class>
- <widget class="QWidget" name="VisionTracking" >
-  <property name="geometry" >
+ <widget class="QWidget" name="VisionTracking">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,68 +10,59 @@
     <height>213</height>
    </rect>
   </property>
-  <property name="minimumSize" >
+  <property name="minimumSize">
    <size>
     <width>320</width>
     <height>213</height>
    </size>
   </property>
-  <property name="maximumSize" >
+  <property name="maximumSize">
    <size>
     <width>320</width>
     <height>213</height>
    </size>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <property name="styleSheet" >
+  <property name="styleSheet">
    <string>QPushButton{
 icon-size:25px;
 border:0px;
 }</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="spacing" >
+  <layout class="QVBoxLayout">
+   <property name="spacing">
     <number>0</number>
    </property>
-   <property name="leftMargin" >
-    <number>0</number>
-   </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>0</number>
      </property>
      <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>0</number>
        </property>
        <item>
-        <widget class="QPushButton" name="RawButton" >
-         <property name="minimumSize" >
+        <widget class="QPushButton" name="RawButton">
+         <property name="minimumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="maximumSize" >
+         <property name="maximumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="styleSheet" >
+         <property name="styleSheet">
           <string>QPushButton{
 border:0px;
 background-image:url(:/actions/rivet30x30L.png);
@@ -82,29 +74,29 @@ background-image:url(:/actions/rivet30x30D.png);
 color:white;
 }</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Raw</string>
          </property>
-         <property name="checkable" >
+         <property name="checkable">
           <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="MatchButton" >
-         <property name="minimumSize" >
+        <widget class="QPushButton" name="MatchButton">
+         <property name="minimumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="maximumSize" >
+         <property name="maximumSize">
           <size>
            <width>25</width>
            <height>16777215</height>
           </size>
          </property>
-         <property name="styleSheet" >
+         <property name="styleSheet">
           <string>QPushButton{
 border:0px;
 background-image:url(:/actions/rivet30x30L.png);
@@ -116,44 +108,44 @@ background-image:url(:/actions/rivet30x30D.png);
 color:white;
 }</string>
          </property>
-         <property name="text" >
-          <string>Trk</string>
-         </property>
-         <property name="checkable" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="TrackButton" >
-         <property name="minimumSize" >
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>25</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="styleSheet" >
-          <string>QPushButton{
-border:0px;
-background-image:url(:/actions/rivet30x30L.png);
-color:black;
-}
-QPushButton:checked{
-border:0px;
-background-image:url(:/actions/rivet30x30D.png);
-color:white;
-}</string>
-         </property>
-         <property name="text" >
+         <property name="text">
           <string>Mat</string>
          </property>
-         <property name="checkable" >
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="TrackButton">
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>25</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet30x30L.png);
+color:black;
+}
+QPushButton:checked{
+border:0px;
+background-image:url(:/actions/rivet30x30D.png);
+color:white;
+}</string>
+         </property>
+         <property name="text">
+          <string>Trk</string>
+         </property>
+         <property name="checkable">
           <bool>true</bool>
          </property>
         </widget>
@@ -161,53 +153,53 @@ color:white;
       </layout>
      </item>
      <item>
-      <widget class="QStackedWidget" name="image" >
-       <property name="minimumSize" >
+      <widget class="QStackedWidget" name="image">
+       <property name="minimumSize">
         <size>
          <width>160</width>
          <height>120</height>
         </size>
        </property>
-       <property name="maximumSize" >
+       <property name="maximumSize">
         <size>
          <width>160</width>
          <height>120</height>
         </size>
        </property>
-       <property name="autoFillBackground" >
+       <property name="autoFillBackground">
         <bool>false</bool>
        </property>
-       <property name="frameShape" >
+       <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
        </property>
-       <property name="frameShadow" >
+       <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
-       <property name="lineWidth" >
+       <property name="lineWidth">
         <number>0</number>
        </property>
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>0</number>
        </property>
        <item>
-        <widget class="QPushButton" name="Model0Button" >
-         <property name="minimumSize" >
+        <widget class="QPushButton" name="Model0Button">
+         <property name="minimumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="maximumSize" >
+         <property name="maximumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="styleSheet" >
+         <property name="styleSheet">
           <string>QPushButton{
 border:0px;
 background-image:url(:/actions/rivet30x30L.png);
@@ -219,26 +211,26 @@ background-image:url(:/actions/rivet30x30D.png);
 color:white;
 }</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>0</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="Model1Button" >
-         <property name="minimumSize" >
+        <widget class="QPushButton" name="Model1Button">
+         <property name="minimumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="maximumSize" >
+         <property name="maximumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="styleSheet" >
+         <property name="styleSheet">
           <string>QPushButton{
 border:0px;
 background-image:url(:/actions/rivet30x30L.png);
@@ -250,26 +242,26 @@ background-image:url(:/actions/rivet30x30D.png);
 color:white;
 }</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>1</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="Model2Button" >
-         <property name="minimumSize" >
+        <widget class="QPushButton" name="Model2Button">
+         <property name="minimumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="maximumSize" >
+         <property name="maximumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="styleSheet" >
+         <property name="styleSheet">
           <string>QPushButton{
 border:0px;
 background-image:url(:/actions/rivet30x30L.png);
@@ -281,26 +273,26 @@ background-image:url(:/actions/rivet30x30D.png);
 color:white;
 }</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>2</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="Model3Button" >
-         <property name="minimumSize" >
+        <widget class="QPushButton" name="Model3Button">
+         <property name="minimumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="maximumSize" >
+         <property name="maximumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="styleSheet" >
+         <property name="styleSheet">
           <string>QPushButton{
 border:0px;
 background-image:url(:/actions/rivet30x30L.png);
@@ -312,7 +304,7 @@ background-image:url(:/actions/rivet30x30D.png);
 color:white;
 }</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>3</string>
          </property>
         </widget>
@@ -322,16 +314,16 @@ color:white;
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>0</number>
      </property>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>65</width>
          <height>20</height>
@@ -340,25 +332,25 @@ color:white;
       </spacer>
      </item>
      <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>0</number>
        </property>
        <item>
-        <widget class="QPushButton" name="TopLeftButton" >
-         <property name="minimumSize" >
+        <widget class="QPushButton" name="TopLeftButton">
+         <property name="minimumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="maximumSize" >
+         <property name="maximumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="styleSheet" >
+         <property name="styleSheet">
           <string>QPushButton{
 border:0px;
 background-image:url(:/actions/rivet30x30L.png);
@@ -370,26 +362,26 @@ background-image:url(:/actions/rivet30x30D.png);
 color:white;
 }</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>TL</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="BottomRightButton" >
-         <property name="minimumSize" >
+        <widget class="QPushButton" name="BottomRightButton">
+         <property name="minimumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="maximumSize" >
+         <property name="maximumSize">
           <size>
            <width>30</width>
            <height>30</height>
           </size>
          </property>
-         <property name="styleSheet" >
+         <property name="styleSheet">
           <string>QPushButton{
 border:0px;
 background-image:url(:/actions/rivet30x30L.png);
@@ -401,7 +393,7 @@ background-image:url(:/actions/rivet30x30D.png);
 color:white;
 }</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>BR</string>
          </property>
         </widget>
@@ -409,49 +401,49 @@ color:white;
       </layout>
      </item>
      <item>
-      <widget class="QStackedWidget" name="hsv" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+      <widget class="QStackedWidget" name="hsv">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize" >
+       <property name="minimumSize">
         <size>
          <width>173</width>
          <height>93</height>
         </size>
        </property>
-       <property name="maximumSize" >
+       <property name="maximumSize">
         <size>
          <width>173</width>
          <height>93</height>
         </size>
        </property>
-       <property name="frameShape" >
+       <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
-       <property name="frameShadow" >
+       <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout">
+       <property name="spacing">
         <number>0</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>17</width>
              <height>17</height>
@@ -460,26 +452,26 @@ color:white;
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="UpButton" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <widget class="QPushButton" name="UpButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>30</horstretch>
              <verstretch>30</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize" >
+           <property name="minimumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="styleSheet" >
+           <property name="styleSheet">
             <string>QPushButton{
 border:0px;
 background-image:url(:/actions/arrowUp-30L.png);
@@ -495,32 +487,32 @@ font:bold;
 font-size:12pt;
 }</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string/>
            </property>
-           <property name="iconSize" >
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="autoRepeat" >
+           <property name="autoRepeat">
             <bool>true</bool>
            </property>
-           <property name="autoRepeatDelay" >
+           <property name="autoRepeatDelay">
             <number>300</number>
            </property>
-           <property name="autoRepeatInterval" >
+           <property name="autoRepeatInterval">
             <number>50</number>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>17</width>
              <height>17</height>
@@ -531,31 +523,31 @@ font-size:12pt;
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="LeftButton" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <widget class="QPushButton" name="LeftButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize" >
+           <property name="minimumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="styleSheet" >
+           <property name="styleSheet">
             <string>QPushButton{
 border:0px;
 background-image:url(:/actions/arrowLf-30L.png);
@@ -571,47 +563,47 @@ font:bold;
 font-size:12pt;
 }</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string/>
            </property>
-           <property name="iconSize" >
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="autoRepeat" >
+           <property name="autoRepeat">
             <bool>true</bool>
            </property>
-           <property name="autoRepeatDelay" >
+           <property name="autoRepeatDelay">
             <number>150</number>
            </property>
-           <property name="autoRepeatInterval" >
+           <property name="autoRepeatInterval">
             <number>20</number>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="RightButton" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <widget class="QPushButton" name="RightButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize" >
+           <property name="minimumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="styleSheet" >
+           <property name="styleSheet">
             <string>QPushButton{
 border:0px;
 background-image:url(:/actions/arrowRt-30L.png);
@@ -627,22 +619,22 @@ font:bold;
 font-size:12pt;
 }</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string/>
            </property>
-           <property name="iconSize" >
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="autoRepeat" >
+           <property name="autoRepeat">
             <bool>true</bool>
            </property>
-           <property name="autoRepeatDelay" >
+           <property name="autoRepeatDelay">
             <number>150</number>
            </property>
-           <property name="autoRepeatInterval" >
+           <property name="autoRepeatInterval">
             <number>20</number>
            </property>
           </widget>
@@ -650,16 +642,16 @@ font-size:12pt;
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
+        <layout class="QHBoxLayout">
+         <property name="spacing">
           <number>0</number>
          </property>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
              <height>20</height>
@@ -668,26 +660,26 @@ font-size:12pt;
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="DownButton" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <widget class="QPushButton" name="DownButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize" >
+           <property name="minimumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="maximumSize" >
+           <property name="maximumSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="styleSheet" >
+           <property name="styleSheet">
             <string>QPushButton{
 border:0px;
 background-image:url(:/actions/arrowDn-30L.png);
@@ -703,32 +695,32 @@ font:bold;
 font-size:12pt;
 }</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string/>
            </property>
-           <property name="iconSize" >
+           <property name="iconSize">
             <size>
              <width>30</width>
              <height>30</height>
             </size>
            </property>
-           <property name="autoRepeat" >
+           <property name="autoRepeat">
             <bool>true</bool>
            </property>
-           <property name="autoRepeatDelay" >
+           <property name="autoRepeatDelay">
             <number>300</number>
            </property>
-           <property name="autoRepeatInterval" >
+           <property name="autoRepeatInterval">
             <number>50</number>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
              <height>20</height>
@@ -745,7 +737,7 @@ font-size:12pt;
   </layout>
  </widget>
  <resources>
-  <include location="../rc/images.qrc" />
+  <include location="../rc/images.qrc"/>
  </resources>
  <connections/>
 </ui>
