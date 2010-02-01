@@ -50,14 +50,14 @@ static int cbob_analog_release(struct inode *inode, struct file *file)
 static ssize_t cbob_analog_read(struct file *file, char *buf, size_t count, loff_t *ppos) 
 {
   struct analog_port *analog = file->private_data;
-  short data[8] = {0,0,0,0,0,0,0,0};
+  short data[9] = {0,0,0,0,0,0,0,0, 0};
   int error;
   
-  if((error = cbob_spi_message(CBOB_CMD_ANALOG_READ, &(analog->port), 1, data, 8)) < 0)
+  if((error = cbob_spi_message(CBOB_CMD_ANALOG_READ, &(analog->port), 1, data, 9)) < 0)
     return error;
   
-  if(count > 16)
-    count = 16; 
+  if(count > 18)
+    count = 18; 
   
   copy_to_user(buf, (char*)&data, count);
   

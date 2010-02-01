@@ -133,6 +133,7 @@ static void ChumbyHandleCmd(short cmd, short *data, short length)
 			}
 			else if(data[0] == 8) {
 				g_ChumbyData[1] = BattVoltage();
+				outcount = 1;
 			}
 			else {
 				for(outcount = 1;outcount <= 8;outcount++) {
