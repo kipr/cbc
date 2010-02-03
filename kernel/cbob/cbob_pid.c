@@ -88,7 +88,7 @@ static int cbob_pid_ioctl(struct inode *inode, struct file *file, unsigned int i
 {
 	struct pid_port *pid = file->private_data;
 	short request[8];
-        short result[8];
+  short result[8];
 	int error, arg;
 	
 	switch(ioctl_num) {
@@ -117,12 +117,12 @@ static int cbob_pid_ioctl(struct inode *inode, struct file *file, unsigned int i
 			request[1] = pid->port;
 			if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 2, result, 6)) < 0)
 				return error;
-                        copy_to_user((void*)ioctl_param, result, 14);
+      copy_to_user((void*)ioctl_param, result, 14);
 			break;
 		case CBOB_PID_GET_DONE:
 			request[0] = 4;
-                        request[1] = pid->port;
-                        if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 2, result, 1)) < 0)
+      request[1] = pid->port;
+      if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 2, result, 1)) < 0)
 				return error;
 			arg = result[0];
 			copy_to_user((void*)ioctl_param, &arg, sizeof(int));
@@ -138,6 +138,18 @@ static int cbob_pid_ioctl(struct inode *inode, struct file *file, unsigned int i
 		  if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 1, 0, 0)) < 0)
 				return error;
 			break;
+    case CBOB_PID_GET_CAL:
+      request[0] = 7;
+      if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 1, result, 4)) < 0)
+        return error;
+      copy_to_user((void*)ioctl_param, result, sizeof(short)*4);
+      break;
+    case CBOB_PID_SET_CAL:
+      request[0] = 8;
+      copy_from_user(&(request[1]), (void*)ioctl_param, sizeof(short)*4);
+      if((error = cbob_spi_message(CBOB_CMD_PID_CONFIG, request, 5, 0, 0)) < 0);
+        return error;
+      break;
 	}
   return 0;
 }

@@ -121,6 +121,20 @@ void CbobData::accelerometerRecalibrate()
     close(accel);
 }
 
+void CbobData::accelerometerGetCal(short *calibration)
+{
+    int accel = open("/dev/cbc/accel", O_RDWR);
+    ioctl(accel, CBOB_ACCEL_GET_CAL, calibration);
+    close(accel);
+}
+
+void CbobData::accelerometerSetCal(short *calibration)
+{
+    int accel = open("/dev/cbc/accel", O_RDWR);
+    ioctl(accel, CBOB_ACCEL_SET_CAL, calibration);
+    close(accel);
+}
+
 float CbobData::batteryVoltage()
 { 
     static float trigger = 6.5;
@@ -157,6 +171,17 @@ void CbobData::motorsRecalibrate()
     //qWarning("motors recal");
     ioctl(m_allPID, CBOB_PID_RECALIBRATE);
 }
+
+void CbobData::motorsSetCal(short *calibration)
+{
+    ioctl(m_allPID, CBOB_PID_SET_CAL, calibration);
+}
+
+void CbobData::motorsGetCal(short *calibration)
+{
+    ioctl(m_allPID, CBOB_PID_GET_CAL, calibration);
+}
+
 void CbobData::motorGains(int motor,int *gains)
 {
     short data[6];

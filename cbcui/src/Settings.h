@@ -38,6 +38,12 @@ public slots:
     void resetPID();
     void setCameraDefault();
     void on_ui_consoleShowBox_clicked(bool checked = true);
+
+    void storePidCal();
+    void loadPidCal();
+
+    void storeAccelCal();
+    void loadAccelCal();
 };
 
 #endif

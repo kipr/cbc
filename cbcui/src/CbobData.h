@@ -42,6 +42,8 @@ public:
     int accelerometerY();
     int accelerometerZ();
     void accelerometerRecalibrate();
+    void accelerometerSetCal(short *calibration);
+    void accelerometerGetCal(short *calibration);
     int analogPullups();
 
     float batteryVoltage();
@@ -51,6 +53,8 @@ public:
     int motorVelocity(int motor);
     int motorPWM(int motor);
     void motorsRecalibrate();
+    void motorsGetCal(short *calibration);
+    void motorsSetCal(short *calibration);
 
     void motorGains(int motor,int *gains);
     void motorSetGains(int motor,int *gains);
