@@ -59,49 +59,88 @@
    
 */
 
+// Copyright(c) KIPR, 2010
+// Update of wait_for_light function for the CBC2
+//    (uses print in place on the CBC and analog10 to match simulator)
+// History: ported and modified 1/27/2010 - cnw
+//          replaced tone loops with beep loops 1/30/2010 - cnw
+
+int __wfl_keep_beeping=1;//global used as semaphore between processes so kill process not needed
+void beeper1();
+
 void wait_for_light(int light_port_)
 {
-	int l_on_, l_off_, l_mid_, t, good=0;
-	
-	/* print statements may look funny but are spaced for LCD*/
-	while(!good){
-		printf ("Cal. with sensoron port #%d\n", light_port_);
-		sleep(2.);
-		
-		printf("Cal: press Left when light on\n");
-		while(!left_button());
-		l_on_=analog(light_port_); /*sensor value when light is on*/
-		beep();
-		
-		printf("Cal: light on   value is=%d\n", l_on_);
-		sleep(1.);
-		beep();
-		
-		printf("Cal: press Right when light off\n");
-		while(!right_button());
-		l_off_=analog(light_port_); /*sensor value when light is off*/
-		beep();
-		
-		printf("Cal: light off  value is=%d\n", l_off_);
-		sleep(1.);
-		beep();
-		
-		if((l_off_-l_on_)>=15){ /*bright = small values */
-			l_mid_=(l_on_+l_off_)/2;
-			printf("Good CalibrationDiff=%d Waiting\n",(l_off_-l_on_));
-			good=1;
-			while(analog(light_port_)>l_mid_);
-		}
-		else{
-			if(l_off_<128){
-				printf("Bad Calibration Add Shielding!!\n");
-			}
-			else{
-				printf("Bad Calibration Aim sensor!!\n");
-			}
-		}
-	}
+        int l_on_, l_off_, l_mid_, t, OK=0;
+        int p; // temp until tone is implemented
+        float s;
+
+        while (!OK) {
+                cbc_display_clear();
+                cbc_printf (0,0,"CALIBRATE: sensor port #%d", light_port_);
+                sleep(1.); beep(); sleep(1.);
+
+                cbc_printf(0,1,"  press <-- when light on");
+                while(!left_button()){/*sensor value when light is on*/
+                        cbc_printf(0,2,"  value is %d, bright = low   ",l_on_=analog10 (light_port_));
+                        msleep(50);
+                }
+                beep();
+
+                cbc_printf(0,1,"  light on value is = %d        ", l_on_);
+                sleep(1.);
+                beep();
+
+                cbc_printf(0,2,"  press --> when light off             ");
+                while(!right_button()){	/*sensor value when light is off*/
+                        cbc_printf(0,3,"   value is %d, dark = high   ",l_off_=analog10 (light_port_));
+                        msleep(50);
+                }
+                beep();
+
+                cbc_printf(0,2,"  light off value is = %d         ", l_off_);
+                sleep(1.);
+                beep();
+
+                cbc_printf(0,3,"                              ");
+
+                if((l_off_-l_on_)>=120){ /*bright = small values */
+                        OK=1;
+                        l_mid_=(l_on_+l_off_)/2;
+                        cbc_printf(0,4,"Good Calibration!");
+                        cbc_printf(0,6,"Diff = %d:  WAITING",l_off_-l_on_);
+                        p=start_process(beeper1);
+                        while(analog10(light_port_)>l_mid_){
+                                cbc_printf(0,7,"Value = %d; Threshold = %d   ",analog10(light_port_),l_mid_);
+                                msleep(25);
+                        }
+                        cbc_printf(0,6,"Going!                      ");
+                        cbc_printf(0,7,"Value = %d; Threshold = %d   ",analog10(light_port_),l_mid_);
+                        //kill_process(p); //works on cbc
+                        __wfl_keep_beeping=0;//avoids kill process which has problems on Mac
+                }
+                else{
+                        s=seconds();
+                        cbc_printf(0,6,"BAD CALIBRATION");
+                        if(l_off_<512){
+                                cbc_printf(0,7,"   Add Shielding!!");
+                                for(t=0; t<4; t++) {beep(); sleep(.2); beep(); sleep(0.4);}
+                                beep();
+                        }
+                        else{
+                                cbc_printf(0,7,"   Aim sensor!!");
+                                for(t=0; t<4; t++) {beep(); sleep(.2); beep(); sleep(0.4);}
+                                beep();
+                        }
+                }
+        }
 }
+
+void beeper1()
+{
+        while(__wfl_keep_beeping)
+        {sleep(1); beep();}
+}
+
 
 //  
 //  Function:  shut_down_in(float: delay)

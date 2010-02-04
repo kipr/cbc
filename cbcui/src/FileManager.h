@@ -38,7 +38,7 @@ public:
     bool isUSBMounted();
     
 public slots:
-    void on_ui_directoryBrowser_clicked(const QModelIndex &index);
+    void on_ui_directoryBrowser_entered(const QModelIndex &index);
     void on_ui_mountButton_clicked();
     void on_ui_unmountButton_clicked();
     void on_ui_compileButton_clicked();

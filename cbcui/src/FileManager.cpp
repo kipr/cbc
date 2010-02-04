@@ -51,10 +51,9 @@ bool FileManager::isUSBMounted()
     return info.exists();
 }
 
-void FileManager::on_ui_directoryBrowser_clicked(const QModelIndex&)
+void FileManager::on_ui_directoryBrowser_entered(const QModelIndex &index)
 {
-    
-    if(m_dir.isDir(ui_directoryBrowser->currentIndex())) {
+    if(m_dir.isDir(index)) {
         ui_compileButton->hide();
         ui_openButton->show();
     }
