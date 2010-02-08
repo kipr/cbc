@@ -33,8 +33,7 @@
 #include "MicrodiaCamera.h"
 #include "Pixel565toHSV.h"
 
-Vision::Vision() :
-        m_colorTracker(Vision::NUM_CHANNELS)
+Vision::Vision() : m_colorTracker(Vision::NUM_CHANNELS)
 {
     ctassert(sizeof(Pixel565) == 2);
     ctassert(sizeof(ushort) == 2);
@@ -61,7 +60,8 @@ Vision::Vision() :
         }
         sc->loadSimulatedImage(simulatedImage);
         m_camera = sc;
-    } else {
+    }
+    else {
 #ifdef HAS_MICRODIA_CAMERA
         m_camera = new MicrodiaCamera();
 #else
@@ -73,6 +73,7 @@ Vision::Vision() :
 
     ctassert(m_camera);
     m_camera->addFrameHandler(&m_colorTracker);
+    m_camera->addFrameHandler(&m_rawCameraView);
     m_camera->requestContinuousFrames();
 }
 

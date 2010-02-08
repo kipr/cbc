@@ -61,13 +61,19 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_8">
      <property name="spacing">
-      <number>3</number>
+      <number>0</number>
      </property>
      <property name="leftMargin">
       <number>10</number>
      </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
      <property name="rightMargin">
       <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
      </property>
      <item>
       <widget class="QPushButton" name="ui_visionSettingLfButton">
@@ -107,71 +113,199 @@ font-size:12pt;
      <item>
       <widget class="QStackedWidget" name="ui_paramStack">
        <property name="currentIndex">
-        <number>1</number>
+        <number>5</number>
        </property>
-       <widget class="QWidget" name="ui_brightContrSharpPage">
-        <layout class="QVBoxLayout" name="verticalLayout_5">
+       <widget class="QWidget" name="ui_brightnessPage">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <property name="margin">
+          <number>9</number>
+         </property>
          <item>
-          <layout class="QGridLayout" name="gridLayout_3">
-           <item row="0" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
             <widget class="QLabel" name="label">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
              <property name="text">
               <string>Brightness</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item>
+            <widget class="QLineEdit" name="ui_brightnessLineEdit">
+             <property name="maximumSize">
+              <size>
+               <width>80</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::RightToLeft</enum>
+             </property>
+             <property name="text">
+              <string>127</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QSlider" name="ui_brightnessSlider">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+           <property name="pageStep">
+            <number>25</number>
+           </property>
+           <property name="value">
+            <number>127</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="ui_contrastPage">
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
             <widget class="QLabel" name="label_2">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
              <property name="text">
               <string>Contrast</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item>
+            <widget class="QLineEdit" name="ui_contrastLineEdit">
+             <property name="maximumSize">
+              <size>
+               <width>80</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::RightToLeft</enum>
+             </property>
+             <property name="text">
+              <string>127</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QSlider" name="ui_contrastSlider">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+           <property name="pageStep">
+            <number>25</number>
+           </property>
+           <property name="value">
+            <number>127</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="ui_sharpnessPage">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
             <widget class="QLabel" name="label_3">
              <property name="text">
               <string>Sharpness</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="ui_brightnessLineEdit">
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::RightToLeft</enum>
-             </property>
-             <property name="text">
-              <string>100</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="ui_contrastLineEdit">
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::RightToLeft</enum>
-             </property>
-             <property name="text">
-              <string>100</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
+           <item>
             <widget class="QLineEdit" name="ui_sharpnessLineEdit">
              <property name="maximumSize">
               <size>
-               <width>100</width>
-               <height>16777215</height>
+               <width>80</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::RightToLeft</enum>
+             </property>
+             <property name="text">
+              <string>31</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QSlider" name="ui_sharpnessSlider">
+           <property name="maximum">
+            <number>63</number>
+           </property>
+           <property name="value">
+            <number>31</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="ui_gammaPage">
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <item>
+            <widget class="QLabel" name="label_6">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Gamma</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="ui_gammaLineEdit">
+             <property name="maximumSize">
+              <size>
+               <width>80</width>
+               <height>20</height>
               </size>
              </property>
              <property name="layoutDirection">
@@ -183,6 +317,22 @@ font-size:12pt;
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QSlider" name="ui_gammaSlider">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+           <property name="pageStep">
+            <number>25</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -199,10 +349,7 @@ font-size:12pt;
            <property name="topMargin">
             <number>3</number>
            </property>
-           <property name="horizontalSpacing">
-            <number>0</number>
-           </property>
-           <property name="verticalSpacing">
+           <property name="spacing">
             <number>4</number>
            </property>
            <item row="0" column="0">
@@ -222,7 +369,7 @@ font-size:12pt;
             <widget class="QLineEdit" name="ui_redBalLineEdit">
              <property name="maximumSize">
               <size>
-               <width>80</width>
+               <width>35</width>
                <height>20</height>
               </size>
              </property>
@@ -230,7 +377,7 @@ font-size:12pt;
               <enum>Qt::RightToLeft</enum>
              </property>
              <property name="text">
-              <string>30</string>
+              <string>31</string>
              </property>
             </widget>
            </item>
@@ -251,7 +398,7 @@ font-size:12pt;
             <widget class="QLineEdit" name="ui_blueBalLineEdit">
              <property name="maximumSize">
               <size>
-               <width>80</width>
+               <width>35</width>
                <height>20</height>
               </size>
              </property>
@@ -259,40 +406,11 @@ font-size:12pt;
               <enum>Qt::RightToLeft</enum>
              </property>
              <property name="text">
-              <string>30</string>
+              <string>31</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Gamma</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="ui_gammaLineEdit">
-             <property name="maximumSize">
-              <size>
-               <width>80</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::RightToLeft</enum>
-             </property>
-             <property name="text">
-              <string>30</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0" colspan="2">
+           <item row="3" column="0" colspan="3">
             <widget class="QCheckBox" name="ui_autoWhiteBalCheckBox">
              <property name="maximumSize">
               <size>
@@ -308,6 +426,95 @@ font-size:12pt;
              </property>
             </widget>
            </item>
+           <item row="1" column="2">
+            <widget class="QSlider" name="ui_blueBalSlider">
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="maximum">
+              <number>127</number>
+             </property>
+             <property name="value">
+              <number>31</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QSlider" name="ui_redBalSlider">
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="maximum">
+              <number>127</number>
+             </property>
+             <property name="value">
+              <number>31</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="ui_defaultPage">
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Reset Camera Parameters</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_10">
+           <item>
+            <widget class="QPushButton" name="ui_defaultButton">
+             <property name="minimumSize">
+              <size>
+               <width>95</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>95</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton{
+border:0px;
+background-image:url(:/actions/rivet95x30L.png);
+color:black;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet95x30D.png);
+color:white;
+font-size:12pt;
+}</string>
+             </property>
+             <property name="text">
+              <string>Default</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -318,6 +525,12 @@ font-size:12pt;
           <layout class="QHBoxLayout" name="horizontalLayout_6">
            <item>
             <widget class="QLabel" name="label_7">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
              <property name="text">
               <string>Exposure</string>
              </property>
@@ -328,7 +541,7 @@ font-size:12pt;
              <property name="maximumSize">
               <size>
                <width>80</width>
-               <height>16777215</height>
+               <height>20</height>
               </size>
              </property>
              <property name="layoutDirection">
@@ -340,6 +553,46 @@ font-size:12pt;
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QSlider" name="ui_exposureSlider">
+           <property name="maximumSize">
+            <size>
+             <width>300</width>
+             <height>15</height>
+            </size>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="pageStep">
+            <number>25</number>
+           </property>
+           <property name="value">
+            <number>1</number>
+           </property>
+           <property name="sliderPosition">
+            <number>1</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::NoTicks</enum>
+           </property>
+           <property name="tickInterval">
+            <number>10000</number>
+           </property>
+          </widget>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -358,6 +611,12 @@ font-size:12pt;
            </item>
            <item>
             <widget class="QCheckBox" name="ui_autoExposureCheckBox">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
              <property name="text">
               <string>Auto Exposure</string>
              </property>

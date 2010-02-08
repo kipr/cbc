@@ -109,7 +109,7 @@ std::string VisionTracking::modelSaveFile() const {
 
 bool VisionTracking::loadModels()
 {
-        //qWarning(modelSaveFile().c_str());
+        qWarning(modelSaveFile().c_str());
   bool ret=m_ColorTracker->loadModels(modelSaveFile().c_str());
   updateModel();
   return ret;
@@ -117,7 +117,7 @@ bool VisionTracking::loadModels()
 
 bool VisionTracking::saveModels()
 {
-    //qWarning(modelSaveFile().c_str());
+    qWarning(modelSaveFile().c_str());
   return m_ColorTracker->saveModels(modelSaveFile().c_str());
 }
 

@@ -51,6 +51,7 @@ public:
   void shareResults(const char *filename);
   void stopSharingResults();
   static void test();
+
 protected:
   void updateSharedResults(int frameTime);
   void testImage(const char *filename, int nblobs_expected);

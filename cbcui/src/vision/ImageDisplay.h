@@ -35,6 +35,7 @@ public:
   QImage m_QImage;
   Image m_Image;
   void loadImage(const Image &image);
+
 protected:
   void updateImages();
   virtual void paintEvent(QPaintEvent *);

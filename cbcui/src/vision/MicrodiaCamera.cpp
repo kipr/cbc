@@ -48,7 +48,7 @@ MicrodiaCamera::MicrodiaCamera()
   system("rmmod videodev");
   system("rmmod microdia");
   system("insmod /mnt/usb/videodev.ko");
-  sprintf(buf, "insmod /mnt/usb/microdia.ko max_urbs=20 exposure=100");
+  sprintf(buf, "insmod /mnt/usb/microdia.ko max_urbs=20 exposure=256");
   system(buf);
 
   sleep(1);
@@ -88,7 +88,7 @@ bool MicrodiaCamera::openCamera()
   int fd = open("/dev/video0", O_RDWR);
   
   if (fd < 0) {
-    //perror("open /dev/video0");
+    perror("open /dev/video0");
     return false;
   }
   
@@ -118,7 +118,7 @@ bool MicrodiaCamera::openCamera()
 
   this->readSettings();
   // print out the settings their locations, values, names, and max value
-  this->checkSettings();
+  //this->checkSettings();
 
   return true;
 }
@@ -243,6 +243,7 @@ int MicrodiaCamera::setParameter(enum cam_parms id, int value)
         perror("VIDIOC_S_CTRL error");
         return 1;
     }
+    this->writeSetting(id,value);
     return 0;
 }
 
@@ -278,17 +279,71 @@ void MicrodiaCamera::readSettings()
         this->setParameter(RED_BALANCE, m_settings.value("RedBalance",31).toInt());
         this->setParameter(BLUE_BALANCE, m_settings.value("BlueBalance",31).toInt());
         this->setParameter(GAMMA, m_settings.value("Gamma",13107).toInt());
-        this->setParameter(EXPOSURE, m_settings.value("Exposure",100).toInt());
+        this->setParameter(EXPOSURE, m_settings.value("Exposure",256).toInt());
         this->setParameter(H_FLIP, m_settings.value("H_flip",false).toInt());
         this->setParameter(V_FLIP, m_settings.value("V_flip",false).toInt());
         this->setParameter(SHARPNESS, m_settings.value("Sharpness",31).toInt());
         this->setParameter(AUTO_EXPOSURE, m_settings.value("AutoExposure",true).toInt());
         m_settings.endGroup();
+        m_settings.sync();
+        ::system("sync");
+        ::system("sync");
 }
 
-int MicrodiaCamera::setDefaultParams()
+void MicrodiaCamera::setDefaultParams()
 {
     QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    // remove all camera settings from settings file
     m_settings.remove("Camera");
+    // reset all to default values because the settings are not there
     this->readSettings();
+}
+
+void MicrodiaCamera::writeSetting(enum cam_parms id, int value)
+{
+    QString name;
+
+    switch(id){
+    case BRIGHTNESS:
+        name = "Brightness";
+        break;
+    case CONTRAST:
+        name = "Contrast";
+        break;
+    case AUTO_WHITE_BALANCE:
+        name = "AutoBalance";
+        break;
+    case RED_BALANCE:
+        name = "RedBalance";
+        break;
+    case BLUE_BALANCE:
+        name = "BlueBalance";
+        break;
+    case GAMMA:
+        name = "Gamma";
+        break;
+    case EXPOSURE:
+        name = "Exposure";
+        break;
+    case H_FLIP:
+        name = "H_flip";
+        break;
+    case V_FLIP:
+        name = "V_flip";
+        break;
+    case SHARPNESS:
+        name = "Sharpness";
+        break;
+    case AUTO_EXPOSURE:
+        name = "AutoExposure";
+        break;
+    }
+
+    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    m_settings.beginGroup("Camera");
+    m_settings.setValue(name,value);
+    m_settings.endGroup();
+    m_settings.sync();
+    ::system("sync");
+    ::system("sync");
 }

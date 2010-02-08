@@ -105,22 +105,27 @@ font-size:12pt;
          <height>30</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
        <property name="styleSheet">
-        <string>QPushButton{
+        <string notr="true">QPushButton{
 border:0px;
 background-image:url(:/actions/rivet95x30L.png);
 color:black;
-font-size:12pt;
+font-size:9pt;
 }
 QPushButton:pressed{
 border:0px;
 background-image:url(:/actions/rivet95x30D.png);
 color:white;
-font-size:12pt;
 }</string>
        </property>
        <property name="text">
-        <string>Parameters</string>
+        <string>Camera
+Parameters</string>
        </property>
       </widget>
      </item>

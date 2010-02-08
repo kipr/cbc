@@ -23,10 +23,10 @@
 VisionSelect::VisionSelect(QWidget *parent) :
         Page(parent),
         m_tracking(parent, &m_vision.m_colorTracker),
-        m_setting(parent, m_vision.m_camera,&m_vision.m_colorTracker)
+        m_setting(parent, m_vision.m_camera,&m_vision.m_rawCameraView)
 {
     setupUi(this);
-    
+
     QObject::connect(ui_trackingButton, SIGNAL(clicked()), &m_tracking, SLOT(raisePage()));
     QObject::connect(ui_settingButton, SIGNAL(clicked()), &m_setting, SLOT(raisePage()));
 }

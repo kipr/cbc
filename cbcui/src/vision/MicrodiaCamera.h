@@ -50,8 +50,10 @@ public:
   virtual void stopFrames();
   int setParameter(enum cam_parms id, int value);
   int getParameter(enum cam_parms id);
-  int setDefaultParams();
   void backgroundLoop();
+
+public slots:
+  void setDefaultParams();
 
 protected:
   bool openCamera();
@@ -64,6 +66,7 @@ protected:
   MicrodiaCameraThread m_thread;
   void checkSettings();
   void readSettings();
+  void writeSetting(enum cam_parms id, int value);
 
 };
 

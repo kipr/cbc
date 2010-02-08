@@ -25,7 +25,7 @@
 #include "Page.h"
 #include <QSettings>
 
-#include "vision/ColorTracker.h"
+#include "vision/RawView.h"
 #include "vision/Camera.h"
 #include "vision/ImageDisplay.h"
 
@@ -34,17 +34,16 @@ class VisionSettings : public Page, private Ui::VisionSettings
     Q_OBJECT
 
 public:
-    VisionSettings(QWidget *parent = 0, Camera *camera = 0, ColorTracker *tracker = 0);
+    VisionSettings(QWidget *parent = 0, Camera *camera = 0, RawView *rview = 0);
     ~VisionSettings();
 
     ImageDisplay *m_ImageDisplay;
     virtual void showEvent(QShowEvent *event);
-    bool saveSettings();
     bool loadSettings();
 
 protected:
     Camera  *m_camera;
-    ColorTracker *m_tracking;
+    RawView *m_rawview;
 
 public slots:
     void on_ui_visionSettingRtButton_clicked();
@@ -52,19 +51,29 @@ public slots:
     void show();
     void hide();
 
-
     void on_ui_autoWhiteBalCheckBox_stateChanged(int state);
     void on_ui_redBalLineEdit_selectionChanged();
+    void on_ui_redBalSlider_valueChanged(int value);
     void on_ui_blueBalLineEdit_selectionChanged();
+    void on_ui_blueBalSlider_valueChanged(int value);
+
     void on_ui_gammaLineEdit_selectionChanged();
+    void on_ui_gammaSlider_valueChanged(int value);
 
     void on_ui_exposureLineEdit_selectionChanged();
+    void on_ui_exposureSlider_valueChanged(int value);
     void on_ui_autoExposureCheckBox_stateChanged(int state);
 
     void on_ui_brightnessLineEdit_selectionChanged();
-    void on_ui_contrastLineEdit_selectionChanged();
-    void on_ui_sharpnessLineEdit_selectionChanged();
+    void on_ui_brightnessSlider_valueChanged(int value);
 
+    void on_ui_contrastLineEdit_selectionChanged();
+    void on_ui_contrastSlider_valueChanged(int value);
+
+    void on_ui_sharpnessLineEdit_selectionChanged();
+    void on_ui_sharpnessSlider_valueChanged(int value);
+
+    void on_ui_defaultButton_clicked();
 };
 
 #endif

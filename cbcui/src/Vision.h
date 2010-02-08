@@ -22,6 +22,7 @@
 #define INCLUDE_Vision_h
 
 #include "ColorTracker.h"
+#include "RawView.h"
 #include "Camera.h"
 
 class Vision {
@@ -29,6 +30,7 @@ public:
     Vision();
     enum {NUM_CHANNELS=4};
     ColorTracker m_colorTracker;
+    RawView m_rawCameraView;
     Camera *m_camera;
 };
 

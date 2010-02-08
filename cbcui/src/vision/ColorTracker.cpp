@@ -49,24 +49,27 @@ ColorTracker::~ColorTracker()
   stopSharingResults();
 }
   
-void ColorTracker::setModel(uint8 channel, const HSVRange &range) {
+void ColorTracker::setModel(uint8 channel, const HSVRange &range)
+{
   m_lut.setModel(channel, range);
 }
 
-HSVRange ColorTracker::getModel(uint8 channel) const {
+HSVRange ColorTracker::getModel(uint8 channel) const
+{
   return m_lut.getModel(channel);
 }
 
-bool ColorTracker::loadModels(const char *filename) {
+bool ColorTracker::loadModels(const char *filename)
+{
   ifstream in(filename);
   for (unsigned ch = 0; ch < m_assemblers.size(); ch++) {
     if (in.good()) {
-      printf("Loaded channel model %d from %s\n", ch, filename);
+      //printf("Loaded channel model %d from %s\n", ch, filename);
       HSVRange model(HSV(330, 127, 127), HSV(30, 255, 255));
       in >> model.h.min >> model.h.max >> model.s.min >> model.v.min;
       setModel(ch, model);
     } else {
-      printf("Couldn't load channel model %d from %s\n", ch, filename);
+      //printf("Couldn't load channel model %d from %s\n", ch, filename);
       return false;
     }
   }
@@ -75,7 +78,7 @@ bool ColorTracker::loadModels(const char *filename) {
 
 bool ColorTracker::saveModels(const char *filename) {
   ofstream out(filename);
-  printf("Saving models to %s\n", filename);
+  //printf("Saving models to %s\n", filename);
   for (unsigned ch = 0; ch < m_assemblers.size(); ch++) {
     HSVRange model = getModel(ch);
     out << model.h.min << " " << model.h.max << " "
@@ -115,16 +118,25 @@ void ColorTracker::processFrame(const Image &image) {
   if (display) display->copy_from(image);
     
   for (unsigned ch = 0; ch < m_assemblers.size(); ch++) {
-    bool displayMatches =
-      (ch == m_displayModel) && (m_displayMode == DisplayMatches || m_displayMode == DisplayBlobs);
+    bool displayMatches = (ch == m_displayModel) && (m_displayMode == DisplayMatches || m_displayMode == DisplayBlobs);
 
-    assembleBlobs(image, *m_assemblers[ch], ch,
+    assembleBlobs(image,
+                  *m_assemblers[ch],
+                  ch,
                   displayMatches ? display : NULL);
 
-    if (display && (ch == m_displayModel) && (m_displayMode == DisplayBlobs)) {
+    if (display &&
+        (ch == m_displayModel) &&
+        (m_displayMode == DisplayBlobs))
+    {
       int minArea = 15;
-      DrawBlobs::draw(*display, *m_assemblers[ch],
-                      minArea, false, false, false, false);
+      DrawBlobs::draw(*display,
+                      *m_assemblers[ch],
+                      minArea,
+                      false,
+                      false,
+                      false,
+                      false);
     }
   }
   if (display) m_displayImage->update();
@@ -135,13 +147,16 @@ void ColorTracker::processFrame(const Image &image) {
   m_lastFrameTime = thisFrameTime;
 }
 
-void ColorTracker::shareResults(const char *filename) {
+void ColorTracker::shareResults(const char *filename)
+{
   stopSharingResults();
   m_sharedResults = new SharedMem<TrackingResults>(filename);
 }
 
-void ColorTracker::stopSharingResults() {
-  if (m_sharedResults) {
+void ColorTracker::stopSharingResults()
+{
+  if (m_sharedResults)
+  {
     delete m_sharedResults;
     m_sharedResults = NULL;
   }
@@ -158,44 +173,46 @@ void ColorTracker::updateSharedResults(int frameTime)
 
   for (newResults.n_channels = 0;
        newResults.n_channels < TRACKING_MAX_CHANNELS &&
-         newResults.n_channels < (int)m_assemblers.size();
-       newResults.n_channels++) {
-    ChannelResults &cr = newResults.channels[newResults.n_channels];
+       newResults.n_channels < (int)m_assemblers.size();
+  newResults.n_channels++)
+  {
+      ChannelResults &cr = newResults.channels[newResults.n_channels];
 
-    std::vector<Blob*> &sortedBlobs = m_assemblers[newResults.n_channels]->getSortedBlobs();
+      std::vector<Blob*> &sortedBlobs = m_assemblers[newResults.n_channels]->getSortedBlobs();
       
-    for (cr.n_blobs=0;
-         cr.n_blobs < CHANNEL_MAX_BLOBS &&
+      for (cr.n_blobs=0;
+           cr.n_blobs < CHANNEL_MAX_BLOBS &&
            cr.n_blobs < (int)sortedBlobs.size();
-         cr.n_blobs++) {
-      BlobResults &br = cr.blobs[cr.n_blobs];
-      Blob *b=sortedBlobs[cr.n_blobs];
-      MomentStats stats;
-      b->moments.GetStats(stats);
+      cr.n_blobs++)
+      {
+          BlobResults &br = cr.blobs[cr.n_blobs];
+          Blob *b=sortedBlobs[cr.n_blobs];
+          MomentStats stats;
+          b->moments.GetStats(stats);
 
-      br.area = b->moments.area;
-      // centroid location
-      br.x = stats.centroidX;
-      br.y = stats.centroidY;
-      // TODO:
-      // confidence, 0-100
-      int bbox_area = (b->right - b->left + 1) * (b->bottom - b->top + 1);
-      br.confidence = 100. * br.area / bbox_area;
-      // TODO: this asserts sometimes, so there's a bug.
-      //ctassert(0 <= br.confidence && br.confidence <= 100);
-      br.bbox_left   = b->left;
-      br.bbox_top    = b->top;
-      br.bbox_right  = b->right;
-      br.bbox_bottom = b->bottom;
+          br.area = b->moments.area;
+          // centroid location
+          br.x = stats.centroidX;
+          br.y = stats.centroidY;
+          // TODO:
+          // confidence, 0-100
+          int bbox_area = (b->right - b->left + 1) * (b->bottom - b->top + 1);
+          br.confidence = 100. * br.area / bbox_area;
+          // TODO: this asserts sometimes, so there's a bug.
+          //ctassert(0 <= br.confidence && br.confidence <= 100);
+          br.bbox_left   = b->left;
+          br.bbox_top    = b->top;
+          br.bbox_right  = b->right;
+          br.bbox_bottom = b->bottom;
 
-      // angle in radians of the major axis of the blob.
-      // Zero is horizontal and when the left end is higher than the right end the angle will be positive.
-      // The range is -PI/2 to +PI/2.
-      br.angle = stats.angle;
-      // sizes, in pixels, of major and minor axes
-      br.major_axis = stats.majorDiameter;
-      br.minor_axis = stats.minorDiameter;
-    }
+          // angle in radians of the major axis of the blob.
+          // Zero is horizontal and when the left end is higher than the right end the angle will be positive.
+          // The range is -PI/2 to +PI/2.
+          br.angle = stats.angle;
+          // sizes, in pixels, of major and minor axes
+          br.major_axis = stats.majorDiameter;
+          br.minor_axis = stats.minorDiameter;
+      }
   }
   m_sharedResults->write(newResults);
 }

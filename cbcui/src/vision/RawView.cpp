@@ -18,54 +18,26 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#ifndef INCLUDE_Camera_h
-#define INCLUDE_Camera_h
+#include "RawView.h"
 
-// class Camera:  Base class for cameras
-//  Inherited by SimulatedCamera and (soon) a class for capturing images from the real camera
+RawView::RawView()
+  : m_displayImage(NULL)
+{
+}
 
-// Local inclues
-#include "FrameHandler.h"
+RawView::~RawView()
+{
+}
 
-enum cam_parms{
-    BRIGHTNESS = 0,
-    CONTRAST = 1,
-    AUTO_WHITE_BALANCE = 12,
-    RED_BALANCE = 14,
-    BLUE_BALANCE = 15,
-    GAMMA = 16,
-    EXPOSURE = 17,
-    H_FLIP = 20,
-    V_FLIP = 21,
-    SHARPNESS = 25,
-    AUTO_EXPOSURE = 26
-};
+void RawView::processFrame(const Image &image)
+{
+    check_heap();
+    Image *display = m_displayImage ? &m_displayImage->m_Image : NULL;
 
-class Camera {
-public:
-  Camera(unsigned width, unsigned height) :
-          m_width(width),
-          m_height(height){}
-
-  virtual void requestOneFrame() = 0;
-  virtual void requestContinuousFrames() = 0;
-  virtual void stopFrames() = 0;
-  virtual int setParameter(enum cam_parms id, int value){ return 0; }
-  virtual int getParameter(enum cam_parms id){ return 0; }
-
-public slots:
-  virtual void setDefaultParams(){}
-
-  // Add a handler to call at end of frame
-  void addFrameHandler(FrameHandler *frameHandler);
-  unsigned width() const { return m_width; }
-  unsigned height() const { return m_height; }
-  virtual ~Camera() {}
-
-protected:
-  unsigned m_width, m_height;
-  void callFrameHandlers(const Image &image);
-  std::vector<FrameHandler*> m_frameHandlers;
-};
-  
-#endif
+    if(display)
+    {
+        display->copy_from(image);
+        m_displayImage->update();
+        check_heap();
+    }
+}
