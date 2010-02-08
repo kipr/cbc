@@ -32,7 +32,6 @@
 #include "SimulatedCamera.h"
 #include "MicrodiaCamera.h"
 #include "Pixel565toHSV.h"
-#include "ColorTracker.h"
 
 Vision::Vision() :
         m_colorTracker(Vision::NUM_CHANNELS)
@@ -52,7 +51,6 @@ Vision::Vision() :
 #endif
 
     if (use_simulated_camera) {
-        printf("Using simulated camera\n");
         SimulatedCamera *sc = new SimulatedCamera(160, 120);
         //Image simulatedImage(120, 160);
         //simulatedImage.loadRaw("/mnt/usb/crashframe.raw");
@@ -65,7 +63,6 @@ Vision::Vision() :
         m_camera = sc;
     } else {
 #ifdef HAS_MICRODIA_CAMERA
-        printf("Using Microdia camera\n");
         m_camera = new MicrodiaCamera();
 #else
         ctassert(0);

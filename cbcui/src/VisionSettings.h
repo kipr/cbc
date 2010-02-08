@@ -23,14 +23,47 @@
 
 #include "ui_VisionSettings.h"
 #include "Page.h"
+#include <QSettings>
+
+#include "vision/ColorTracker.h"
+#include "vision/Camera.h"
+#include "vision/ImageDisplay.h"
 
 class VisionSettings : public Page, private Ui::VisionSettings
 {
     Q_OBJECT
 
 public:
-    VisionSettings(QWidget *parent = 0);
+    VisionSettings(QWidget *parent = 0, Camera *camera = 0, ColorTracker *tracker = 0);
     ~VisionSettings();
+
+    ImageDisplay *m_ImageDisplay;
+    virtual void showEvent(QShowEvent *event);
+    bool saveSettings();
+    bool loadSettings();
+
+protected:
+    Camera  *m_camera;
+    ColorTracker *m_tracking;
+
+public slots:
+    void on_ui_visionSettingRtButton_clicked();
+    void on_ui_visionSettingLfButton_clicked();
+    void show();
+    void hide();
+
+
+    void on_ui_autoWhiteBalCheckBox_stateChanged(int state);
+    void on_ui_redBalLineEdit_selectionChanged();
+    void on_ui_blueBalLineEdit_selectionChanged();
+    void on_ui_gammaLineEdit_selectionChanged();
+
+    void on_ui_exposureLineEdit_selectionChanged();
+    void on_ui_autoExposureCheckBox_stateChanged(int state);
+
+    void on_ui_brightnessLineEdit_selectionChanged();
+    void on_ui_contrastLineEdit_selectionChanged();
+    void on_ui_sharpnessLineEdit_selectionChanged();
 
 };
 

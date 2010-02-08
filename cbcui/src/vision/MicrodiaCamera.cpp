@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/videodev2.h>
+#include <QSettings>
 
 // Local includes
 #include "ctdebug.h"
@@ -41,16 +42,13 @@ MicrodiaCamera::MicrodiaCamera()
     m_fd(-1),
     m_thread(*this)
 {
-  printf("Constructing MicrodiaCamera\n");
-  system("mknod /dev/video0 c 81 0");
-  system("insmod /mnt/usb/videodev.ko");
-  system("rmmod microdia");
+    char buf[100];
 
-  int exposure=1000;
-  char buf[100];
-  printf("Using exposure %d\n", exposure);
-  sprintf(buf, "insmod /mnt/usb/microdia.ko max_urbs=20 exposure=%d",
-          exposure);
+  system("mknod /dev/video0 c 81 0");
+  system("rmmod videodev");
+  system("rmmod microdia");
+  system("insmod /mnt/usb/videodev.ko");
+  sprintf(buf, "insmod /mnt/usb/microdia.ko max_urbs=20 exposure=100");
   system(buf);
 
   sleep(1);
@@ -86,9 +84,7 @@ bool MicrodiaCamera::openCamera()
   if (m_fd >= 0) {
     close(m_fd);
     m_fd = -1;
-  }
-  //printf("MicrodiaCamera::openCamera\n");
-      
+  }      
   int fd = open("/dev/video0", O_RDWR);
   
   if (fd < 0) {
@@ -103,7 +99,9 @@ bool MicrodiaCamera::openCamera()
     perror("ioctl(VIDIOC_QUERYCAP)");
     return false;
   }
-  
+  // print out the capabilities of the camera: read/write/streaming/video capture
+  //qWarning("%s",qPrintable(QString("capabilities = %1").arg(cap.capabilities,0,16)));
+
   struct v4l2_format fmt;
   memset(&fmt, 0, sizeof(fmt));
   
@@ -118,7 +116,10 @@ bool MicrodiaCamera::openCamera()
     return false;
   }
 
-  printf("Camera device opened successfully\n");
+  this->readSettings();
+  // print out the settings their locations, values, names, and max value
+  this->checkSettings();
+
   return true;
 }
 
@@ -155,12 +156,11 @@ void MicrodiaCamera::backgroundLoop()
       } else {
         consecutive_readerrs=0;
       }
-      if (m_exit) goto done;
 
       if (!m_processOneFrame && !m_processContinuousFrames) continue;
-      if (len != buffer_size) {
-        printf("Error reading from camera:  expected %d bytes, got %d bytes\n", buffer_size, len);
-      } else {
+      if (len != buffer_size) printf("Error reading from camera:  expected %d bytes, got %d bytes\n", buffer_size, len);
+      else
+      {
         check_heap();
         m_processOneFrame = false;
         //printf("Got frame from camera, len=%d\n", len);
@@ -181,3 +181,114 @@ void MicrodiaCamera::backgroundLoop()
 }
 
 
+void MicrodiaCamera::checkSettings()
+{
+    struct v4l2_control controls;
+    struct v4l2_queryctrl queryctrl;
+    struct v4l2_querymenu querymenu;
+
+    memset (&queryctrl, 0, sizeof (queryctrl));
+
+    for (queryctrl.id = V4L2_CID_BASE;
+         queryctrl.id < V4L2_CID_LASTP1;
+         queryctrl.id++) {
+        if (0 == ioctl (m_fd, VIDIOC_QUERYCTRL, &queryctrl)) {
+            //if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+              //  continue;
+            qWarning("Control %s", qPrintable(QString("id %1 min %2 max %3").arg(queryctrl.id,0,16).arg(queryctrl.minimum).arg(queryctrl.maximum)));
+
+            controls.id = queryctrl.id;
+            if(0==ioctl(m_fd,VIDIOC_G_CTRL, &controls))
+                qWarning("\t%s %s",queryctrl.name-3,qPrintable(QString("value %1").arg(controls.value)));
+        }
+    }
+
+    for (queryctrl.id = V4L2_CID_PRIVATE_BASE;
+         queryctrl.id < 24+V4L2_CID_PRIVATE_BASE;
+         queryctrl.id++) {
+        if (0 == ioctl (m_fd, VIDIOC_QUERYCTRL, &queryctrl)) {
+            //if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
+              //  continue;
+
+            qWarning("PrivCtrl %s", qPrintable(QString("id %1 min %2 max %3").arg(queryctrl.id,0,16).arg(queryctrl.minimum).arg(queryctrl.maximum)));
+
+            controls.id = queryctrl.id;
+            if(0==ioctl(m_fd,VIDIOC_G_CTRL, &controls))
+                qWarning("\t%s %s",queryctrl.name-3,qPrintable(QString("value %1").arg(controls.value)));
+
+        }
+    }
+
+    for(controls.id=V4L2_CID_BASE;controls.id<24+V4L2_CID_BASE;controls.id++){
+
+    }
+}
+
+int MicrodiaCamera::setParameter(enum cam_parms id, int value)
+{
+    struct v4l2_control ctrlParam;
+
+    if(id <= 24)
+        ctrlParam.id = id + V4L2_CID_BASE;
+    else if(id == 25)
+        ctrlParam.id = V4L2_CID_PRIVATE_BASE;
+    else if(id == 26)
+        ctrlParam.id = 1+V4L2_CID_PRIVATE_BASE;
+    else return 0;
+
+    ctrlParam.value = value;
+    //qWarning("set %s", qPrintable(QString("id %1 value %2").arg(ctrlParam.id,0,16).arg(ctrlParam.value)));
+
+    if(0 != ioctl(m_fd, VIDIOC_S_CTRL, &ctrlParam)){
+        perror("VIDIOC_S_CTRL error");
+        return 1;
+    }
+    return 0;
+}
+
+int MicrodiaCamera::getParameter(enum cam_parms id)
+{
+    struct v4l2_control ctrlParam;
+
+    if(id <= 24)
+        ctrlParam.id = id + V4L2_CID_BASE;
+    else if(id == 25)
+        ctrlParam.id = V4L2_CID_PRIVATE_BASE;
+    else if(id == 26)
+        ctrlParam.id = 1+V4L2_CID_PRIVATE_BASE;
+    else return 0;
+
+    if(0 != ioctl(m_fd, VIDIOC_G_CTRL, &ctrlParam)) perror("VIDIOC_G_CTRL error");
+    //qWarning("get %s", qPrintable(QString("id %1 value %2").arg(ctrlParam.id,0,16).arg(ctrlParam.value)));
+    return ctrlParam.value;
+}
+
+void MicrodiaCamera::readSettings()
+{
+    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+
+    //qWarning("%s",qPrintable(m_settings.fileName()));
+    // reads in the Camera settings that have been saved to memory
+    // if no settings file is located the defaults are input
+    // write each of the saved settings to the Camera
+        m_settings.beginGroup(QString("Camera"));
+        this->setParameter(BRIGHTNESS,m_settings.value("Brightness",32767).toInt());
+        this->setParameter(CONTRAST,m_settings.value("Contrast",32767).toInt());
+        this->setParameter(AUTO_WHITE_BALANCE, m_settings.value("AutoBalance",true).toInt());
+        this->setParameter(RED_BALANCE, m_settings.value("RedBalance",31).toInt());
+        this->setParameter(BLUE_BALANCE, m_settings.value("BlueBalance",31).toInt());
+        this->setParameter(GAMMA, m_settings.value("Gamma",13107).toInt());
+        this->setParameter(EXPOSURE, m_settings.value("Exposure",100).toInt());
+        this->setParameter(H_FLIP, m_settings.value("H_flip",false).toInt());
+        this->setParameter(V_FLIP, m_settings.value("V_flip",false).toInt());
+        this->setParameter(SHARPNESS, m_settings.value("Sharpness",31).toInt());
+        this->setParameter(AUTO_EXPOSURE, m_settings.value("AutoExposure",true).toInt());
+        m_settings.endGroup();
+}
+
+int MicrodiaCamera::setDefaultParams()
+{
+    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    m_settings.remove("Camera");
+    this->readSettings();
+}

@@ -38,7 +38,7 @@ void ImageDisplay::loadImage(const Image &src)
 
 void ImageDisplay::updateImages()
 {
-  printf("ImageDisplay::updateImages(): %d x %d\n", width(), height());
+  //printf("ImageDisplay::updateImages(): %d x %d\n", width(), height());
   m_QImage = QImage(width(), height(), QImage::Format_RGB16);
   m_Image = Image::wrapQImage(m_QImage);
 }

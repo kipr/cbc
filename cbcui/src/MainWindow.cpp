@@ -30,11 +30,11 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent), m_mainMenu(0)
     setupUi(this);
 
     setWindowState(windowState() | Qt::WindowFullScreen);
-    
+
     m_mainMenu = new MainMenu(ui_widget);
-    
+
     m_mainMenu->raisePage();
-    
+
     QObject::connect(ui_runstopButton, SIGNAL(clicked()), UserProgram::instance(), SLOT(toggleState()));
     QObject::connect(CbobData::instance(), SIGNAL(refresh()), this, SLOT(updateBatteryDisplay()));
     QObject::connect(CbobData::instance(), SIGNAL(lowBattery(float)), this, SLOT(batteryWarning(float)));
@@ -42,8 +42,9 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent), m_mainMenu(0)
     QObject::connect(UserProgram::instance(), SIGNAL(stateChange(int)), this, SLOT(userProgramStateChange(int)));
     
     updateBatteryDisplay();
+
     CbobData::instance()->resetPullups();
-    
+
     userProgramStateChange(0);
 }
 

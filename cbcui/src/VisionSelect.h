@@ -24,6 +24,7 @@
 #include "ui_VisionSelect.h"
 #include "Page.h"
 
+#include "VisionSettings.h"
 #include "VisionTracking.h"
 #include "Vision.h"
 
@@ -38,7 +39,7 @@ public:
 private:
    Vision m_vision;
    VisionTracking m_tracking;
-
+   VisionSettings m_setting;
 };
 
 #endif

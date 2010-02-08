@@ -26,7 +26,7 @@
 // Qt
 #include <QWidget>
 #include <QThread>
-
+#include <linux/videodev2.h>
 // Local includes
 #include "Camera.h"
 
@@ -48,7 +48,11 @@ public:
   virtual void requestOneFrame();
   virtual void requestContinuousFrames();
   virtual void stopFrames();
+  int setParameter(enum cam_parms id, int value);
+  int getParameter(enum cam_parms id);
+  int setDefaultParams();
   void backgroundLoop();
+
 protected:
   bool openCamera();
   // volatile since we're modifying and accessing from more than one thread
@@ -58,6 +62,9 @@ protected:
   bool m_exit;
   int  m_fd;
   MicrodiaCameraThread m_thread;
+  void checkSettings();
+  void readSettings();
+
 };
 
   

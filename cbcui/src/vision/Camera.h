@@ -27,12 +27,33 @@
 // Local inclues
 #include "FrameHandler.h"
 
+enum cam_parms{
+    BRIGHTNESS = 0,
+    CONTRAST = 1,
+    AUTO_WHITE_BALANCE = 12,
+    RED_BALANCE = 14,
+    BLUE_BALANCE = 15,
+    GAMMA = 16,
+    EXPOSURE = 17,
+    H_FLIP = 20,
+    V_FLIP = 21,
+    SHARPNESS = 25,
+    AUTO_EXPOSURE = 26
+};
+
 class Camera {
 public:
-  Camera(unsigned width, unsigned height) : m_width(width), m_height(height) {}
+  Camera(unsigned width, unsigned height) :
+          m_width(width),
+          m_height(height){}
+
   virtual void requestOneFrame() = 0;
   virtual void requestContinuousFrames() = 0;
   virtual void stopFrames() = 0;
+  virtual int setParameter(enum cam_parms id, int value){ return 0; }
+  virtual int getParameter(enum cam_parms id){ return 0; }
+  virtual int setDefaultParams(){ return 0; }
+
   // Add a handler to call at end of frame
   void addFrameHandler(FrameHandler *frameHandler);
   unsigned width() const { return m_width; }
@@ -42,6 +63,7 @@ protected:
   unsigned m_width, m_height;
   void callFrameHandlers(const Image &image);
   std::vector<FrameHandler*> m_frameHandlers;
+
 };
   
 #endif
