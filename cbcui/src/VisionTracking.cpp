@@ -22,167 +22,129 @@
 
 VisionTracking::VisionTracking(QWidget *parent, ColorTracker *colorTracker) : Page(parent), m_ColorTracker(colorTracker)
 {
-  setupUi(this);
-  
-  m_ImageDisplay = new ImageDisplay();
-  image->addWidget(m_ImageDisplay);
+    setupUi(this);
 
-  m_HSVRangeDisplay = new HSVRangeDisplay();
-  hsv->addWidget(m_HSVRangeDisplay);
+    m_ImageDisplay = new ImageDisplay();
+    image->addWidget(m_ImageDisplay);
 
-  //qWarning("setting display model 0");
-  displayModel(0);
-  
- // qWarning("setting up model buttons");
+    m_HSVRangeDisplay = new HSVRangeDisplay();
+    hsv->addWidget(m_HSVRangeDisplay);
 
-  Model0Button->setCheckable(true);
-  Model1Button->setCheckable(true);
-  Model2Button->setCheckable(true);
-  Model3Button->setCheckable(true);
+    //qWarning("setting display model 0");
+    displayModel(0);
 
-  m_modelGroup.addButton(Model0Button);
-  m_modelGroup.addButton(Model1Button);
-  m_modelGroup.addButton(Model2Button);
-  m_modelGroup.addButton(Model3Button);
-  Model0Button->click();
-  
-  //qWarning("Setting up track button");
-  RawButton->setCheckable(true);
-  MatchButton->setCheckable(true);
-  TrackButton->setCheckable(true);
-  m_modeGroup.addButton(RawButton);
-  m_modeGroup.addButton(MatchButton);
-  m_modeGroup.addButton(TrackButton);
-  TrackButton->click();
-  
+    // qWarning("setting up model buttons");
 
-  //qWarning("setting up other buttons");
-  TopLeftButton->setCheckable(true);
-  BottomRightButton->setCheckable(true);
-  m_tlbrGroup.addButton(TopLeftButton);
-  m_tlbrGroup.addButton(BottomRightButton);
-  TopLeftButton->click();
-  
-  //qWarning("loading models");
+    Model0Button->setCheckable(true);
+    Model1Button->setCheckable(true);
+    Model2Button->setCheckable(true);
+    Model3Button->setCheckable(true);
 
-  if (!this->loadModels()) {
-    this->loadDefaultModels();
-  }
+    m_modelGroup.addButton(Model0Button);
+    m_modelGroup.addButton(Model1Button);
+    m_modelGroup.addButton(Model2Button);
+    m_modelGroup.addButton(Model3Button);
+    Model0Button->click();
+
+    //qWarning("Setting up track button");
+    RawButton->setCheckable(true);
+    MatchButton->setCheckable(true);
+    TrackButton->setCheckable(true);
+    m_modeGroup.addButton(RawButton);
+    m_modeGroup.addButton(MatchButton);
+    m_modeGroup.addButton(TrackButton);
+    TrackButton->click();
+
+
+    //qWarning("setting up other buttons");
+    TopLeftButton->setCheckable(true);
+    BottomRightButton->setCheckable(true);
+    m_tlbrGroup.addButton(TopLeftButton);
+    m_tlbrGroup.addButton(BottomRightButton);
+    TopLeftButton->click();
+
 }
 
 VisionTracking::~VisionTracking()
 {
 }
 
-void VisionTracking::show() {
-    if(!this->loadModels())
-        this->loadDefaultModels();
+void VisionTracking::show()
+{
+    m_ColorTracker->loadModels();
+    this->updateModel();
     Page::show();
 }
-void VisionTracking::hide() {
-  saveModels();
-  Page::hide();
+void VisionTracking::hide()
+{
+    m_ColorTracker->saveModels();
+    Page::hide();
 }
 
-void VisionTracking::setModel(const HSVRange &model) {
-  m_ColorTracker->setModel(m_ColorTracker->getDisplayModel(), model);
-  updateModel();
+void VisionTracking::setModel(const HSVRange &model)
+{
+    m_ColorTracker->setModel(m_ColorTracker->getDisplayModel(), model);
+    updateModel();
 }
 
 void VisionTracking::updateModel()
 {
-  m_HSVRangeDisplay->setRange(getModel());
+    HSVRange model = getModel();
+    m_HSVRangeDisplay->setRange(model);
+    HSVLabel->setText(QString("(%1,%2,\n  %3,%4)").arg(model.h.min).arg(model.h.max).arg(model.s.min).arg(model.v.min));
 }
 
-void VisionTracking::displayModel(int ch) {
-  m_ColorTracker->setDisplayModel(ch);
-  updateModel();
-}
-
-std::string VisionTracking::modelSaveFile() const {
-#ifdef QT_ARCH_ARM  
-  return "/mnt/user/vision/track_colors";
-#else
-  return QDir::homePath().toStdString() + "/track_colors";
-#endif
-}
-
-bool VisionTracking::loadModels()
+void VisionTracking::displayModel(int ch)
 {
-        qWarning(modelSaveFile().c_str());
-  bool ret=m_ColorTracker->loadModels(modelSaveFile().c_str());
-  updateModel();
-  return ret;
-}
-
-bool VisionTracking::saveModels()
-{
-    qWarning(modelSaveFile().c_str());
-  return m_ColorTracker->saveModels(modelSaveFile().c_str());
-}
-
-void VisionTracking::loadDefaultModels()
-{
-  HSVRange redTraining(HSV(330, 127, 127), HSV(30, 255, 255));
-  m_ColorTracker->setModel(0, redTraining);
-  
-  HSVRange yellowTraining(HSV(30, 127, 127), HSV(90, 255, 255));
-  m_ColorTracker->setModel(1, yellowTraining);
-
-  HSVRange greenTraining(HSV(90, 127, 127), HSV(150, 255, 255));
-  m_ColorTracker->setModel(2, greenTraining);
-
-  HSVRange blueTraining(HSV(210, 127, 127), HSV(270, 255, 255));
-  m_ColorTracker->setModel(3, blueTraining);
-
-  updateModel();
+    m_ColorTracker->setDisplayModel(ch);
+    updateModel();
 }
 
 template <class T>
-static void tweak(T &val, int delta, int min, int max)
+        static void tweak(T &val, int delta, int min, int max)
 {
-  int newval = val + delta;
-  if (newval < min) newval = min;
-  if (newval > max) newval = max;
-  val = (T) newval;
+    int newval = val + delta;
+    if (newval < min) newval = min;
+    if (newval > max) newval = max;
+    val = (T) newval;
 }
 
 void VisionTracking::moveHorizontally(int dx) {
-  HSVRange model(getModel());
-  if (m_tl) tweak(model.s.min,  dx, 0, 255);
-  else      tweak(model.v.min, -dx, 0, 255);
-  setModel(model);
+    HSVRange model(getModel());
+    if (m_tl) tweak(model.s.min,  dx, 0, 255);
+    else      tweak(model.v.min, -dx, 0, 255);
+    setModel(model);
 }
 
 template <class T>
-static void mod360_tweak(T &val, int delta)
+        static void mod360_tweak(T &val, int delta)
 {
-  int newval = val + 360 + delta;
-  val = (T) (newval % 360);
+    int newval = val + 360 + delta;
+    val = (T) (newval % 360);
 }
 
 void VisionTracking::moveVertically(int dy) {
-  HSVRange model(getModel());
-  HSVRange oldModel(model);
-  int min_hue_range = 5;
-  int max_hue_range = 120;
+    HSVRange model(getModel());
+    HSVRange oldModel(model);
+    int min_hue_range = 5;
+    int max_hue_range = 120;
 
-  mod360_tweak(m_tl ? model.h.min : model.h.max, dy);
-  int new_range = (model.h.max + 360 - model.h.min) % 360;
-  if (new_range < min_hue_range || new_range > max_hue_range) {
-    // If we made the hue range too much or too little, revert and move
-    // both bounds
-    model = oldModel;
-    mod360_tweak(model.h.min, dy);
-    mod360_tweak(model.h.max, dy);
-  }
-  setModel(model);
+    mod360_tweak(m_tl ? model.h.min : model.h.max, dy);
+    int new_range = (model.h.max + 360 - model.h.min) % 360;
+    if (new_range < min_hue_range || new_range > max_hue_range) {
+        // If we made the hue range too much or too little, revert and move
+        // both bounds
+        model = oldModel;
+        mod360_tweak(model.h.min, dy);
+        mod360_tweak(model.h.max, dy);
+    }
+    setModel(model);
 }
 
 void VisionTracking::showEvent(QShowEvent *) {
-  if (m_ColorTracker) m_ColorTracker->setImageDisplay(m_ImageDisplay);
+    if (m_ColorTracker) m_ColorTracker->setImageDisplay(m_ImageDisplay);
 #ifdef QT_ARCH_ARM
-  setWindowState(windowState() | Qt::WindowFullScreen);
+    setWindowState(windowState() | Qt::WindowFullScreen);
 #endif
 }
 
@@ -216,12 +178,12 @@ void VisionTracking::on_RawButton_clicked() {
     MatchButton->setChecked(false);
     TrackButton->setChecked(false);
 }
- void VisionTracking::on_MatchButton_clicked() {
+void VisionTracking::on_MatchButton_clicked() {
     m_ColorTracker->setDisplayMode(ColorTracker::DisplayMatches);
     RawButton->setChecked(false);
     TrackButton->setChecked(false);
 }
-  void VisionTracking::on_TrackButton_clicked() {
+void VisionTracking::on_TrackButton_clicked() {
     m_ColorTracker->setDisplayMode(ColorTracker::DisplayBlobs);
     RawButton->setChecked(false);
     MatchButton->setChecked(false);
@@ -232,6 +194,6 @@ void VisionTracking::on_TopLeftButton_clicked() {
     BottomRightButton->setChecked(false);
 }
 void VisionTracking::on_BottomRightButton_clicked() {
-      m_tl = false;
-      TopLeftButton->setChecked(false);
+    m_tl = false;
+    TopLeftButton->setChecked(false);
 }

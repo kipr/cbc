@@ -90,14 +90,14 @@ std::string AdjustColorWidget::modelSaveFile() const {
 
 bool AdjustColorWidget::loadModels()
 {
-  bool ret=m_ColorTracker->loadModels(modelSaveFile().c_str());
+  bool ret=m_ColorTracker->loadModels();
   updateModel();
   return ret;
 }
 
 bool AdjustColorWidget::saveModels()
 {
-  return m_ColorTracker->saveModels(modelSaveFile().c_str());
+  return m_ColorTracker->saveModels();
 }
 
 void AdjustColorWidget::loadDefaultModels()

@@ -40,13 +40,22 @@ ColorTracker::ColorTracker(int nmodels)
     m_frameNumber(0),
     m_lastFrameTime(0)
 {
-  for (int i = 0; i < nmodels; i++) m_assemblers.push_back(new BlobAssembler());
+    this->loadModels();
+    for (int i = 0; i < nmodels; i++) m_assemblers.push_back(new BlobAssembler());
 }
 
 ColorTracker::~ColorTracker()
 {
   for (unsigned i = 0; i < m_assemblers.size(); i++) delete m_assemblers[i];
   stopSharingResults();
+}
+
+std::string ColorTracker::modelSaveFile() const {
+#ifdef QT_ARCH_ARM
+  return "/mnt/user/vision/track_colors";
+#else
+  return QDir::homePath().toStdString() + "/track_colors";
+#endif
 }
   
 void ColorTracker::setModel(uint8 channel, const HSVRange &range)
@@ -59,26 +68,27 @@ HSVRange ColorTracker::getModel(uint8 channel) const
   return m_lut.getModel(channel);
 }
 
-bool ColorTracker::loadModels(const char *filename)
+bool ColorTracker::loadModels()
 {
-  ifstream in(filename);
+  ifstream in(this->modelSaveFile().c_str());
   for (unsigned ch = 0; ch < m_assemblers.size(); ch++) {
     if (in.good()) {
-      //printf("Loaded channel model %d from %s\n", ch, filename);
+      //printf("Loaded channel model %d from %s\n", ch, m_HSVmodelFile);
       HSVRange model(HSV(330, 127, 127), HSV(30, 255, 255));
       in >> model.h.min >> model.h.max >> model.s.min >> model.v.min;
       setModel(ch, model);
     } else {
-      //printf("Couldn't load channel model %d from %s\n", ch, filename);
-      return false;
+      //qWarning("loading default models @ %s",this->modelSaveFile().c_str());
+        this->loadDefaultModels();
     }
   }
   return true;
 }
 
-bool ColorTracker::saveModels(const char *filename) {
-  ofstream out(filename);
-  //printf("Saving models to %s\n", filename);
+bool ColorTracker::saveModels()
+{
+  ofstream out(this->modelSaveFile().c_str());
+  //printf("Saving models to %s\n", m_HSVmodelFile);
   for (unsigned ch = 0; ch < m_assemblers.size(); ch++) {
     HSVRange model = getModel(ch);
     out << model.h.min << " " << model.h.max << " "
@@ -97,6 +107,23 @@ bool ColorTracker::saveModels(const char *filename) {
   return out.good();
 }
 
+void ColorTracker::loadDefaultModels()
+{
+    HSVRange redTraining(HSV(330, 127, 127), HSV(30, 255, 255));
+    this->setModel(0,redTraining);
+
+    HSVRange yellowTraining(HSV(30, 127, 127), HSV(90, 255, 255));
+    this->setModel(1,yellowTraining);
+
+    HSVRange greenTraining(HSV(90, 127, 127), HSV(150, 255, 255));
+    this->setModel(2,greenTraining);
+
+    HSVRange blueTraining(HSV(210, 127, 127), HSV(270, 255, 255));
+    this->setModel(3,blueTraining);
+    
+    this->saveModels();
+}
+
 // time, in milliseconds
 static int mtime()
 {
@@ -105,14 +132,13 @@ static int mtime()
   return tv.tv_usec / 1000 + tv.tv_sec * 1000;
 }
 
-void ColorTracker::processFrame(const Image &image) {
+void ColorTracker::processFrame(const Image &image)
+{
   int thisFrameTime= mtime();
   m_frameNumber++;
   //printf("ColorTracker::processFrame begin\n");
   check_heap();
-//  FILE *out = fopen("/mnt/usb/frame.raw","w");
-//  fwrite(image.scanLine(0), 160*120*2, 1, out);
-//  fclose(out);
+
   Image *display = m_displayImage ? &m_displayImage->m_Image : NULL;
 
   if (display) display->copy_from(image);

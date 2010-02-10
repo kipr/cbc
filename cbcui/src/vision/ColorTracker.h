@@ -41,8 +41,9 @@ public:
   virtual void processFrame(const Image &image);
   void setModel(uint8 channel, const HSVRange &range);
   HSVRange getModel(uint8 channel) const;
-  bool loadModels(const char *filename);
-  bool saveModels(const char *filename);
+  bool loadModels();
+  bool saveModels();
+  void loadDefaultModels();
   
   void setDisplayModel(int model) { m_displayModel = model; }
   void setDisplayMode(DisplayMode mode) { m_displayMode = mode; }
@@ -57,6 +58,8 @@ protected:
   void testImage(const char *filename, int nblobs_expected);
   std::vector<BlobAssembler*> m_assemblers;
 
+  std::string modelSaveFile() const;
+
   // For viewing images and tracking
   DisplayMode m_displayMode;
   unsigned int m_displayModel; // model # to display (0-based)
@@ -69,6 +72,7 @@ protected:
   void assembleBlobs(const Image &in, BlobAssembler &bass,
                      uint8 model, Image *out);
   HSVRangeLUT m_lut;
+  char m_HSVmodelFile[];
 };
   
 #endif

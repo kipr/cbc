@@ -34,14 +34,9 @@ Q_OBJECT
 public:
   VisionTracking(QWidget *parent = 0, ColorTracker *colorTracker = 0);
   ~VisionTracking();
-  //AdjustColorWidget(QWidget *parent, ColorTracker *colorTracker);
   ImageDisplay *m_ImageDisplay;
   HSVRangeDisplay *m_HSVRangeDisplay;
   virtual void showEvent(QShowEvent *event);
-  bool saveModels();
-  bool loadModels();
-  void loadDefaultModels();
-  //virtual void closeEvent(QCloseEvent *event);
 
 protected:
   //Ui::AdjustColorWidget ui;
@@ -57,7 +52,6 @@ protected:
   void displayModel(int ch);
   void moveHorizontally(int dx);
   void moveVertically(int dy);
-  std::string modelSaveFile() const;
   
 public slots:
   void show();

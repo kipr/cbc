@@ -172,7 +172,24 @@ int track_minor_axis(int ch, int i)
   return (int)(tracklib_results_snapshot.channels[ch].blobs[i].minor_axis);
 }
 
+void track_set_model_hsv(int ch, int h_min, int h_max, int s_min, int v_min)
+{
+    if (!channel_in_bounds(ch)) return;
+    tracklib_results_snapshot.channels[ch].hsv_model[0] = h_min;
+    tracklib_results_snapshot.channels[ch].hsv_model[1] = h_max;
+    tracklib_results_snapshot.channels[ch].hsv_model[2] = s_min;
+    tracklib_results_snapshot.channels[ch].hsv_model[3] = v_min;
+    shared_mem_write(tracklib_sm_results, &tracklib_results_snapshot, sizeof(tracklib_results_snapshot));
+}
 
+void track_get_model_hsv(int ch, int *h_min, int *h_max, int *s_min, int *v_min)
+{
+    if (!channel_in_bounds(ch)) return;
+    *h_min = tracklib_results_snapshot.channels[ch].hsv_model[0];
+    *h_max = tracklib_results_snapshot.channels[ch].hsv_model[1];
+    *s_min = tracklib_results_snapshot.channels[ch].hsv_model[2];
+    *v_min = tracklib_results_snapshot.channels[ch].hsv_model[3];
+}
 
 
 

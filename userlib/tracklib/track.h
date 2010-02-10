@@ -97,7 +97,12 @@ int track_capture_time();
 // quickly than frames were captured and thus skipped one or more frame captures
 int track_previous_capture_time();
 
-  
+// Sets the HSV color model to the bounding box defined by the arguments
+void track_set_model_hsv(int ch, int h_min, int h_max, int s_min, int v_min);
+
+// Gets the HSV values for the corresponding color model channel
+void track_get_model_hsv(int ch, int *h_min, int *h_max, int *s_min, int *v_min);
+
 #ifdef __cplusplus
 }
 #endif

@@ -53,7 +53,7 @@ void HSVRangeDisplay::updateImage()
 {
   m_width = width();
   m_height = height();
-  printf("HSVRangeDisplay::updateImage(): %d x %d\n", m_width, m_height);
+  //printf("HSVRangeDisplay::updateImage(): %d x %d\n", m_width, m_height);
   m_image = QImage(m_width, m_height, QImage::Format_RGB16);
   if (!m_width || !m_height) return;
                    

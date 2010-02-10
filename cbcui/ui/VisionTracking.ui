@@ -319,39 +319,56 @@ color:white;
       <number>0</number>
      </property>
      <item>
-      <spacer>
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>65</width>
+         <width>40</width>
          <height>20</height>
         </size>
        </property>
       </spacer>
      </item>
      <item>
-      <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QPushButton" name="TopLeftButton">
-         <property name="minimumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string>QPushButton{
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>50</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QVBoxLayout">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="TopLeftButton">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string>QPushButton{
 border:0px;
 background-image:url(:/actions/rivet30x30L.png);
 color:black;
@@ -361,40 +378,60 @@ border:0px;
 background-image:url(:/actions/rivet30x30D.png);
 color:white;
 }</string>
-         </property>
-         <property name="text">
-          <string>TL</string>
-         </property>
-        </widget>
+             </property>
+             <property name="text">
+              <string>TL</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="BottomRightButton">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet30x30L.png);
+color:black;
+}
+QPushButton:checked{
+border:0px;
+background-image:url(:/actions/rivet30x30D.png);
+color:white;
+}</string>
+             </property>
+             <property name="text">
+              <string>BR</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="BottomRightButton">
-         <property name="minimumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
+        <widget class="QLabel" name="HSVLabel">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
          </property>
          <property name="styleSheet">
-          <string>QPushButton{
-border:0px;
-background-image:url(:/actions/rivet30x30L.png);
-color:black;
-}
-QPushButton:checked{
-border:0px;
-background-image:url(:/actions/rivet30x30D.png);
-color:white;
-}</string>
+          <string notr="true">color:white;</string>
          </property>
          <property name="text">
-          <string>BR</string>
+          <string>(300,127,
+    255,255)</string>
          </property>
         </widget>
        </item>
@@ -736,8 +773,6 @@ font-size:12pt;
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../rc/images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
