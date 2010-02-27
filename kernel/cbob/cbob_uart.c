@@ -29,6 +29,7 @@ static int  cbob_uart_open(struct tty_struct *tty, struct file *filp);
 static void cbob_uart_close(struct tty_struct *tty, struct file *filp);
 static int  cbob_uart_write(struct tty_struct *tty, const unsigned char *buf, int count);
 static int  cbob_uart_write_room(struct tty_struct *tty);
+static int cbob_uart_chars_in_buffer(struct tty_struct *tty);
 static void do_close(struct cbob_uart *uart);
 
 irqreturn_t cbob_uart_handler(int irq, void *data, struct pt_regs *regs);
@@ -41,7 +42,8 @@ static struct tty_operations cbob_uart_ops = {
   open:       cbob_uart_open,
   close:      cbob_uart_close,
   write:      cbob_uart_write,
-  write_room: cbob_uart_write_room
+  write_room: cbob_uart_write_room,
+  chars_in_buffer: cbob_uart_chars_in_buffer
 };
 
 struct cbob_uart *cbob_uarts[CBOB_UART_MINORS];
@@ -174,6 +176,11 @@ void cbob_uart_fetch_data(void *arg) {
 		tty_insert_flip_string(tty, (void*)&(data[1]), data[0]);
 		tty_flip_buffer_push(tty);
 	}
+}
+
+static int cbob_uart_chars_in_buffer(struct tty_struct *tty)
+{
+  return 0; 
 }
 
 /* init and exit */
