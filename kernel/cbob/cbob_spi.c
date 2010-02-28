@@ -175,7 +175,8 @@ int cbob_spi_message(short cmd, short *outbuf, short outcount, short *inbuf, sho
   cbob_spi_wait();
   
   for(i = 0;i < replycount;i++) {
-    if(incount--) {
+    if(incount > 0) {
+      incount--;
       inbuf[i] = spi_exchange_data(0);
     }
     else spi_exchange_data(0);
