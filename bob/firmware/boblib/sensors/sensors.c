@@ -23,6 +23,7 @@ const Pin twiPortPins[] = {PIN_TWID,PIN_TWICK};
 char g_AnalogPullups = 0;
 short g_AnalogPullupMask = 0;
 char g_DigitalPullups = 0;
+short g_DigitalConfigMask = 0;
 volatile int g_AnalogReading[8];
 volatile int g_BatteryCounter = 0;
 volatile int g_BatteryVoltage[40];
@@ -191,7 +192,6 @@ int Digital(int port)
 {
 	if(port < 0 || port > 8)
 	  return 0;
-	
 	return !PIO_Get(&(digitalIns[port]));
 }
 
@@ -218,6 +218,12 @@ void DigitalOut(int port, int state)
 		PIO_Clear(&(digitalOuts[port]));
 }
 
+void DigitalOutState(int mask)
+{
+	int i;
+	for(i=0;i<8;i++)
+		if(g_DigitalConfigMask & (1<<i)) DigitalOut(i,mask&(1<<i));
+}
 // state = 1 pin is HIGH
 // state = 0 pin is LOW
 void ADigitalOut(int port, int state)
@@ -239,25 +245,29 @@ void DigitalConfig(int port, int dir)
 		return;
 	
 	if(dir){
+		g_DigitalConfigMask |= (1<<port);
 		PIO_Configure(&(digitalOuts[port]),1);
 		DigitalPullup(port,0); // disable pullup
 	}
 	else{
+		g_DigitalConfigMask &= ~(1<<port);
 		PIO_Configure(&(digitalIns[port]),1);
 		DigitalPullup(port,1); // enable pullup
 	}
 }
 
+void SetDigitalConfig(short mask)
+{
+	int i;
+	
+	for(i = 0;i < 8;i++) DigitalConfig(i, mask&(1<<i));
+}
+
 // returns 1 if the port is an output
 // returns 0 if the port is an input
-// returns -1 if port is out of range
-int GetDigitalConfig(int port)
+short GetDigitalConfig()
 {
-	if(port < 0 || port > 8) 
-		return -1;
-	
-	if(PIO_IsOutputPin(&(digitalIns[port]))) return 1;
-	else return 0;
+	return g_DigitalConfigMask;
 }
 
 void UpdateAnalogs(void)
