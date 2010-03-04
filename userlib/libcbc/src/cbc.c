@@ -52,7 +52,7 @@ void kissSimPause(){}
 int kissSimActive(){return 1;}
 
 static int g_cbc_initted = 0;
-static int g_digital;
+static int g_digital[8];
 static int g_analog[8];
 static int g_battery;
 static int g_pid[4];
@@ -71,9 +71,11 @@ void libcbc_init()
 	if(g_cbc_initted) return;
 	g_cbc_initted = 1;
 	
-	g_digital = open("/dev/cbc/digital", O_RDWR);
+        //g_digital = open("/dev/cbc/digital", O_RDWR);
 	
 	for(i = 0;i < 8;i++) {
+                sprintf(devname,"/dev/cbc/digital%d", i+8);
+                g_digital[i] = open(devname, O_RDWR);
 		sprintf(devname, "/dev/cbc/analog%d", i);
 		g_analog[i] = open(devname, O_RDONLY);
 	}
@@ -102,24 +104,24 @@ void libcbc_init()
 
 void libcbc_exit()
 {
-int i;
-	
-	close(g_digital);
-	close(g_battery);
-	
-	for(i = 0;i < 8;i++)
-		close(g_analog[i]);
-	
-	for(i = 0;i < 4;i++) {
-		close(g_pid[i]);
-		close(g_pwm[i]);
-		close(g_servo[i]);
-	}
-	
-	close(g_accX);
-	close(g_accY);
-	close(g_accZ);
-	
+    int i;
+
+    for(i = 0;i < 8;i++){
+        close(g_digital[i]);
+        close(g_analog[i]);
+    }
+    close(g_battery);
+
+    for(i = 0;i < 4;i++) {
+        close(g_pid[i]);
+        close(g_pwm[i]);
+        close(g_servo[i]);
+    }
+
+    close(g_accX);
+    close(g_accY);
+    close(g_accZ);
+
 }
 
 /////////////////////////////////////////////////////////////
@@ -148,7 +150,7 @@ int digital(int port)
 {
 	short data;
 	
-	read(g_digital, &data, 2);
+        read(g_digital[0], &data, 2);
   
 	if(port >= 8 && port <= 15) {
 		return (1 & (data>>(port-8)));
@@ -156,30 +158,31 @@ int digital(int port)
 	else{
 		printf("Digital must be between 8 and 15\n");
 		return -1;
-	}
+        }
 }
 
 
-int set_digital_output_value(int port, int value)
+void set_digital_output_value(int port, int value)
 {
-	PENDING("set_digital_output_value");
-	return -1;
-	/*
-  cbc_data *cbc = cbc_data_ptr();
-  
-	if(port < 8 && port >= 0) {
-		// first set the output enable bit
-		cbc->enable_digital_outputs = (1 << port) | cbc->enable_digital_outputs;
-		// now set the output value
-		cbc->digital_output_values = ((!(!value)) << port) | cbc->digital_output_values;
-		return (0);
-	}
-	printf("Digital must be between 8 and 15\n");
-	return -1;*/
+    char state = value;
+
+    if(port < 8 || port > 15) return;
+
+    write(g_digital[port-8], &state, 1);
 }
 
-int set_digital_port_direction(int port, int direction)
+void set_digital_port_direction(int mask)
 {
+    ioctl(g_digital[0], CBOB_DIGITAL_SET_DIR, &mask);
+}
+
+int get_digital_port_direction()
+{
+    int mask = 0;
+
+    ioctl(g_digital[0], CBOB_DIGITAL_GET_DIR, &mask);
+
+    return mask;
 }
 
 int analog10(int port)
@@ -204,8 +207,6 @@ int analog(int port)
 
 void set_analog_floats(int mask)
 {
-	int i;
-	
 	mask = (~mask)&0xFF;
 	
 	ioctl(g_analog[0], CBOB_ANALOG_SET_PULLUPS, &mask);
@@ -213,7 +214,7 @@ void set_analog_floats(int mask)
 
 int get_analog_floats()
 {
-	int mask;
+        int mask = 0;
 	
 	ioctl(g_analog[0], CBOB_ANALOG_GET_PULLUPS, &mask);
 	
@@ -614,7 +615,7 @@ int black_button()
 {
 	short data;
 	
-	read(g_digital, &data, 2);
+        read(g_digital[0], &data, 2);
 	
 	return (data>>8)&1;
 }

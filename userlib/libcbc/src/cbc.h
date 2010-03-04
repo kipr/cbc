@@ -35,11 +35,12 @@
 
 extern int __pid_defaults[6];
 
-int set_digital_port_direction(int port, int direction);
+void set_digital_port_direction(int mask);
+int get_digital_port_direction();
 void tone(int frequency, int duration); /* makes a sound at frequency for duration ms */
 void beep(); /* make a beep */
 int digital(int port); /* returns a 1 or 0 reflecting the state of port (0 to 7) */
-int set_digital_output_value(int port, int value); /*sets port (0 to 7)to value (0 or 1) */
+void set_digital_output_value(int port, int value); /*sets port (0 to 7)to value (0 or 1) */
 int analog10(int port); /* returns 10-bit value from analog port (ports 8 to 15) */
 int analog(int port); /* returns 8-bit value from analog port (ports 8 to 15) */
 int accel_x(); /* returns x accelleration (-2047 to 2047, +/- 1.5 gee) */
