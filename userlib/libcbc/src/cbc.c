@@ -52,6 +52,7 @@ void kissSimPause(){}
 int kissSimActive(){return 1;}
 
 static int g_cbc_initted = 0;
+static int g_button;
 static int g_digital[8];
 static int g_analog[8];
 static int g_battery;
@@ -71,7 +72,7 @@ void libcbc_init()
 	if(g_cbc_initted) return;
 	g_cbc_initted = 1;
 	
-        //g_digital = open("/dev/cbc/digital", O_RDWR);
+        g_button = open("/dev/cbc/button", O_RDONLY);
 	
 	for(i = 0;i < 8;i++) {
                 sprintf(devname,"/dev/cbc/digital%d", i+8);
@@ -111,6 +112,7 @@ void libcbc_exit()
         close(g_analog[i]);
     }
     close(g_battery);
+    close(g_button);
 
     for(i = 0;i < 4;i++) {
         close(g_pid[i]);
@@ -149,11 +151,10 @@ void beep()
 int digital(int port)
 {
 	short data;
-	
-        read(g_digital[0], &data, 2);
   
 	if(port >= 8 && port <= 15) {
-		return (1 & (data>>(port-8)));
+            read(g_digital[port-8], &data, 2);
+                return data;
 	}
 	else{
 		printf("Digital must be between 8 and 15\n");
@@ -615,9 +616,9 @@ int black_button()
 {
 	short data;
 	
-        read(g_digital[0], &data, 2);
+        read(g_button, &data, 2);
 	
-	return (data>>8)&1;
+        return data;
 }
 
 int up_button()
