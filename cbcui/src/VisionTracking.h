@@ -56,6 +56,8 @@ protected:
 public slots:
   void show();
   void hide();
+  void updateModelLabel();
+
   // Select model
   void on_Model0Button_clicked();
   void on_Model1Button_clicked();

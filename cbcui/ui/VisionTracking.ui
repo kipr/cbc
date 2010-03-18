@@ -540,7 +540,7 @@ font-size:12pt;
             <number>300</number>
            </property>
            <property name="autoRepeatInterval">
-            <number>50</number>
+            <number>75</number>
            </property>
           </widget>
          </item>
@@ -616,7 +616,7 @@ font-size:12pt;
             <number>150</number>
            </property>
            <property name="autoRepeatInterval">
-            <number>20</number>
+            <number>75</number>
            </property>
           </widget>
          </item>
@@ -672,7 +672,7 @@ font-size:12pt;
             <number>150</number>
            </property>
            <property name="autoRepeatInterval">
-            <number>20</number>
+            <number>75</number>
            </property>
           </widget>
          </item>
@@ -748,7 +748,7 @@ font-size:12pt;
             <number>300</number>
            </property>
            <property name="autoRepeatInterval">
-            <number>50</number>
+            <number>75</number>
            </property>
           </widget>
          </item>

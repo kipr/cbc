@@ -279,11 +279,11 @@ void MicrodiaCamera::readSettings()
         this->setParameter(RED_BALANCE, m_settings.value("RedBalance",31).toInt());
         this->setParameter(BLUE_BALANCE, m_settings.value("BlueBalance",31).toInt());
         this->setParameter(GAMMA, m_settings.value("Gamma",13107).toInt());
-        this->setParameter(EXPOSURE, m_settings.value("Exposure",256).toInt());
+        this->setParameter(EXPOSURE, m_settings.value("Exposure",3072).toInt());
         this->setParameter(H_FLIP, m_settings.value("H_flip",false).toInt());
         this->setParameter(V_FLIP, m_settings.value("V_flip",false).toInt());
         this->setParameter(SHARPNESS, m_settings.value("Sharpness",31).toInt());
-        this->setParameter(AUTO_EXPOSURE, m_settings.value("AutoExposure",true).toInt());
+        this->setParameter(AUTO_EXPOSURE, m_settings.value("AutoExposure",false).toInt());
         m_settings.endGroup();
         m_settings.sync();
         ::system("sync");

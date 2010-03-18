@@ -47,30 +47,29 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>54</width>
-         <height>27</height>
+         <width>60</width>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>54</width>
-         <height>27</height>
+         <width>60</width>
+         <height>30</height>
         </size>
        </property>
        <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="styleSheet">
-        <string>QPushButton{
+        <string notr="true">QPushButton{
 border:0px;
-background-image:url(:/actions/back-wide.png);
+background-image:url(:/actions/back-60L.png);
 color:black;
 font-size:11pt;
 text-align:left;
 }
 QPushButton:pressed{
-border:1px solid black;
-background-image:url(:/actions/back-wide.png);
+background-image:url(:/actions/back-60D.png);
 color:black;
 font-size:11pt;
 text-align:left;
@@ -245,26 +244,31 @@ color:white;
        <property name="minimumSize">
         <size>
          <width>60</width>
-         <height>27</height>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>60</width>
-         <height>27</height>
+         <height>30</height>
         </size>
        </property>
        <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="styleSheet">
-        <string>QPushButton{
+        <string notr="true">QPushButton{
 border:0px;
-background-image:url(:/actions/close-wide.png);
+background-image:url(:/actions/close-60L.png);
 color:black;
 font-size:11pt;
 text-align:left;
-padding-left:2px;
+}
+QPushButton:pressed{
+background-image:url(:/actions/close-60D.png);
+color:black;
+font-size:11pt;
+text-align:left;
 }</string>
        </property>
        <property name="text">

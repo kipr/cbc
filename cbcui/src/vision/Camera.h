@@ -27,6 +27,7 @@
 // Local inclues
 #include "FrameHandler.h"
 
+// this is a camera enumeration value not a setting
 enum cam_parms{
     BRIGHTNESS = 0,
     CONTRAST = 1,

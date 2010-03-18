@@ -63,6 +63,7 @@ VisionTracking::VisionTracking(QWidget *parent, ColorTracker *colorTracker) : Pa
     m_tlbrGroup.addButton(BottomRightButton);
     TopLeftButton->click();
 
+    HSVLabel->setText(" ");
 }
 
 VisionTracking::~VisionTracking()
@@ -91,6 +92,11 @@ void VisionTracking::updateModel()
 {
     HSVRange model = getModel();
     m_HSVRangeDisplay->setRange(model);
+}
+
+void VisionTracking::updateModelLabel()
+{
+    HSVRange model = getModel();
     HSVLabel->setText(QString("(%1,%2,\n  %3,%4)").arg(model.h.min).arg(model.h.max).arg(model.s.min).arg(model.v.min));
 }
 

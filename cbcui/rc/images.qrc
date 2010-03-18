@@ -1,11 +1,9 @@
 <RCC>
-    <qresource prefix="/" >
+    <qresource prefix="/">
         <file>background-inverted.png</file>
         <file>background.png</file>
     </qresource>
-    <qresource prefix="/actions" >
-        <file>back-wide.png</file>
-        <file>close-wide.png</file>
+    <qresource prefix="/actions">
         <file>back.png</file>
         <file>close.png</file>
         <file>rivet30x30L.png</file>
@@ -30,5 +28,9 @@
         <file>arrowUp-30D.png</file>
         <file>arrowUp-30L.png</file>
         <file>cbc_2.png</file>
+        <file>close-60D.png</file>
+        <file>close-60L.png</file>
+        <file>back-60D.png</file>
+        <file>back-60L.png</file>
     </qresource>
 </RCC>
