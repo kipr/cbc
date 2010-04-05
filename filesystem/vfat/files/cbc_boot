@@ -86,4 +86,9 @@ echo "Mounting /mnt/kiss"
 mkdir -p /mnt/kiss
 mount /dev/sda2 /mnt/kiss -t ext2
 
+# startup btplay daemon
+btplayd </dev/null >/dev/null 2>&1 &
+
+# set volume
+amixer cset numid=1 100
 # sh /mnt/kiss/startup.sh

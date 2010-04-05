@@ -19,7 +19,6 @@
  **************************************************************************/
 
 #include "MotorTest.h"
-#include <QMessageBox>
 
 MotorTest::MotorTest(QWidget *parent) : Page(parent)
 {
@@ -160,32 +159,20 @@ void MotorTest::on_ui_PowerRadio_clicked()
 void MotorTest::on_ui_TargetSpeedPowerLine_selectionChanged()
 {
     int value;
-    Keypad user_keypad(this);
+    Keypad user_keypad(this,-1000,1000);
+
+    if(m_controlState[m_motorNumber] == 0)
+        user_keypad.setRange(-100,100);
+
 
     ui_TargetSpeedPowerLine->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine0{background-color:red}");
     user_keypad.exec();
     value = user_keypad.getValue();
 
-    if(m_controlState[m_motorNumber] == 0){
-        if(value < -100 || value > 100) {
-            QMessageBox::warning(this,
-                                "Input Error",
-                                "Value must be between 100 and -100\n",
-                                QMessageBox::Ok,
-                                QMessageBox::NoButton);
-            value = 0;
-        }
+   if(m_controlState[m_motorNumber] == 0){
         m_targetPower[m_motorNumber] = value;
     }
     else{
-        if(value < -1000 || value > 1000) {
-            QMessageBox::warning(this,
-                            "Input Error",
-                             "Value must be between 1000 and -1000\n",
-                             QMessageBox::Ok,
-                             QMessageBox::NoButton);
-            value = 0;
-        }
         m_targetSpeed[m_motorNumber] = value;
     }
 
@@ -194,7 +181,7 @@ void MotorTest::on_ui_TargetSpeedPowerLine_selectionChanged()
 }
 void MotorTest::on_ui_TargetPositionLine_selectionChanged()
 {
-    Keypad user_keypad(this);
+    Keypad user_keypad(this,-2000000000,2000000000);
 
     ui_TargetPositionLine->setStyleSheet("QLineEdit#ui_TargetPositionLine0{background-color:red}");
     user_keypad.exec();

@@ -20,7 +20,6 @@
 
 #include "MotorTuning.h"
 #include "Keypad.h"
-#include <QMessageBox>
 #include <QSettings>
 
 MotorTuning::MotorTuning(QWidget *parent) : Page(parent)
@@ -156,27 +155,18 @@ void MotorTuning::on_ui_DivSlider_valueChanged(int value)
 
 void MotorTuning::on_ui_TargetSpeedLine_selectionChanged()
 {
-    Keypad user_keypad(this);
+    Keypad user_keypad(this,-1000,1000);
 
     ui_TargetSpeedLine->setStyleSheet("QLineEdit#ui_TargetSpeedLine{background-color:red}");
     user_keypad.exec();
     m_targetSpeed = user_keypad.getValue();
 
-
-    if(m_targetSpeed < -1000 || m_targetSpeed > 1000){
-        QMessageBox::warning(this,
-                            "Input Error",
-                             "Value must be between 1000 and -1000\n",
-                             QMessageBox::Ok,
-                             QMessageBox::NoButton);
-        m_targetSpeed = 0;
-    }
     ui_TargetSpeedLine->setStyleSheet("QLineEdit#ui_TargetSpeedLine{background-color:white}");
     ui_TargetSpeedLine->setText(QString::number(m_targetSpeed));
 }
 void MotorTuning::on_ui_TargetPositionLine_selectionChanged()
 {
-    Keypad user_keypad(this);
+    Keypad user_keypad(this,-2000000000,2000000000);
     ui_TargetPositionLine->setStyleSheet("QLineEdit#ui_TargetPositionLine{background-color:red}");
     user_keypad.exec();
 

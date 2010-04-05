@@ -18,8 +18,11 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 #include "Keypad.h"
+#include <QMessageBox>
+#include <QSound>
 
-Keypad::Keypad(QWidget *parent) : QDialog(parent)
+Keypad::Keypad(QWidget *parent, int min, int max)
+    : QDialog(parent),minVal(min),maxVal(max)
 {
     setupUi(this);
     this->move(100,25);
@@ -100,13 +103,29 @@ void Keypad::on_ui_enterButton_clicked(bool)
 {
     QString value = ui_outputLine->text();
     userValue = value.toInt();
-    this->close();
+    if(userValue < minVal || userValue > maxVal){
+        QSound::play("/mnt/kiss/sounds/quack.wav");
+        QMessageBox::warning(this,
+                             "Input Error",
+                             QString("Value must be between %1 and %2\n").arg(minVal).arg(maxVal),
+                             QMessageBox::Ok,
+                             QMessageBox::NoButton);
+        ui_outputLine->setText("");
+    }
+    else this->close();
 }
 void Keypad::refreshView()
 {
     ui_outputLine->setText(QString::number(userValue));
 }
+
 int Keypad::getValue()
 {
     return userValue;
+}
+
+void Keypad::setRange(int min, int max)
+{
+    minVal = min;
+    maxVal = max;
 }

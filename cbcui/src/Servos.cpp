@@ -19,7 +19,6 @@
  **************************************************************************/
 
 #include "Servos.h"
-#include <QMessageBox>
 
 Servos::Servos(QWidget *parent) : Page(parent)
 {
@@ -94,20 +93,11 @@ void Servos::on_ui_ServoIncButton_clicked(bool)
 void Servos::on_ui_ServoPositionLine_selectionChanged()
 {
     int value;
-    Keypad user_keypad(this);
+    Keypad user_keypad(this,0,2048);
 
     ui_ServoPositionLine->setStyleSheet("QLineEdit#ui_ServoPositionLine{background-color:red}");
     user_keypad.exec();
     value = user_keypad.getValue();
-
-    if(value < 0 || value > 2048) {
-        QMessageBox::warning(this,
-                            "Input Error",
-                             "Value must be between 0 and 2048\n",
-                             QMessageBox::Ok,
-                             QMessageBox::NoButton);
-        return;
-    }
 
     m_servoPosition[m_servoNumber] = value;
 
