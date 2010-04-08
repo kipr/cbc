@@ -95,7 +95,7 @@ void libcbc_init()
 	g_accX = open("/dev/cbc/accelX", O_RDONLY);
 	g_accY = open("/dev/cbc/accelY", O_RDONLY);
 	g_accZ = open("/dev/cbc/accelZ", O_RDONLY);
-	
+
 	g_uidata_sm = shared_mem_create("/tmp/cbc_uidata", sizeof(UIData));
 	assert(g_uidata_sm);
 	g_uidata = (UIData *)shared_mem_ptr(g_uidata_sm);
@@ -123,7 +123,6 @@ void libcbc_exit()
     close(g_accX);
     close(g_accY);
     close(g_accZ);
-
 }
 
 /////////////////////////////////////////////////////////////
@@ -140,9 +139,46 @@ void tone(int frequency, int duration)
 
 void beep()
 {
+        g_uidata->state = 1;
 	printf("\a");
 }
 
+void play_sound(const char *filename)
+{
+        g_uidata->state = 2;
+        strcpy(g_uidata->filename,filename);
+        printf("\a");
+}
+
+int playing_sound()
+{
+    return g_uidata->playing;
+}
+
+void stop_sound()
+{
+        g_uidata->state = 3;
+        printf("\a");
+}
+
+void start_recording(const char *filename, int length)
+{
+        g_uidata->state = 4;
+        g_uidata->recordTime = length;
+        strcpy(g_uidata->filename,filename);
+        printf("\a");
+}
+
+int recording_sound()
+{
+    return g_uidata->recording;
+}
+
+void stop_recording()
+{
+        g_uidata->state = 5;
+        printf("\a");
+}
 
 /////////////////////////////////////////////////////////////
 // Sensor Functions

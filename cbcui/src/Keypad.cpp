@@ -19,7 +19,7 @@
  **************************************************************************/
 #include "Keypad.h"
 #include <QMessageBox>
-#include <QSound>
+#include <QProcess>
 
 Keypad::Keypad(QWidget *parent, int min, int max)
     : QDialog(parent),minVal(min),maxVal(max)
@@ -104,7 +104,7 @@ void Keypad::on_ui_enterButton_clicked(bool)
     QString value = ui_outputLine->text();
     userValue = value.toInt();
     if(userValue < minVal || userValue > maxVal){
-        QSound::play("/mnt/kiss/sounds/quack.wav");
+        QProcess::startDetached("aplay /mnt/kiss/sounds/quack.wav");
         QMessageBox::warning(this,
                              "Input Error",
                              QString("Value must be between %1 and %2\n").arg(minVal).arg(maxVal),

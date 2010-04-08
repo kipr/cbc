@@ -24,7 +24,7 @@
 #include "UserProgram.h"
 #include "CbobData.h"
 #include <QMessageBox>
-#include <QSound>
+#include <QProcess>
 
 MainWindow::MainWindow(QWidget *parent) : QDialog(parent), m_mainMenu(0)
 {
@@ -71,8 +71,8 @@ void MainWindow::updateBatteryDisplay()
 
 void MainWindow::batteryWarning(float volts)
 {
-    if(volts <= 5.9){
-        QSound::play("/mnt/kiss/sounds/klaxon.wav");
+    if(volts <= 6.1){
+        QProcess::startDetached("aplay /mnt/kiss/sounds/tri_klaxon.wav");
         QMessageBox::critical(this,
                              "Low Battery!",
                              "Shutdown imminent!",
@@ -80,7 +80,7 @@ void MainWindow::batteryWarning(float volts)
                              QMessageBox::NoButton);
     }
     else{
-        QSound::play("/mnt/kiss/sounds/klaxon.wav");
+        QProcess::startDetached("aplay /mnt/kiss/sounds/tri_klaxon.wav");
         QMessageBox::warning(this,
                              "Low Battery!",
                              "Low Battery - Please Charge Me!",

@@ -39,6 +39,12 @@ void set_digital_port_direction(int mask);
 int get_digital_port_direction();
 void tone(int frequency, int duration); /* makes a sound at frequency for duration ms */
 void beep(); /* make a beep */
+void play_sound(const char* filename);
+int playing_sound();
+void stop_sound();
+void start_recording(const char* filename, int length);
+int recording_sound();
+void stop_recording();
 int digital(int port); /* returns a 1 or 0 reflecting the state of port (0 to 7) */
 void set_digital_output_value(int port, int value); /*sets port (0 to 7)to value (0 or 1) */
 int analog10(int port); /* returns 10-bit value from analog port (ports 8 to 15) */

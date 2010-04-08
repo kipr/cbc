@@ -137,14 +137,14 @@ void CbobData::accelerometerSetCal(short *calibration)
 
 float CbobData::batteryVoltage()
 { 
-    static float trigger = 6.5;
+    static float trigger = 6.6;
     float voltage = ((float)m_sensorData[9])/1000.0;
 
     if(voltage < trigger){
         trigger -= 0.2;
         emit lowBattery(voltage);
     }
-    else if(voltage > trigger + 0.5 && trigger <= 6.3)
+    else if(voltage > trigger + 0.5 && trigger <= 6.4)
         trigger += 0.2;
 
     return voltage;

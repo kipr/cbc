@@ -163,8 +163,6 @@ mount --bind /mnt/user/code /mnt/browser/code
 
 # startup btplay daemon
 btplayd </dev/null >/dev/null 2>&1 &
-# set volume
-amixer cset numid=1 100
 
 save_time
 

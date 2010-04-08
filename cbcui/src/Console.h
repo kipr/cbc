@@ -24,7 +24,8 @@
 #include "ui_Console.h"
 #include "Page.h"
 #include <QString>
-#include <QSound>
+#include <QProcess>
+#include <QFile>
 
 #include "SharedMem.h"
 #include "UIData.h"
@@ -58,15 +59,19 @@ public slots:
    void on_ui_bButton_released();
    
    void bell();
+   void playSoundFile(QString filename);
+   void stopSoundFile();
+   void recordChange(QProcess::ProcessState newState);
+   void manageSound();
 
 protected:
     void setViewportColors(Qt::GlobalColor text, Qt::GlobalColor background);
 private:
-   QSound m_bell;
 
-   SharedMem<UIData> m_uiData;
+   SharedMem<UIData>    m_uiData;
    
-
+    QProcess            m_recdProc;
+    QFile               m_btinput;
 };
 
 #endif
