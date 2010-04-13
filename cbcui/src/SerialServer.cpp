@@ -25,6 +25,7 @@
 #include <QtEndian>
 #include <QBuffer>
 #include <QDir>
+#include <QProcess>
 
 SerialServer::SerialServer(QObject *parent) : QThread(parent), 
                                               m_port(SERIAL_DEVICE, this),
@@ -77,7 +78,7 @@ void SerialServer::processTransfer(QByteArray& header)
     //qWarning("packetcount=%d", packetCount);
     
     QByteArray compressedData;
-    
+    QProcess::startDetached("aplay /mnt/kiss/sounds/downloading.wav");
     for(quint16 i = 0;i < packetCount;i++) {
         QByteArray data;
         if(!readPacket(&data))

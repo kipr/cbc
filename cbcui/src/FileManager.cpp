@@ -110,6 +110,7 @@ void FileManager::on_ui_compileButton_clicked()
 
     QString filePath = m_dir.filePath(ui_directoryBrowser->currentIndex());
 
+    QProcess::startDetached("aplay /mnt/kiss/sounds/compiling.wav");
     m_compiler.compileFile(filePath);
 }
 
