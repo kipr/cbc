@@ -152,18 +152,21 @@ void play_sound(const char *filename)
 
 int playing_sound()
 {
-    return g_uidata->playing;
+    g_uidata->state = 3;
+    printf("\a");
+    if(g_uidata->playing < 2) return 0;
+    else return 1;
 }
 
 void stop_sound()
 {
-        g_uidata->state = 3;
+        g_uidata->state = 4;
         printf("\a");
 }
 
 void start_recording(const char *filename, int length)
 {
-        g_uidata->state = 4;
+        g_uidata->state = 5;
         g_uidata->recordTime = length;
         strcpy(g_uidata->filename,filename);
         printf("\a");
@@ -176,7 +179,7 @@ int recording_sound()
 
 void stop_recording()
 {
-        g_uidata->state = 5;
+        g_uidata->state = 6;
         printf("\a");
 }
 

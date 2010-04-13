@@ -61,6 +61,7 @@ public slots:
    void bell();
    void playSoundFile(QString filename);
    void stopSoundFile();
+   void playChange();
    void recordChange(QProcess::ProcessState newState);
    void manageSound();
 
@@ -72,6 +73,8 @@ private:
    
     QProcess            m_recdProc;
     QFile               *m_btinput;
+    QFile               *m_btoutput;
+    uchar               *m_playState;
 };
 
 #endif

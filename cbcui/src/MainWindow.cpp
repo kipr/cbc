@@ -71,7 +71,7 @@ void MainWindow::updateBatteryDisplay()
 
 void MainWindow::batteryWarning(float volts)
 {
-    if(volts <= 6.1){
+    if(volts <= 6.2){
         QProcess::startDetached("aplay /mnt/kiss/sounds/tri_klaxon.wav");
         QMessageBox::critical(this,
                              "Low Battery!",

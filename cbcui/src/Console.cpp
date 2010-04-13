@@ -45,16 +45,23 @@ Console::Console(QWidget *parent) : Page(parent), m_uiData("/tmp/cbc_uidata")
     m_uiData.shared().recording = 0;
 
     m_btinput = new QFile("/tmp/.btplay-cmdin");
-    if(!m_btinput->open(QIODevice::WriteOnly | QIODevice::Text)) qWarning("btplay-cmdin not open");
+    if(!m_btinput->open(QIODevice::WriteOnly | QIODevice::Text)) qWarning("tmp/.btplay-cmdin not open");
+
+
+    m_btoutput = new QFile("/var/run/btplay.state");
+    if(!m_btoutput->open(QIODevice::ReadOnly)) qWarning("var/run/btplay.state not open");
+    m_playState = m_btoutput->map(0,1,QFile::NoOptions);
+    m_btoutput->close();
+
 
     QObject::connect(&m_recdProc, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(recordChange(QProcess::ProcessState)));
-    //QProcess::startDetached("aplay /mnt/kiss/sounds/mellow.wav");
 }
 
 Console::~Console()
 {
     m_btinput->close();
     delete m_btinput;
+    delete m_btoutput;
 }
 
 void Console::setViewportColors(Qt::GlobalColor text, Qt::GlobalColor background)
@@ -97,7 +104,7 @@ void Console::playSoundFile(QString filename)
     // write to BT command file to play current sound even if currently playing
     filename.prepend("btplay ");
     QProcess::startDetached(filename);
-    m_uiData.shared().playing = 1;
+    m_uiData.shared().playing = 2;
 }
 
 void Console::stopSoundFile()
@@ -106,6 +113,12 @@ void Console::stopSoundFile()
     QTextStream btin(m_btinput);
     btin << "stop\n";
     m_uiData.shared().playing = 0;
+}
+
+void Console::playChange()
+{
+    //ui_console->insertPlainText(QString("play state avil.= %1\n").arg(*m_playState-48));
+    m_uiData.shared().playing = (int)(*m_playState - 48);
 }
 
 void Console::recordChange(QProcess::ProcessState newState)
@@ -134,12 +147,17 @@ void Console::manageSound()
             this->playSoundFile(QString("/mnt/browser/usb/sound/") + m_uiData.shared().filename);
             break;
         }
-    case 3: // stop playing the song
+    case 3: // is playing sound?
+        {
+            this->playChange();
+            break;
+        }
+    case 4: // stop playing the song
         {
             this->stopSoundFile();
             break;
         }
-    case 4: // record from the mic if not currently playing
+    case 5: // record from the mic if not currently playing
         if(m_uiData.shared().playing && m_recdProc.state() != QProcess::NotRunning) break;
         else {
             QDir usbDir("/mnt/browser/usb");
@@ -151,7 +169,7 @@ void Console::manageSound()
             ui_console->insertPlainText(QString("recording to -") + m_uiData.shared().filename + "\n");
             break;
         }
-    case 5: // stop recording
+    case 6: // stop recording
         if(m_recdProc.state() != QProcess::NotRunning) m_recdProc.kill(); // stop recording
         break;
 

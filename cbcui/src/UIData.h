@@ -10,7 +10,7 @@ typedef struct __UIData
   int left_button;
   int right_button;
 
-  int state;    // 1 = beep, 2 = play sound file, 3 = stop playing, 4 = record from mic, 5 = stop recording
+  int state;    // 1 = beep, 2 = play sound file, 3 = is playing sound?, 4 = stop playing, 5 = record from mic, 6 = stop recording
   int recording;
   int playing;
   int recordTime;
