@@ -23,6 +23,7 @@
 #include <QScrollBar>
 #include <QTimer>
 #include <QDir>
+#include <QTextStream>
 
 Console::Console(QWidget *parent) : Page(parent), m_uiData("/tmp/cbc_uidata")
 {
@@ -43,18 +44,17 @@ Console::Console(QWidget *parent) : Page(parent), m_uiData("/tmp/cbc_uidata")
     m_uiData.shared().playing = 0;
     m_uiData.shared().recording = 0;
 
-    //QDir::setCurrent("/tmp");
-    m_btinput.setFileName("/tmp/.btplay-cmdin");
-    if(m_btinput.exists()) qWarning("btplay-cmdin exists");
-    if(m_btinput.open(QIODevice::WriteOnly)) qWarning("btplay-cmdin open");
+    m_btinput = new QFile("/tmp/.btplay-cmdin");
+    if(!m_btinput->open(QIODevice::WriteOnly | QIODevice::Text)) qWarning("btplay-cmdin not open");
 
     QObject::connect(&m_recdProc, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(recordChange(QProcess::ProcessState)));
-    QProcess::startDetached("aplay /mnt/kiss/sounds/mellow.wav");
+    //QProcess::startDetached("aplay /mnt/kiss/sounds/mellow.wav");
 }
 
 Console::~Console()
 {
-    m_btinput.close();
+    m_btinput->close();
+    delete m_btinput;
 }
 
 void Console::setViewportColors(Qt::GlobalColor text, Qt::GlobalColor background)
@@ -95,18 +95,16 @@ void Console::bell()
 void Console::playSoundFile(QString filename)
 {
     // write to BT command file to play current sound even if currently playing
-    filename.prepend("playnow ");
-    filename.append("\n");
-    ui_console->insertPlainText(filename);
-    m_btinput.write("playnow /mnt/browser/usb/sound/ballz.wav\n",41);
-    //m_btinput.write(filename.toAscii());
+    filename.prepend("btplay ");
+    QProcess::startDetached(filename);
     m_uiData.shared().playing = 1;
 }
 
 void Console::stopSoundFile()
 {
     // write to BT command file to stop playing current sound
-    m_btinput.write(QString("stop").toUtf8());
+    QTextStream btin(m_btinput);
+    btin << "stop\n";
     m_uiData.shared().playing = 0;
 }
 

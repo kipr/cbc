@@ -163,6 +163,12 @@ mount --bind /mnt/user/code /mnt/browser/code
 
 # startup btplay daemon
 btplayd </dev/null >/dev/null 2>&1 &
+sleep 2
+chmod a+w /tmp/.btplay-cmdin
+btplay /mnt/kiss/sounds/mellow.wav
+sleep 2
+btplay /mnt/kiss/sounds/sysInit.wav
+
 
 save_time
 

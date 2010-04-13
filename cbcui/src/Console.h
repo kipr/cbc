@@ -71,7 +71,7 @@ private:
    SharedMem<UIData>    m_uiData;
    
     QProcess            m_recdProc;
-    QFile               m_btinput;
+    QFile               *m_btinput;
 };
 
 #endif
