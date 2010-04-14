@@ -92,6 +92,7 @@ void FileManager::on_ui_unmountButton_clicked()
 {
     QProcess umount;
 
+    QProcess::startDetached("btplay /mnt/kiss/sounds/disconnected.wav");
     ui_directoryBrowser->setRootIndex(m_dir.index(DEFAULT_PATH));
     m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
 
