@@ -1,7 +1,7 @@
 #Onurs address pass:RouterAdm1n
-CBC_IP=192.168.1.75
+#CBC_IP=192.168.1.75
 #KIPR address
-#CBC_IP=192.168.123.173
+CBC_IP=192.168.123.173
 make &&
 ssh root@$CBC_IP killall cbcui 
 scp cbcui root@$CBC_IP:/tmp/cbcui &&

@@ -25,18 +25,21 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="1">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="verticalSpacer_3">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::MinimumExpanding</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>20</width>
+         <height>40</height>
         </size>
        </property>
       </spacer>
@@ -54,51 +57,41 @@
        <property name="text">
         <string>Brightness</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <spacer name="verticalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Brightness:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSlider" name="ui_brightness">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>10</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QSlider" name="ui_brightness">
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>512</number>
+       </property>
+       <property name="pageStep">
+        <number>20</number>
+       </property>
+       <property name="value">
+        <number>500</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer name="verticalSpacer_2">
@@ -110,29 +103,79 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>20</width>
-         <height>10</height>
+         <width>15</width>
+         <height>20</height>
         </size>
        </property>
       </spacer>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
+      <widget class="QLabel" name="ui_dimTime">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Auto Dim Delay</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="ui_dimCombo">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLabel" name="ui_dimTime">
+        <widget class="QCheckBox" name="ui_dimCheckBox">
+         <property name="layoutDirection">
+          <enum>Qt::RightToLeft</enum>
+         </property>
          <property name="text">
-          <string>Dim After: </string>
+          <string>Screen off when dim</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="ui_dimCombo"/>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>25</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
     </layout>
    </item>
-   <item>
+   <item row="1" column="0" colspan="3">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -141,6 +184,32 @@
       <size>
        <width>20</width>
        <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="0">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="2">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
       </size>
      </property>
     </spacer>

@@ -39,17 +39,14 @@ public:
 protected slots:
    void on_ui_dimCombo_currentIndexChanged(int i);
    void on_ui_brightness_valueChanged(int i);
+   void on_ui_dimCheckBox_clicked(bool checked = false);
    void mouseUpdateChecker();
    void dim();
 
 protected:
-    void blocked(bool a);
-    char getHex(int i);
     void setBrightness(int i);
 
-    
 private:
-    bool m_blocked;
     QSettings m_settings;
     int m_brightness;
     int m_dimAfter;
@@ -57,6 +54,8 @@ private:
     QTimer m_dimmer;
     bool m_dimmed;
     QPoint m_lastMousePos;
+    bool m_blocked;
+    bool m_dimOff;
 };
 
 #endif // BRIGHTNESS_H
