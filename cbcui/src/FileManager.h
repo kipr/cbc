@@ -38,16 +38,18 @@ public:
     bool isUSBMounted();
     
 public slots:
+    void on_ui_directoryBrowser_clicked(const QModelIndex &index);
     void on_ui_directoryBrowser_entered(const QModelIndex &index);
     void on_ui_mountButton_clicked();
     void on_ui_unmountButton_clicked();
-    void on_ui_compileButton_clicked();
+    void on_ui_actionButton_clicked();
+    void on_ui_stopButton_clicked();
     void on_ui_deleteButton_clicked();
-    void on_ui_openButton_clicked();
 
 private:
-   Compiler m_compiler;
-    QFileSystemModel m_dir;
+   Compiler             m_compiler;
+    QFileSystemModel    m_dir;
+    QModelIndex         m_index;
 
 };
 

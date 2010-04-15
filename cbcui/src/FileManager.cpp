@@ -36,8 +36,8 @@ FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent)
     ui_directoryBrowser->setRootIndex(m_dir.index(DEFAULT_PATH));
 
     ui_unmountButton->hide();
-    ui_openButton->hide();
-    ui_compileButton->hide();
+    ui_actionButton->hide();
+    ui_stopButton->hide();
 }
 
 FileManager::~FileManager()
@@ -51,28 +51,37 @@ bool FileManager::isUSBMounted()
     return info.exists();
 }
 
-void FileManager::on_ui_directoryBrowser_entered(const QModelIndex &index)
+void FileManager::on_ui_directoryBrowser_clicked(const QModelIndex &index)
 {
-    if(m_dir.isDir(index)) {
-        ui_compileButton->hide();
-        ui_openButton->show();
-    }
-    else {
-        ui_compileButton->show();
-        ui_openButton->hide();
-    }
+    // forward this to catch all clicks
+    this->on_ui_directoryBrowser_entered(index);
 }
 
-void FileManager::on_ui_openButton_clicked()
+void FileManager::on_ui_directoryBrowser_entered(const QModelIndex &index)
 {
-    QString path = m_dir.fileInfo(ui_directoryBrowser->currentIndex()).canonicalFilePath();
-
-    if(path == DEFAULT_PATH)
-        m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
-    else
-        m_dir.setFilter(QDir::AllEntries);
-
-    ui_directoryBrowser->setRootIndex(m_dir.index(path));
+    m_index = index;
+    if(m_dir.isDir(m_index)) {
+        ui_actionButton->setText("Open");
+        ui_actionButton->show();
+        ui_stopButton->hide();
+    }
+    else {
+        QString filename = m_dir.fileName(m_index);
+        if(filename.endsWith(".c")){
+            ui_actionButton->setText("Compile");
+            ui_actionButton->show();
+            ui_stopButton->hide();
+        }
+        else if(filename.endsWith(".wav",Qt::CaseInsensitive) || filename.endsWith(".mp3",Qt::CaseInsensitive)){
+            ui_actionButton->setText("Play");
+            ui_actionButton->show();
+            ui_stopButton->show();
+        }
+        else{
+            ui_actionButton->hide();
+            ui_stopButton->hide();
+        }
+    }
 }
 
 void FileManager::on_ui_mountButton_clicked()
@@ -103,16 +112,40 @@ void FileManager::on_ui_unmountButton_clicked()
 
     ui_mountButton->show();
     ui_unmountButton->hide();
+    ui_actionButton->hide();
+    ui_stopButton->hide();
 }
 
-void FileManager::on_ui_compileButton_clicked()
+void FileManager::on_ui_actionButton_clicked()
 {
-    if(m_dir.isDir(ui_directoryBrowser->currentIndex())) return;
+    if(m_dir.isDir(m_index)){
+        QString path = m_dir.fileInfo(m_index).canonicalFilePath();
 
-    QString filePath = m_dir.filePath(ui_directoryBrowser->currentIndex());
+        if(path == DEFAULT_PATH)
+            m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+        else
+            m_dir.setFilter(QDir::AllEntries);
 
-    QProcess::startDetached("aplay /mnt/kiss/sounds/compiling.wav");
-    m_compiler.compileFile(filePath);
+        ui_directoryBrowser->setRootIndex(m_dir.index(path));
+        ui_actionButton->hide();
+    }
+    else{
+        QString filePath = m_dir.filePath(m_index);
+        if(filePath.endsWith(".c")){
+            QProcess::startDetached("aplay /mnt/kiss/sounds/compiling.wav");
+            m_compiler.compileFile(filePath);
+        }
+        else if(filePath.endsWith(".wav",Qt::CaseInsensitive) || filePath.endsWith(".mp3",Qt::CaseInsensitive)){
+            filePath.prepend("btplay ");
+            qWarning("%s",qPrintable(filePath));
+            QProcess::startDetached(filePath.toLocal8Bit());
+        }
+    }
+}
+
+void FileManager::on_ui_stopButton_clicked()
+{
+    ::system("echo stop > /tmp/.btplay-cmdin");
 }
 
 void FileManager::on_ui_deleteButton_clicked()
