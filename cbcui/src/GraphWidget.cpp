@@ -84,6 +84,7 @@ void GraphWidget::setScale(int xScale, int yScale, int zScale)
 
 void GraphWidget::addValues(int x, int y, int z)
 {
+    scan_index++;
     if(scan_index>99) scan_index = 0;
     
     if(m_xScale) pointsX[scan_index] = QPoint(scan_index, -50*x/m_xScale);
@@ -141,7 +142,6 @@ void GraphWidget::paintEvent(QPaintEvent *)
         sketcher.setPen(QPen(Qt::red,0));
         sketcher.drawPolyline(pointsZ,100);
     }
-    scan_index++;
 }
 
 
