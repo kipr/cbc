@@ -18,36 +18,45 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#ifndef __SETTINGS_H__
-#define __SETTINGS_H__
+// Author: Braden McDorman <bmcdorman@gmail.com>
 
-#include "ui_Settings.h"
+#ifndef BRIGHTNESS_H
+#define BRIGHTNESS_H
+
+#include <QtGui/QWidget>
 #include "Page.h"
-#include "Brightness.h"
+#include "ui_Brightness.h"
+#include <QSettings>
+#include <QTimer>
+#include <QPoint>
 
-class Settings : public Page, private Ui::Settings
-{
+class Brightness : public Page, public Ui::Brightness {
     Q_OBJECT
-
 public:
-    Settings(QWidget *parent = 0);
-    ~Settings();
+    Brightness(QWidget *parent = 0);
+    ~Brightness();
 
-public slots:
-    void recalibrateMotors();
-    void recalibrateAccel();
-    void resetPID();
-    void setCameraDefault();
-    void on_ui_consoleShowBox_clicked(bool checked = true);
+protected slots:
+   void on_ui_dimCombo_currentIndexChanged(int i);
+   void on_ui_brightness_valueChanged(int i);
+   void mouseUpdateChecker();
+   void dim();
 
-    void storePidCal();
-    void loadPidCal();
+protected:
+    void blocked(bool a);
+    char getHex(int i);
+    void setBrightness(int i);
 
-    void storeAccelCal();
-    void loadAccelCal();
-
+    
 private:
-    Brightness m_brightness;
+    bool m_blocked;
+    QSettings m_settings;
+    int m_brightness;
+    int m_dimAfter;
+    QTimer m_mouseUpdate;
+    QTimer m_dimmer;
+    bool m_dimmed;
+    QPoint m_lastMousePos;
 };
 
-#endif
+#endif // BRIGHTNESS_H

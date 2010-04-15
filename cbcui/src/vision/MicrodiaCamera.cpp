@@ -42,16 +42,11 @@ MicrodiaCamera::MicrodiaCamera()
     m_fd(-1),
     m_thread(*this)
 {
-    char buf[100];
-
-  system("mknod /dev/video0 c 81 0");
   system("rmmod videodev");
   system("rmmod microdia");
   system("insmod /mnt/usb/videodev.ko");
-  sprintf(buf, "insmod /mnt/usb/microdia.ko max_urbs=20 exposure=256");
-  system(buf);
+  system("insmod /mnt/usb/microdia.ko max_urbs=20");
 
-  sleep(1);
   m_thread.start();
 }
 
@@ -87,10 +82,8 @@ bool MicrodiaCamera::openCamera()
   }      
   int fd = open("/dev/video0", O_RDWR);
   
-  if (fd < 0) {
-    perror("open /dev/video0");
+  if (fd < 0) 
     return false;
-  }
   
   m_fd = fd;
   

@@ -159,6 +159,39 @@ font-size:12pt;
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="ui_brightnessButton">
+       <property name="minimumSize">
+        <size>
+         <width>160</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>160</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet160x30L.png);
+color:black;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet160x30D.png);
+color:white;
+font-size:12pt;
+}</string>
+       </property>
+       <property name="text">
+        <string>Brightness</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="ui_resetPIDButton">
        <property name="minimumSize">
         <size>

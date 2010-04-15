@@ -74,6 +74,10 @@ void Compiler::compileFile(QString filename)
         UserProgram::instance()->stop();
         UserProgram::instance()->loading();
         ui_output->clear();
-        m_compiler.start("/mnt/kiss/usercode/compile", QStringList() << filename);
+        
+        if(filename.endsWith(".sh"))
+            m_compiler.start("sh", QStringList() << filename);
+        else
+            m_compiler.start("/mnt/kiss/usercode/compile", QStringList() << filename);    
     }
 }
