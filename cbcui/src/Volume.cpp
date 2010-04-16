@@ -18,40 +18,27 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#ifndef __SETTINGS_H__
-#define __SETTINGS_H__
-
-#include <QSettings>
-#include "ui_Settings.h"
-#include "Page.h"
-#include "Brightness.h"
 #include "Volume.h"
 
-class Settings : public Page, private Ui::Settings
+#define VOLUME_KEY   "Volume"
+
+Volume::Volume(QWidget *parent) :
+    Page(parent),
+    m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat)
 {
-    Q_OBJECT
+    setupUi(this);
 
-public:
-    Settings(QWidget *parent = 0);
-    ~Settings();
+    int volume = m_settings.value(VOLUME_KEY, 90).toInt();   // volume values range from 0-100
+    on_ui_volume_valueChanged(volume);
+}
 
-public slots:
-    void recalibrateMotors();
-    void recalibrateAccel();
-    void resetPID();
-    void setCameraDefault();
-    void on_ui_consoleShowBox_clicked(bool checked = true);
+Volume::~Volume()
+{
+}
 
-    void storePidCal();
-    void loadPidCal();
-
-    void storeAccelCal();
-    void loadAccelCal();
-
-private:
-    QSettings   m_settings;
-    Brightness  m_brightness;
-    Volume      m_volume;
-};
-
-#endif
+void Volume::on_ui_volume_valueChanged(int i)
+{
+    system(QString("chumby_set_volume %1" ).arg(i).toAscii());
+    m_settings.setValue(VOLUME_KEY,i);
+    m_settings.sync();
+}

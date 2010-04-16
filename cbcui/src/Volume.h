@@ -18,40 +18,28 @@
  *  in the project root.  If not, see <http://www.gnu.org/licenses/>.     *
  **************************************************************************/
 
-#ifndef __SETTINGS_H__
-#define __SETTINGS_H__
+#ifndef VOLUME_H
+#define VOLUME_H
 
-#include <QSettings>
-#include "ui_Settings.h"
+#include <QtGui/QWidget>
 #include "Page.h"
-#include "Brightness.h"
-#include "Volume.h"
+#include "ui_Volume.h"
+#include <QSettings>
 
-class Settings : public Page, private Ui::Settings
-{
+class Volume : public Page, public Ui::Volume {
     Q_OBJECT
-
 public:
-    Settings(QWidget *parent = 0);
-    ~Settings();
+    Volume(QWidget *parent = 0);
+    ~Volume();
 
-public slots:
-    void recalibrateMotors();
-    void recalibrateAccel();
-    void resetPID();
-    void setCameraDefault();
-    void on_ui_consoleShowBox_clicked(bool checked = true);
+protected slots:
+   void on_ui_volume_valueChanged(int i);
 
-    void storePidCal();
-    void loadPidCal();
-
-    void storeAccelCal();
-    void loadAccelCal();
+protected:
+    void setVolume(int i);
 
 private:
-    QSettings   m_settings;
-    Brightness  m_brightness;
-    Volume      m_volume;
+    QSettings m_settings;
 };
 
-#endif
+#endif // VOLUME_H

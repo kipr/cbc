@@ -142,7 +142,10 @@ void Console::manageSound()
         if(m_uiData.shared().recording) break;
         else {
             QDir usbDir("/mnt/browser/usb/sound");  // make sure the sound directory is there
-            if(!usbDir.exists()) break;
+            if(!usbDir.exists()) {
+                ui_console->insertPlainText("Error: USB sound folder not found\n");
+                break;
+            }
             // play a song here
             this->playSoundFile(QString("/mnt/browser/usb/sound/") + m_uiData.shared().filename);
             break;
@@ -161,7 +164,10 @@ void Console::manageSound()
         if(m_uiData.shared().playing && m_recdProc.state() != QProcess::NotRunning) break;
         else {
             QDir usbDir("/mnt/browser/usb");
-            if(!usbDir.exists()) break;     // make sure the usb drive is plugged in
+            if(!usbDir.exists()){
+                ui_console->insertPlainText("Error: USB drive not mounted\n");
+                break;     // make sure the usb drive is plugged in
+            }
             usbDir.mkpath("/mnt/browser/usb/sound/"); // create the sound directory if not there
             // start recording from the mic
             QString wavFile = QString("arecord -d %1 -f cd /mnt/browser/usb/sound/").arg(m_uiData.shared().recordTime);

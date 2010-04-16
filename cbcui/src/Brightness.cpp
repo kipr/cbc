@@ -30,7 +30,7 @@
 
 Brightness::Brightness(QWidget *parent) :
     Page(parent),
-    m_settings("/mnt/user/config/brightness.config", QSettings::IniFormat),
+    m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat),
     m_mouseUpdate(this),
     m_dimmer(this),
     m_dimmed(true)
@@ -40,6 +40,7 @@ Brightness::Brightness(QWidget *parent) :
     m_dimAfter = m_settings.value(DIM_AFTER_KEY, 1).toInt();        // set dim delay value
     m_brightness = m_settings.value(BRIGHTNESS_KEY, 500).toInt();   // brightness values range from 0-512
     m_dimOff = m_settings.value(DIM_OFF_KEY,false).toBool();            // when screen goes dim it is turned off
+    m_settings.sync();
 
     m_blocked = true; // when adding an item to the combo box it registers an event, ignore these events so settings can take place
     ui_dimCombo->addItem("10 Seconds"); // 0
@@ -52,6 +53,7 @@ Brightness::Brightness(QWidget *parent) :
 
     ui_dimCheckBox->setChecked(m_dimOff);
     ui_brightness->setValue(m_brightness);
+    on_ui_brightness_valueChanged(m_brightness);
     ui_dimCombo->setCurrentIndex(m_dimAfter);
     on_ui_dimCombo_currentIndexChanged(m_dimAfter); // make sure the dim delay interval gets set
 
