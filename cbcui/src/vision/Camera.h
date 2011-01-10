@@ -24,7 +24,7 @@
 // class Camera:  Base class for cameras
 //  Inherited by SimulatedCamera and (soon) a class for capturing images from the real camera
 
-// Local inclues
+// Local includes
 #include "FrameHandler.h"
 
 // this is a camera enumeration value not a setting

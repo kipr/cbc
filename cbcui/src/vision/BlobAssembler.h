@@ -131,8 +131,8 @@ public:
       b->Add(segment);
       
       // Check to see if we attach to multiple blobs
-      while(oldFringeIter+1 != oldFringe->end() &&
-            segment.right >= oldFringeIter[1].left) {
+      while(oldFringeIter+1 != oldFringe->end() && segment.right >= oldFringeIter[1].left)
+      {
         ++oldFringeIter;
         Blob *lhs_b = getBlob(oldFringeIter);
         if (lhs_b != b) {
@@ -141,6 +141,7 @@ public:
           b->setParent(lhs_b);
         }
       }
+
       newFringe->push_back(BlobFringe(segment.left, segment.right, b-&blobs[0]));
       return;
     }
@@ -169,7 +170,8 @@ public:
     return nextBlob((&blobs[0])-1);
   }
   Blob *nextBlob(Blob *b) {
-    while (++b <= &blobs.back()) {
+    while (++b <= &blobs.back())
+    {
       if (b->root() == b) return b;
     }
     return NULL;
@@ -180,7 +182,9 @@ public:
   void sortBlobs() {
     sorted = true;
     sortedBlobs.clear();
-    for (Blob *b = firstBlob(); b; b = nextBlob(b)) {
+
+    for (Blob *b = firstBlob(); b; b = nextBlob(b))
+    {
       sortedBlobs.push_back(b);
     }
     // Sort by descending area

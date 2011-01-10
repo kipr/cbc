@@ -45,7 +45,7 @@ void VisionSettings::hide()
     Page::hide();
 }
 
-bool VisionSettings::loadSettings()
+void VisionSettings::loadSettings()
 {
     int state;
     state = m_camera->getParameter(AUTO_WHITE_BALANCE);

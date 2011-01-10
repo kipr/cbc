@@ -39,7 +39,7 @@ public:
 
     ImageDisplay *m_ImageDisplay;
     virtual void showEvent(QShowEvent *event);
-    bool loadSettings();
+    void loadSettings();
 
 protected:
     Camera  *m_camera;

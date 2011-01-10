@@ -23,6 +23,7 @@
 
 // System includes
 #include <stdlib.h>
+#include <stdio.h>
 
 // Qt
 #include <QImage>

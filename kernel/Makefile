@@ -1,6 +1,10 @@
 COMPILER = /usr/bin/arm-linux-gcc
 
+# update for new chipset July 27, 2010 kernel
+#TARFILE = linux-2.6.16.tgz
 TARFILE = linux-2.6.16-chumby-1.7.0.tar.gz
+# update for new chipset july 27, 2010 kernel
+#KERNEL_DIR = linux-2.6.16
 KERNEL_DIR = linux-2.6.16-chumby-1.7.0
 KERNEL = $(KERNEL_DIR)/arch/arm/boot/zImage
 ZIPFILE = k1.bin.zip

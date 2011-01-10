@@ -31,48 +31,50 @@
 
 class ColorTracker : public FrameHandler {
 public:
-  enum DisplayMode {
-    DisplayRaw=0,
-    DisplayMatches,
-    DisplayBlobs
-  };
-  ColorTracker(int nmodels);
-  ~ColorTracker();
-  virtual void processFrame(const Image &image);
-  void setModel(uint8 channel, const HSVRange &range);
-  HSVRange getModel(uint8 channel) const;
-  bool loadModels();
-  bool saveModels();
-  void loadDefaultModels();
-  
-  void setDisplayModel(int model) { m_displayModel = model; }
-  void setDisplayMode(DisplayMode mode) { m_displayMode = mode; }
-  void setImageDisplay(ImageDisplay *image) { m_displayImage = image; }
-  int getDisplayModel() const { return m_displayModel; }
-  void shareResults(const char *filename);
-  void stopSharingResults();
-  static void test();
+    enum DisplayMode {
+        DisplayRaw=0,
+        DisplayMatches,
+        DisplayBlobs
+    };
+
+    ColorTracker(int nmodels);
+    ~ColorTracker();
+    virtual void processFrame(const Image &image);
+    void setModel(uint8 channel, const HSVRange &range);
+    HSVRange getModel(uint8 channel) const;
+    bool loadModels();
+    bool saveModels();
+    void loadDefaultModels();
+
+    void setDisplayModel(int model) { m_displayModel = model; }
+    void setDisplayMode(DisplayMode mode) { m_displayMode = mode; }
+    void setImageDisplay(ImageDisplay *image) { m_displayImage = image; }
+    int getDisplayModel() const { return m_displayModel; }
+    void shareResults(const char *filename);
+    void stopSharingResults();
+    static void test();
 
 protected:
-  void updateSharedResults(int frameTime);
-  void testImage(const char *filename, int nblobs_expected);
-  std::vector<BlobAssembler*> m_assemblers;
+    std::vector<BlobAssembler*> m_assemblers;
+    void assembleBlobs(const Image &in, BlobAssembler &bass,uint8 model, Image *out);
 
-  std::string modelSaveFile() const;
+    SharedMem<TrackingResults> *m_sharedResults;
+    void updateSharedResults(int frameTime);
 
-  // For viewing images and tracking
-  DisplayMode m_displayMode;
-  unsigned int m_displayModel; // model # to display (0-based)
-  ImageDisplay *m_displayImage; // image to display on
-  
-  bool m_recordSegments;
-  SharedMem<TrackingResults> *m_sharedResults;
-  int m_frameNumber;
-  int m_lastFrameTime;
-  void assembleBlobs(const Image &in, BlobAssembler &bass,
-                     uint8 model, Image *out);
-  HSVRangeLUT m_lut;
-  char m_HSVmodelFile[];
+    // For viewing images and tracking
+    DisplayMode m_displayMode;
+    unsigned int m_displayModel; // model # to display (0-based)
+    ImageDisplay *m_displayImage; // image to display on
+    bool m_recordSegments;
+
+    int m_frameNumber;
+    int m_lastFrameTime;
+    HSVRangeLUT m_lut;
+    char m_HSVmodelFile[];
+
+    std::string modelSaveFile() const;
+
+    void testImage(const char *filename, int nblobs_expected);
 };
-  
+
 #endif

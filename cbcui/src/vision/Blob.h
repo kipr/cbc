@@ -31,8 +31,8 @@
 
 struct Segment {
   unsigned short row;
-  unsigned short left; // inclusive
-  unsigned short right;   // inclusive
+  unsigned short left;      // inclusive
+  unsigned short right;     // inclusive
 
   enum { invalid_row = 0x3ff };
 
@@ -77,15 +77,17 @@ public:
     top(segment.row),
     right(segment.right),
     bottom(segment.row),
-    parentOffset(0) {
+    parentOffset(0)
+  {
     segment.GetMoments(moments);
   }
-  ~Blob() {
-  }
+
+  ~Blob() {}
 
   // Adding a new segment
   // Assumes that row #s never decrease
-  void Add(const Segment &segment) {
+  void Add(const Segment &segment)
+  {
     // Enlarge bounding box if necessary
     left = std::min(left, segment.left);
     right = std::max(right, segment.right);
@@ -110,9 +112,11 @@ public:
     parentOffset = parent - this;
   }
   
-  Blob *root() {
+  Blob *root()
+  {
     Blob *ret=this;
-    while (ret->parentOffset) {
+    while (ret->parentOffset)
+    {
       ret += ret->parentOffset;
     }
     return ret;

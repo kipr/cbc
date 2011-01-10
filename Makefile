@@ -37,17 +37,17 @@ userlib_clean: libcbc_clean tracklib_clean
 
 cbcui: userlib
 	(cd cbcui && $(QTEMBEDDED_QMAKE))
-	make -C cbcui
+	make -s -C cbcui
 
 cbcui_clean:
 	(if test -e cbcui/Makefile; then make -C cbcui distclean; fi)
 
 userhook0: cbcui userlib fb_print
 	make -C filesystem/upgrade
-	ln -sf filesystem/upgrade/userhook0 userhook0
+#	ln -sf filesystem/upgrade/userhook0 userhook0
 
 userhook0_clean: cbcui_clean userlib_clean fb_print_clean
 	make -C filesystem/upgrade clean
-	rm -f userhook0
+#	rm -f userhook0
 
 .PHONY: userhook0 cbcui userlib libcbc tracklib shared_mem fb_print

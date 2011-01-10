@@ -94,16 +94,20 @@ void DrawBlobs::draw(Image &dest, BlobAssembler &bass,
   MomentStats stats;
   int i=0;
 
-  if(showtext) {
+  if(showtext)
+  {
     printf("---------------------------------------------------------\n");
     printf("Blob stats:\n");
   }
 
-  for (Blob *blob = bass.firstBlob(); blob; blob=bass.nextBlob(blob)) {
+  for (Blob *blob = bass.firstBlob(); blob; blob=bass.nextBlob(blob))
+  {
     blob->moments.GetStats(stats);
-    if(stats.area >= minarea) {
+    if(stats.area >= minarea)
+    {
       Pixel565 color = (i < num_colors) ? blob_colors[i] : Pixel565::white();
-      if(showtext) {
+      if(showtext)
+      {
 	printf("\tBlob %d: area %d, centroid (%f, %f)\n", 
 	       i++, stats.area, stats.centroidX, stats.centroidY);
 	printf("                axis %f, aspect %f\n", 
@@ -112,9 +116,7 @@ void DrawBlobs::draw(Image &dest, BlobAssembler &bass,
       }
       draw_blob(dest, blob, color, showseg, showell);
 
-      if(showbars && i<=num_colors) {
-        dest.draw_fillrect((i-1)*10, 0, i*10, 10, color);
-      }
+      if(showbars && i<=num_colors) dest.draw_fillrect((i-1)*10, 0, i*10, 10, color);
     }
   }
 }
@@ -278,10 +280,13 @@ void draw_ellipse(Image &dest, float x, float y, float angle,
   int ix = (int)x, iy = (int)y;
 
   int a = (int)((angle/(2.0*M_PI))*512.0);
-  if(a<0) {
+  if(a<0)
+  {
     a+=512;
   }
-  for(int p=0; p<512; p+=step) {
+
+  for(int p=0; p<512; p+=step)
+  {
     // This is the x,y location at this angle around the ellipse if
     // the ellipse were centered at zero and had theta=0;
     int ce_x = (int)(major_axis * costab[p]);

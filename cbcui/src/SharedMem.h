@@ -35,7 +35,7 @@ public:
     m_size(sizeof(T)),
     m_filename(filename),
     m_shared(NULL) {
-    m_fd = open(filename.c_str(), O_RDWR | O_CREAT);
+    m_fd = open(filename.c_str(), O_RDWR | O_CREAT, 0666);  // added 0666 for file creation permissions
     if (m_fd < 0) {
       perror("SharedMem:open");
       return;

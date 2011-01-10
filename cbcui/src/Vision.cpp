@@ -39,7 +39,7 @@ Vision::Vision() : m_colorTracker(Vision::NUM_CHANNELS)
     ctassert(sizeof(ushort) == 2);
     ctassert(sizeof(short) == 2);
 
-    Pixel565toHSV::init();
+    Pixel565toHSV::init();              // initialize the HSV color map
 
     m_camera=NULL;
 

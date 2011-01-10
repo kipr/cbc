@@ -32,12 +32,13 @@ bool Pixel565toHSV::pixel565_to_hsv_lut_valid;
 
 void Pixel565toHSV::init()
 {
-  if (!pixel565_to_hsv_lut_valid) {
-    for (unsigned p = 0; p < Pixel565::MAXVAL+1; p++) {
-      pixel565_to_hsv_lut[p] = HSV::fromPixel(Pixel565(p));
+    if (!pixel565_to_hsv_lut_valid) {
+        // fill the hsv_lut array with all values in the color field
+        for (unsigned p = 0; p < Pixel565::MAXVAL+1; p++) {
+            pixel565_to_hsv_lut[p] = HSV::fromPixel(Pixel565(p));
+        }
+        pixel565_to_hsv_lut_valid = true;
     }
-    pixel565_to_hsv_lut_valid = true;
-  }
 }
 
 

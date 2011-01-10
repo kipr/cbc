@@ -31,7 +31,7 @@ void Camera::addFrameHandler(FrameHandler *frameHandler)
 
 void Camera::callFrameHandlers(const Image &image)
 {
-  check_heap();
+  check_heap();     // each frame handeler already checks the heap, may not need this call
   for (unsigned i = 0; i < m_frameHandlers.size(); i++)
     m_frameHandlers[i]->processFrame(image);
   check_heap();

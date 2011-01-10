@@ -106,7 +106,8 @@ void Settings::setCameraDefault()
 #ifdef QT_ARCH_ARM
   QFile::remove("/mnt/user/vision/track_colors");
 #else
-  QFile::remove(QDir::homePath().toStdString() + "/track_colors");
+  QString str = QDir::homePath() + "/track_colors";
+  QFile::remove(str);
 #endif
 }
 

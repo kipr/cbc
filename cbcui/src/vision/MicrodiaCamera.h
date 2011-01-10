@@ -34,9 +34,15 @@ class MicrodiaCamera;
 
 class MicrodiaCameraThread : public QThread {
 public:
-  MicrodiaCameraThread(MicrodiaCamera &camera) : m_camera(camera) {}
-  ~MicrodiaCameraThread() { wait(); }
+  MicrodiaCameraThread(MicrodiaCamera &camera)
+      : m_camera(camera)
+  {}
+
+  ~MicrodiaCameraThread()
+  { wait(); }
+
   virtual void run();
+
 protected:
   MicrodiaCamera &m_camera;
 };
@@ -67,7 +73,6 @@ protected:
   void checkSettings();
   void readSettings();
   void writeSetting(enum cam_parms id, int value);
-
 };
 
   
