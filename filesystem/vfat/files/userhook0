@@ -1,11 +1,15 @@
 #!/bin/sh
 
 ROOT=/mnt/usb
-
-#PRINT=$ROOT/fb_print
-PRINT=echo
 VERSION=`cat $ROOT/FIRMWARE_VERSION`
 
+DEBUG=1
+
+if [ DEBUG ]; then
+    PRINT=$ROOT/fb_print    # causes printing to the screen
+else
+    PRINT=echo
+fi
 
 if [ "$1" == "--version" ]; then
   echo $VERSION
@@ -38,52 +42,61 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-INTERNAL_DEVICE=$1
+if [ ! DEBUG ]; then
+    dd if=/mnt/usb/splash_screen.bin of=/dev/fb0
+fi
 
-#
+#######################################
+# Network setup
+#################
 # Set up loopback
-#
 ifconfig lo 127.0.0.1
 
-dd if=/mnt/usb/splash_screen.bin of=/dev/fb0
-
-#
 # Set up wired network
-#
+######################
 echo "Checking for network" | $PRINT
 echo "Starting wired network driver"
 insmod /drivers/pegasus.ko
 echo "Starting DHCP on eth0"
 udhcpc eth0
 
-#
 # Set up wireless network
-#
-echo "Starting wireless network driver"
-insmod /drivers/rt73.ko
+#########################
+echo "Starting wireless network driver" | $PRINT
+#insmod /drivers/rt73.ko
+insmod /mnt/usb/rt73.ko
 if [ -e /mnt/usb/network_config ]; then
+        echo "Copying network config" | $PRINT
 	cp /mnt/usb/network_config /psp
 	/usr/chumby/scripts/start_network &
 else
 	if [ -e /psp/network_config ]; then
+                echo "Starting network" | $PRINT
 		/usr/chumby/scripts/start_network &
 	else
-		ifconfig rausb0 up
+                echo "Raising usb network" | $PRINT
+                ifconfig rausb0 up
 	fi
 fi
 
-#
 # Display network interfaces
-#
-ifconfig
+############################
+echo "ifconfig in 5" | $PRINT
+sleep 5
+ifconfig | $PRINT
 ifconfig | grep inet | grep -v 127.0.0.1 | sed 's/Bcast.*//' | $PRINT
 
 # sshd
-echo "Starting sshd"
+######
+echo "Starting sshd" | $PRINT
 /sbin/sshd
 
+##############################
+# Chumby Hardware driver setup
+##############################
 # Touch screen and sensors
 hwversion=`/usr/chumby/scripts/chumby_version -h`
+echo "Chumby hardware version $hwversion" | $PRINT --echo
 if [ "$hwversion" == "3.8" ]; then
     # touch screen
     insmod /drivers/chumby-tsc2100.ko version038=1
@@ -97,14 +110,13 @@ else
     # chumby sensor driver
     insmod /drivers/chumby_sense1.ko
 fi
-echo "Chumby hardware version $hwversion" | $PRINT --echo
+#echo "Disabling touchscreen touchclick"
+#echo 0 > /proc/chumby/touchscreen/touchclick
 
-#
 # USB HID: keyboard / mouse
-#
-echo "Starting USB HID"
+###########################
+echo "Starting USB HID" | $PRINT
 insmod /drivers/usbhid.ko
-
 insmod /drivers/chumby_udma.ko
 insmod /drivers/chumby_timer.ko
 mknod /dev/timerx c `cat /proc/devices |awk '/timer/ {print $1}'` 0
@@ -117,16 +129,15 @@ mknod /dev/switch c `cat /proc/devices |awk '/switch/ {print $1}'` 0
 mknod /dev/udma c `cat /proc/devices |awk '/udma/ {print $1}'` 1
 
 # set paranoid boot flag/semaphore
-echo "Clearing paranoid boot flag"
+echo "Clearing paranoid boot flag" | $PRINT
 /bin/eraseall /dev/mtd7
 nandwrite /dev/mtd7 /usr/chumby/msp_00_64k_no_oob.bin 0x70000
 
-echo "Disabling touchscreen touchclick"
-echo 0 > /proc/chumby/touchscreen/touchclick
-
-echo "Loading CBOB SPI module"
+echo "Loading CBOB SPI module" | $PRINT
 insmod /mnt/usb/cbob.ko
 sh /mnt/usb/mkdev.sh
+
+INTERNAL_DEVICE=$1
 
 KISS=/mnt/kiss
 USER=/mnt/user
@@ -139,7 +150,7 @@ insmod /mnt/usb/ext2.ko
 
 restore_time
 
-echo "Enabling audio"
+echo "Enabling audio" | $PRINT
 insmod /drivers/snd-rawmidi.ko
 insmod /drivers/snd-seq-midi.ko
 insmod /drivers/snd-usb-lib.ko
@@ -161,7 +172,10 @@ mount ${USER_DEV} ${USER} -t ext2
 mkdir -p /mnt/browser/code
 mount --bind /mnt/user/code /mnt/browser/code
 
-# startup btplay daemon
+#######################
+# Setup audio
+#############
+echo "Startup btplay daemon" | $PRINT
 btplayd </dev/null >/dev/null 2>&1 &
 sleep 2
 chmod a+w /tmp/.btplay-cmdin
@@ -169,14 +183,14 @@ btplay /mnt/kiss/sounds/mellow.wav
 sleep 2
 btplay /mnt/kiss/sounds/sysInit.wav
 
-
 save_time
-
-echo "done."
 
 echo "" | $PRINT --echo
 echo "Boot complete" | $PRINT --echo
 
-/mnt/kiss/startup.sh &
+ echo "Trying to start control panel" | $PRINT
+ /usr/chumby/scripts/start_control_panel
+
+#/mnt/kiss/startup.sh &
 
 exit

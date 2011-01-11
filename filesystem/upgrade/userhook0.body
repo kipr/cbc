@@ -93,6 +93,21 @@ PRINT="$PRINT --skiptop 72"
 
 echo -n ""| $PRINT 
 
+echo "Backing up user data..." | $PRINT
+USER=/mnt/user
+USER_DEV=/dev/${INTERNAL_DEVICE}3
+insmod /tmp/ext2.ko | $PRINT
+mkdir -p $USER | $PRINT
+mount $USER_DEV $USER -t ext2 | $PRINT
+mkdir -p $ROOT/cbc_backup/user/ | $PRINT
+cp -a -f $USER/* $ROOT/cbc_backup/user/ | $PRINT
+sync
+sync
+umount $USER | $PRINT
+rmmod ext2 | $PRINT
+echo "Backup complete!" | $PRINT
+
+
 # Check the partition table...
 
 PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
@@ -179,6 +194,10 @@ df $BOOT_DEV $KISS_DEV $USER_DEV | $PRINT
 mkdir $USER/code
 mkdir $USER/config
 mkdir $USER/vision
+
+echo "Restoring user data..." | $PRINT
+cp -a -f $ROOT/cbc_backup/user/* $USER/ | $PRINT
+echo "User data restored!" | $PRINT
 
 echo -n "Updating boot scripts..." | $PRINT
 #rm /psp/rfs1/pointercal
