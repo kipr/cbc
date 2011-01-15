@@ -37,10 +37,13 @@ FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent)
 
     ui_directoryBrowser->setRootIndex(m_dir.index(DEFAULT_PATH));
 
+    QObject::connect(&m_dir, SIGNAL(layoutChanged()), this, SLOT(updateGUI()));
+
     ui_unmountButton->hide();
     ui_actionButton->hide();
     ui_stopButton->hide();
     ui_deleteButton->hide();
+    updateGUI();
 }
 
 FileManager::~FileManager()
@@ -56,13 +59,22 @@ bool FileManager::isUSBMounted()
 
 void FileManager::on_ui_directoryBrowser_clicked(const QModelIndex &index)
 {
+    m_index = index;
     // forward this to catch all clicks
-    this->on_ui_directoryBrowser_entered(index);
+    //this->on_ui_directoryBrowser_entered(index);
+    this->updateGUI();
 }
 
 void FileManager::on_ui_directoryBrowser_entered(const QModelIndex &index)
 {
     m_index = index;
+
+    this->updateGUI();
+}
+
+void FileManager::updateGUI()
+{
+    //m_index = index;
     QString indexName = m_dir.filePath(m_index);
 
     ui_deleteButton->show();
@@ -119,8 +131,11 @@ void FileManager::on_ui_unmountButton_clicked()
     QProcess umount;
 
     QProcess::startDetached("btplay /mnt/kiss/sounds/disconnected.wav");
-    ui_directoryBrowser->setRootIndex(m_dir.index(DEFAULT_PATH));
+    m_index = m_dir.index(DEFAULT_PATH);
+    ui_directoryBrowser->setRootIndex(m_index);
     m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+
+    this->updateGUI();
 
     umount.start("/mnt/kiss/usercode/umount-usb");
     umount.waitForFinished();
@@ -167,10 +182,11 @@ void FileManager::on_ui_stopButton_clicked()
 
 void FileManager::on_ui_deleteButton_clicked()
 {
-    QString deleteString = "rm -rf " + m_dir.filePath(ui_directoryBrowser->currentIndex());
+    QString fPath = m_dir.filePath(ui_directoryBrowser->currentIndex());
+    fPath.replace(" ",QString("\\ "));
+    QString deleteString("rm -rf " + fPath);
 
     ::system(deleteString.toLocal8Bit());
-    ui_deleteButton->hide();
 }
 
 

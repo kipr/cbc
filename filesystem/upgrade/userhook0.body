@@ -198,6 +198,7 @@ mkdir $USER/vision
 
 echo "Restoring user data..." | $PRINT
 cp -a -f $ROOT/cbc_backup/user/* $USER/
+rm -rf $ROOT/cbc_backup
 echo "User data restored!" | $PRINT
 
 echo -n "Updating boot scripts..." | $PRINT

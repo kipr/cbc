@@ -45,6 +45,7 @@ public slots:
     void on_ui_actionButton_clicked();
     void on_ui_stopButton_clicked();
     void on_ui_deleteButton_clicked();
+    void updateGUI();
 
 private:
    Compiler             m_compiler;
