@@ -23,6 +23,8 @@
 #include <QProcess>
 
 #define DEFAULT_PATH "/mnt/browser"
+#define INTERNAL_USER_PATH "/mnt/browser/code"
+#define USB_USER_PATH "/mnt/browser/usb"
 
 FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent)
 {
@@ -38,6 +40,7 @@ FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent)
     ui_unmountButton->hide();
     ui_actionButton->hide();
     ui_stopButton->hide();
+    ui_deleteButton->hide();
 }
 
 FileManager::~FileManager()
@@ -60,11 +63,25 @@ void FileManager::on_ui_directoryBrowser_clicked(const QModelIndex &index)
 void FileManager::on_ui_directoryBrowser_entered(const QModelIndex &index)
 {
     m_index = index;
+    QString indexName = m_dir.filePath(m_index);
+
+    ui_deleteButton->show();
+
+    // Directory user interface setup
     if(m_dir.isDir(m_index)) {
         ui_actionButton->setText("Open");
         ui_actionButton->show();
         ui_stopButton->hide();
+
+        if(indexName == DEFAULT_PATH ||
+           indexName == INTERNAL_USER_PATH ||
+           indexName == USB_USER_PATH ||
+           indexName.endsWith("."))
+        {
+            ui_deleteButton->hide();
+        }
     }
+    // File user interface setup
     else {
         QString filename = m_dir.fileName(m_index);
         if(filename.endsWith(".c")){
@@ -153,6 +170,7 @@ void FileManager::on_ui_deleteButton_clicked()
     QString deleteString = "rm -rf " + m_dir.filePath(ui_directoryBrowser->currentIndex());
 
     ::system(deleteString.toLocal8Bit());
+    ui_deleteButton->hide();
 }
 
 
