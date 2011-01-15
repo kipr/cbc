@@ -4,16 +4,17 @@ First off, remember that by following these instructions you may brick your CBC 
 
 Requirements:
 -------------
-To build the CBC Firmware, You'll first need to have a Linux system up and running, preferrably Ubuntu 8.04.  You'll also need to install the following pieces of software by hand:
+To build the CBC Firmware, You'll first need to have a Linux system up and running, preferrably Ubuntu 9.10.  You'll also need to install the following pieces of software by hand:
 
+* build-essentials
 * ARM GCC Toolchain
 * Qt Embedded 4.5
 
-As well as the following minor pieces of software (easily installed through your distro's package manager)
+As well as the following minor pieces of software (easily installed through your distro's package manager) many of the following are installed from (sudo apt-get install build-essentials)
 
 * GCC
 * GNU Make
-* Qt 4.5
+* Qt 4.7
 * Rsync
 * Wget
 

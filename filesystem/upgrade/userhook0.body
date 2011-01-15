@@ -107,8 +107,6 @@ umount $USER
 rmmod ext2
 echo "Backup complete!" | $PRINT
 
-
-
 # Check the partition table...
 
 PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
