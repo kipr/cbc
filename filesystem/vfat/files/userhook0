@@ -3,9 +3,9 @@
 ROOT=/mnt/usb
 VERSION=`cat $ROOT/FIRMWARE_VERSION`
 
-DEBUG=1
+DEBUG=0
 
-if [ DEBUG ]; then
+if [ $(DEBUG) == 1 ]; then
     PRINT=$ROOT/fb_print    # causes printing to the screen
 else
     PRINT=echo
@@ -42,7 +42,7 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-if [ ! DEBUG ]; then
+if [ ! $(DEBUG) ]; then
     dd if=/mnt/usb/splash_screen.bin of=/dev/fb0
 fi
 
@@ -111,7 +111,7 @@ else
     insmod /drivers/chumby_sense1.ko
 fi
 #echo "Disabling touchscreen touchclick"
-#echo 0 > /proc/chumby/touchscreen/touchclick
+echo 0 > /proc/chumby/touchscreen/touchclick
 
 # USB HID: keyboard / mouse
 ###########################
@@ -188,9 +188,11 @@ save_time
 echo "" | $PRINT --echo
 echo "Boot complete" | $PRINT --echo
 
- echo "Trying to start control panel" | $PRINT
- /usr/chumby/scripts/start_control_panel
-
-#/mnt/kiss/startup.sh &
+if [ $(DEBUG) == 1 ]; then
+	echo "Trying to start control panel" | $PRINT
+	/usr/chumby/scripts/start_control_panel
+else
+	/mnt/kiss/startup.sh &
+fi
 
 exit

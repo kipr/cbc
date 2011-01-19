@@ -22,10 +22,32 @@
 #define __FILE_MANAGER_H__
 
 #include <QFileSystemModel>
+#include <QDialog>
+#include <QTreeView>
 
 #include "ui_FileManager.h"
 #include "Page.h"
 #include "Compiler.h"
+
+class CopyDialog : public QDialog
+{
+    Q_OBJECT
+
+    public:
+        CopyDialog(QString fromPath, QWidget *parent = 0);
+
+        QTreeView           *cpTreeView;
+        QPushButton         *copyButton;
+        QPushButton         *cancelButton;
+
+    private:
+        QString             cpFromPath;
+        QFileSystemModel    cpDirModel;
+        QModelIndex         cpIndex;
+
+    public slots:
+        void copyData();
+};
 
 class FileManager : public Page, private Ui::FileManager
 {
@@ -40,10 +62,11 @@ public:
 public slots:
     void on_ui_directoryBrowser_clicked(const QModelIndex &index);
     void on_ui_directoryBrowser_entered(const QModelIndex &index);
+    void on_ui_homeButton_clicked();
     void on_ui_mountButton_clicked();
-    void on_ui_unmountButton_clicked();
     void on_ui_actionButton_clicked();
     void on_ui_stopButton_clicked();
+    void on_ui_copyButton_clicked();
     void on_ui_deleteButton_clicked();
     void updateGUI();
 
@@ -51,7 +74,7 @@ private:
    Compiler             m_compiler;
     QFileSystemModel    m_dir;
     QModelIndex         m_index;
-
+    bool                m_mntState;
 };
 
 #endif

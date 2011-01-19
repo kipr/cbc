@@ -26,7 +26,80 @@
 #define INTERNAL_USER_PATH "/mnt/browser/code"
 #define USB_USER_PATH "/mnt/browser/usb"
 
-FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent)
+////////////////////////////////////////
+//  copy dialog setup
+///////////////
+CopyDialog::CopyDialog(QString fromPath, QWidget *parent) : QDialog(parent), cpFromPath(fromPath)
+{
+    setWindowTitle("Copy to Location");
+    setWindowFlags(Qt::Tool);
+    this->setGeometry(0,0,320,250);
+
+    cpDirModel.setRootPath(INTERNAL_USER_PATH);
+    cpDirModel.setResolveSymlinks(true);
+    cpDirModel.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+    cpIndex = cpDirModel.index(INTERNAL_USER_PATH);
+
+    QHBoxLayout *mainLayout = new QHBoxLayout;
+    cpTreeView = new QTreeView(this);
+    cpTreeView->setModel(&cpDirModel);
+    cpTreeView->setRootIndex(cpIndex);
+    cpTreeView->setRootIsDecorated(true);
+    cpTreeView->setCurrentIndex(cpIndex);
+    cpTreeView->setFrameRect(QRect(0,0,238,250));
+    mainLayout->addWidget(cpTreeView);
+
+    QVBoxLayout *buttonLayout = new QVBoxLayout;
+
+    buttonLayout->addStretch(0);
+
+    copyButton = new QPushButton("Copy");
+    copyButton->setMinimumWidth(80);
+    copyButton->setMinimumHeight(30);
+    copyButton->setStyleSheet("QPushButton{border:0px;background-image:url(:/actions/rivet80x30L.png);color:black;} QPushButton:pressed{border:0px;background-image:url(:/actions/rivet80x30D.png);color:white;}");
+    buttonLayout->addWidget(copyButton);
+
+    buttonLayout->addStretch(0);
+
+    cancelButton = new QPushButton("Cancel");
+    cancelButton->setMinimumWidth(80);
+    cancelButton->setMinimumHeight(30);
+    cancelButton->setStyleSheet("QPushButton{border:0px;background-image:url(:/actions/rivet80x30L.png);color:black;} QPushButton:pressed{border:0px;background-image:url(:/actions/rivet80x30D.png);color:white;}");
+    buttonLayout->addWidget(cancelButton);
+
+    buttonLayout->addStretch(0);
+
+    mainLayout->addLayout(buttonLayout);
+
+    connect(copyButton,SIGNAL(clicked()),this,SLOT(copyData()));
+    connect(cancelButton,SIGNAL(clicked()),this,SLOT(reject()));
+
+    this->setLayout(mainLayout);
+}
+
+void CopyDialog::copyData()
+{
+    cpIndex = cpTreeView->currentIndex();
+    if(!cpDirModel.isDir(cpIndex)) return;
+
+    QString copyString("cp -r ");
+    QString cpToPath = cpDirModel.filePath(cpIndex);
+
+    cpToPath.replace(" ",QString("\\ "));
+    cpFromPath.replace(" ",QString("\\ "));
+
+    copyString.append(cpFromPath);
+    copyString.append(" ");
+    copyString.append(cpToPath);
+
+    ::system(copyString.toLocal8Bit());
+    this->accept();
+}
+
+////////////////////////////////////////////////////////////////
+//  File Manager
+////////////////
+FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent), m_mntState(false)
 {
     setupUi(this);
     
@@ -36,13 +109,13 @@ FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent)
     m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
 
     ui_directoryBrowser->setRootIndex(m_dir.index(DEFAULT_PATH));
+    m_index = m_dir.index(DEFAULT_PATH);
 
-    QObject::connect(&m_dir, SIGNAL(layoutChanged()), this, SLOT(updateGUI()));
+    //QObject::connect(&m_dir, SIGNAL(layoutChanged()), this, SLOT(updateGUI()));
 
-    ui_unmountButton->hide();
     ui_actionButton->hide();
     ui_stopButton->hide();
-    ui_deleteButton->hide();
+    ui_copyButton->hide();
     updateGUI();
 }
 
@@ -60,24 +133,24 @@ bool FileManager::isUSBMounted()
 void FileManager::on_ui_directoryBrowser_clicked(const QModelIndex &index)
 {
     m_index = index;
-    // forward this to catch all clicks
-    //this->on_ui_directoryBrowser_entered(index);
     this->updateGUI();
 }
 
 void FileManager::on_ui_directoryBrowser_entered(const QModelIndex &index)
 {
     m_index = index;
-
     this->updateGUI();
 }
 
 void FileManager::updateGUI()
 {
-    //m_index = index;
     QString indexName = m_dir.filePath(m_index);
+    ui_directoryBrowser->setCurrentIndex(m_index);
 
-    ui_deleteButton->show();
+    if(m_mntState)
+        ui_mountButton->setText("Unmnt. USB");
+    else
+        ui_mountButton->setText("Mount USB");
 
     // Directory user interface setup
     if(m_dir.isDir(m_index)) {
@@ -90,12 +163,20 @@ void FileManager::updateGUI()
            indexName == USB_USER_PATH ||
            indexName.endsWith("."))
         {
+            // ui_copyButton->hide();   // uncomment to allow copy
             ui_deleteButton->hide();
         }
+        else{
+            // ui_copyButton->show();   // uncomment to allow copy
+            ui_deleteButton->show();
+       }
     }
     // File user interface setup
     else {
         QString filename = m_dir.fileName(m_index);
+        // ui_copyButton->show();   // uncomment to allow copy
+        ui_deleteButton->show();
+
         if(filename.endsWith(".c")){
             ui_actionButton->setText("Compile");
             ui_actionButton->show();
@@ -113,39 +194,47 @@ void FileManager::updateGUI()
     }
 }
 
+void FileManager::on_ui_homeButton_clicked()
+{
+    m_index = m_dir.index(DEFAULT_PATH);
+    ui_directoryBrowser->setRootIndex(m_index);
+    ui_directoryBrowser->setCurrentIndex(m_index);
+    m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+
+    updateGUI();
+}
+
 void FileManager::on_ui_mountButton_clicked()
 {
     QProcess mount;
 
-    mount.start("/mnt/kiss/usercode/mount-usb");
-    mount.waitForFinished();
+    if(!m_mntState){
+        mount.start("/mnt/kiss/usercode/mount-usb");
+        mount.waitForFinished();
 
-    if(mount.exitCode()) return;
+        if(mount.exitCode()) return;    // don't change gui if mount fails
 
-    ui_mountButton->hide();
-    ui_unmountButton->show();
-}
+        m_index = m_dir.index(USB_USER_PATH);
+        m_mntState = true;
+    }
+    else{
+        mount.start("/mnt/kiss/usercode/umount-usb");
+        mount.waitForFinished();
 
-void FileManager::on_ui_unmountButton_clicked()
-{
-    QProcess umount;
+        if(mount.exitCode()) return;    // don't change gui if unmount fails
 
-    QProcess::startDetached("btplay /mnt/kiss/sounds/disconnected.wav");
-    m_index = m_dir.index(DEFAULT_PATH);
-    ui_directoryBrowser->setRootIndex(m_index);
-    m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+        if(m_dir.filePath(m_index).startsWith(USB_USER_PATH)){
+            m_index = m_dir.index(DEFAULT_PATH);
+            ui_directoryBrowser->setRootIndex(m_index);
+            ui_directoryBrowser->setCurrentIndex(m_index);
+            m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+        }
+
+        QProcess::startDetached("btplay /mnt/kiss/sounds/disconnected.wav");
+        m_mntState = false;
+    }
 
     this->updateGUI();
-
-    umount.start("/mnt/kiss/usercode/umount-usb");
-    umount.waitForFinished();
-
-    if(umount.exitCode()) return;
-
-    ui_mountButton->show();
-    ui_unmountButton->hide();
-    ui_actionButton->hide();
-    ui_stopButton->hide();
 }
 
 void FileManager::on_ui_actionButton_clicked()
@@ -159,25 +248,59 @@ void FileManager::on_ui_actionButton_clicked()
             m_dir.setFilter(QDir::AllEntries);
 
         ui_directoryBrowser->setRootIndex(m_dir.index(path));
-        ui_actionButton->hide();
+        m_index = m_dir.index(path);
     }
     else{
-        QString filePath = m_dir.filePath(m_index);
-        if(filePath.endsWith(".c")){
+        QFileInfo fileInfo = m_dir.fileInfo(m_index);
+        //QString filePath = m_dir.filePath(m_index);
+        if(fileInfo.suffix() == "c"){
+
+            // if the file to compile is on the external usb, copy it to the internal storage
+            if(fileInfo.absolutePath().startsWith(USB_USER_PATH)){
+
+                QString toPath(INTERNAL_USER_PATH);
+                toPath.append("/");
+
+                // create a directory with the name of the file
+                m_dir.mkdir(m_dir.index(INTERNAL_USER_PATH),fileInfo.baseName());
+
+                toPath.append(fileInfo.baseName());
+                toPath.append("/");
+                toPath.replace(" ",QString("\\ "));
+
+                QString copyString("cp -r ");
+                copyString.append(fileInfo.absoluteFilePath().replace(" ",QString("\\ ")));
+                copyString.append(" ");
+                copyString.append(toPath);
+
+                ::system(copyString.toLocal8Bit());
+            }
+
             QProcess::startDetached("aplay /mnt/kiss/sounds/compiling.wav");
-            m_compiler.compileFile(filePath);
+            m_compiler.compileFile(fileInfo.absoluteFilePath());
         }
-        else if(filePath.endsWith(".wav",Qt::CaseInsensitive) || filePath.endsWith(".mp3",Qt::CaseInsensitive)){
-            filePath.prepend("btplay ");
-            qWarning("%s",qPrintable(filePath));
-            QProcess::startDetached(filePath.toLocal8Bit());
+        else if(fileInfo.fileName().endsWith(".wav",Qt::CaseInsensitive) || fileInfo.fileName().endsWith(".mp3",Qt::CaseInsensitive)){
+            QString soundFile = fileInfo.absoluteFilePath();
+            soundFile.replace(" ","\\ ");
+            soundFile.prepend("btplay ");
+            qWarning("%s",qPrintable(soundFile));
+            QProcess::startDetached(soundFile.toLocal8Bit());
         }
     }
+    this->updateGUI();
 }
 
 void FileManager::on_ui_stopButton_clicked()
 {
     ::system("echo stop > /tmp/.btplay-cmdin");
+}
+
+void FileManager::on_ui_copyButton_clicked()
+{
+    QString fromPath = m_dir.filePath(ui_directoryBrowser->currentIndex());
+
+    CopyDialog cpDialog(fromPath,this);
+    cpDialog.exec();
 }
 
 void FileManager::on_ui_deleteButton_clicked()
@@ -188,6 +311,3 @@ void FileManager::on_ui_deleteButton_clicked()
 
     ::system(deleteString.toLocal8Bit());
 }
-
-
-

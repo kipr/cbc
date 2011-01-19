@@ -29,5 +29,6 @@ void wait_for_light(int light_port_);
 void shut_down_in(float delay);
 void run_for(float howLong, void (*funky));
 void _shut_down_task();
+int target_cha_in_chb(int a, int b, int *x, int *y);
 
 #endif

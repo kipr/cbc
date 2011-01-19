@@ -66,6 +66,37 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="ui_homeButton">
+       <property name="minimumSize">
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton{
+border:0px;
+background-image:url(:/actions/rivet80x30L.png);
+color:black;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet80x30D.png);
+color:white;
+}</string>
+       </property>
+       <property name="text">
+        <string>Home</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="ui_mountButton">
        <property name="minimumSize">
         <size>
@@ -93,37 +124,6 @@ color:white;
        </property>
        <property name="text">
         <string>Mount USB</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ui_unmountButton">
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string>QPushButton{
-border:0px;
-background-image:url(:/actions/rivet80x30L.png);
-color:black;
-}
-QPushButton:pressed{
-border:0px;
-background-image:url(:/actions/rivet80x30D.png);
-color:white;
-}</string>
-       </property>
-       <property name="text">
-        <string>Unmnt. USB</string>
        </property>
       </widget>
      </item>
@@ -214,6 +214,37 @@ color:white;
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="ui_copyButton">
+       <property name="minimumSize">
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string>QPushButton{
+border:0px;
+background-image:url(:/actions/rivet80x30L.png);
+color:black;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet80x30D.png);
+color:white;
+}</string>
+       </property>
+       <property name="text">
+        <string>Copy</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="ui_deleteButton">
