@@ -63,12 +63,12 @@ public slots:
 
 protected:
   bool openCamera();
+  void closeCamera();
   // volatile since we're modifying and accessing from more than one thread
   // reads and writes to these are atomic, so we don't lock access to these
   volatile bool m_processOneFrame;
   volatile bool m_processContinuousFrames;
-  bool m_exit;
-  int  m_fd;
+  int  m_camDevice;
   MicrodiaCameraThread m_thread;
   void checkSettings();
   void readSettings();

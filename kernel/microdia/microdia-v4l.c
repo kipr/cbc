@@ -139,16 +139,17 @@ int v4l2_format_supported(struct usb_microdia *dev, __u32 fmt)
  *
  * This function will enumerate all supported formats.
  */
-struct v4l2_pix_format *v4l2_enum_supported_formats(struct usb_microdia *dev,
-	__u8 index)
+struct v4l2_pix_format *v4l2_enum_supported_formats(struct usb_microdia *dev, __u8 index)
 {
 	int i, bit = 0;
 	for (i = 0; i < sizeof(dev->supported_fmts) * 8; i++) {
 		if (i > (ARRAY_SIZE(microdia_fmts) - 1))
 			break;
 		if (dev->supported_fmts & (1 << i)) {
-			if (bit == index)
+                    if (bit == index){
+                                UDIA_INFO("Pixel format index %d\n",i);
 				return &microdia_fmts[i];
+                            }
 			bit++;
 		}
 	}
@@ -458,8 +459,7 @@ static int v4l_microdia_release(struct inode *inode, struct file *fp)
  *
  * This function is called by the application is reading the video device.
  */
-static ssize_t v4l_microdia_read(struct file *fp, char __user *buf,
-		size_t count, loff_t *f_pos)
+static ssize_t v4l_microdia_read(struct file *fp, char __user *buf, size_t count, loff_t *f_pos)
 {
 	int i, ret;
 	int nbuffers;
@@ -479,8 +479,7 @@ static ssize_t v4l_microdia_read(struct file *fp, char __user *buf,
 	buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	buffer.memory = V4L2_MEMORY_MMAP;
 	if (dev->mode == MICRODIA_MODE_IDLE) {
-		nbuffers = microdia_alloc_buffers(&dev->queue, 2,
-					     MICRODIA_FRAME_SIZE);
+                nbuffers = microdia_alloc_buffers(&dev->queue, 2, MICRODIA_FRAME_SIZE);
 		if (nbuffers < 0)
 			return nbuffers;
 
@@ -495,14 +494,14 @@ static ssize_t v4l_microdia_read(struct file *fp, char __user *buf,
 	}
 
 	if (dev->queue.read_buffer == NULL) {
-		ret = microdia_dequeue_buffer(&dev->queue, &buffer,
-					      fp->f_flags & O_NONBLOCK);
+                ret = microdia_dequeue_buffer(&dev->queue, &buffer, fp->f_flags & O_NONBLOCK);
 		if (ret < 0)
 			return ret;
 
 		microdia_decompress(dev, &buffer);
 		dev->queue.read_buffer = &dev->queue.buffer[buffer.index];
-	} else {
+        }
+        else {
 		buffer = dev->queue.read_buffer->buf;
 	}
 
@@ -642,8 +641,7 @@ done:
  * @return 0
  *
  */
-int microdia_vidioc_querycap(struct file *file, void *priv,
-	struct v4l2_capability *cap)
+int microdia_vidioc_querycap(struct file *file, void *priv, struct v4l2_capability *cap)
 {
 	struct usb_microdia *dev;
 
@@ -670,8 +668,7 @@ int microdia_vidioc_querycap(struct file *file, void *priv,
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_enum_input(struct file *file, void *priv,
-	struct v4l2_input *input)
+int microdia_vidioc_enum_input(struct file *file, void *priv, struct v4l2_input *input)
 {
 	UDIA_DEBUG("VIDIOC_ENUMINPUT %d\n", input->index);
 
@@ -732,8 +729,7 @@ int microdia_vidioc_s_input(struct file *file, void *priv, unsigned int index)
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_queryctrl(struct file *file, void *priv,
-	struct v4l2_queryctrl *ctrl)
+int microdia_vidioc_queryctrl(struct file *file, void *priv, struct v4l2_queryctrl *ctrl)
 {
 	int i;
 	int nbr;
@@ -765,8 +761,7 @@ int microdia_vidioc_queryctrl(struct file *file, void *priv,
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_g_ctrl(struct file *file, void *priv,
-	struct v4l2_control *ctrl)
+int microdia_vidioc_g_ctrl(struct file *file, void *priv, struct v4l2_control *ctrl)
 {
 	struct usb_microdia *dev;
 
@@ -839,8 +834,7 @@ int microdia_vidioc_g_ctrl(struct file *file, void *priv,
  * @returns 0 or negative error value
  *
  */
-int microdia_vidioc_s_ctrl(struct file *file, void *priv,
-	struct v4l2_control *ctrl)
+int microdia_vidioc_s_ctrl(struct file *file, void *priv, struct v4l2_control *ctrl)
 {
 	struct usb_microdia *dev;
 
@@ -923,8 +917,7 @@ int microdia_vidioc_s_ctrl(struct file *file, void *priv,
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_enum_fmt_cap(struct file *file, void *priv,
-	struct v4l2_fmtdesc *fmt)
+int microdia_vidioc_enum_fmt_cap(struct file *file, void *priv, struct v4l2_fmtdesc *fmt)
 {
 	struct usb_microdia *dev;
 	struct v4l2_pix_format *format;
@@ -956,8 +949,7 @@ int microdia_vidioc_enum_fmt_cap(struct file *file, void *priv,
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_try_fmt_cap(struct file *file, void *priv,
-	struct v4l2_format *fmt)
+int microdia_vidioc_try_fmt_cap(struct file *file, void *priv, struct v4l2_format *fmt)
 {
 	struct usb_microdia *dev;
 
@@ -984,8 +976,7 @@ int microdia_vidioc_try_fmt_cap(struct file *file, void *priv,
 	case V4L2_PIX_FMT_RGB24:
 	case V4L2_PIX_FMT_BGR24:
 		fmt->fmt.pix.bytesperline = fmt->fmt.pix.width * 3;
-		fmt->fmt.pix.sizeimage = fmt->fmt.pix.height *
-			fmt->fmt.pix.bytesperline;
+                fmt->fmt.pix.sizeimage = fmt->fmt.pix.height * fmt->fmt.pix.bytesperline;
 		break;
 	case V4L2_PIX_FMT_YUYV:
 		fmt->fmt.pix.bytesperline = fmt->fmt.pix.width * 2;
@@ -1015,8 +1006,7 @@ int microdia_vidioc_try_fmt_cap(struct file *file, void *priv,
  * @return 0
  *
  */
-int microdia_vidioc_g_fmt_cap(struct file *file, void *priv,
-	struct v4l2_format *fmt)
+int microdia_vidioc_g_fmt_cap(struct file *file, void *priv, struct v4l2_format *fmt)
 {
 	struct usb_microdia *dev;
 
@@ -1038,8 +1028,7 @@ int microdia_vidioc_g_fmt_cap(struct file *file, void *priv,
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_s_fmt_cap(struct file *file, void *priv,
-	struct v4l2_format *fmt)
+int microdia_vidioc_s_fmt_cap(struct file *file, void *priv, struct v4l2_format *fmt)
 {
 	struct usb_microdia *dev;
 	int ret;
@@ -1073,8 +1062,7 @@ int microdia_vidioc_s_fmt_cap(struct file *file, void *priv,
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_reqbufs(struct file *file, void *priv,
-	struct v4l2_requestbuffers *request)
+int microdia_vidioc_reqbufs(struct file *file, void *priv, struct v4l2_requestbuffers *request)
 {
 	int ret = 0;
 	struct usb_microdia *dev;
@@ -1119,8 +1107,7 @@ done:
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_querybuf(struct file *file, void *priv,
-	struct v4l2_buffer *buffer)
+int microdia_vidioc_querybuf(struct file *file, void *priv, struct v4l2_buffer *buffer)
 {
 	struct usb_microdia *dev;
 
@@ -1146,8 +1133,7 @@ int microdia_vidioc_querybuf(struct file *file, void *priv,
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_qbuf(struct file *file, void *priv,
-	struct v4l2_buffer *buffer)
+int microdia_vidioc_qbuf(struct file *file, void *priv, struct v4l2_buffer *buffer)
 {
 	struct usb_microdia *dev;
 
@@ -1169,8 +1155,7 @@ int microdia_vidioc_qbuf(struct file *file, void *priv,
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_dqbuf(struct file *file, void *priv,
-	struct v4l2_buffer *buffer)
+int microdia_vidioc_dqbuf(struct file *file, void *priv, struct v4l2_buffer *buffer)
 {
 	struct usb_microdia *dev;
 	int ret = 0;
@@ -1200,8 +1185,7 @@ int microdia_vidioc_dqbuf(struct file *file, void *priv,
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_streamon(struct file *file, void *priv,
-	enum v4l2_buf_type type)
+int microdia_vidioc_streamon(struct file *file, void *priv, enum v4l2_buf_type type)
 {
 	struct usb_microdia *dev;
 
@@ -1226,8 +1210,7 @@ int microdia_vidioc_streamon(struct file *file, void *priv,
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_streamoff(struct file *file, void *priv,
-	enum v4l2_buf_type type)
+int microdia_vidioc_streamoff(struct file *file, void *priv, enum v4l2_buf_type type)
 {
 	struct usb_microdia *dev;
 
@@ -1249,8 +1232,7 @@ int microdia_vidioc_streamoff(struct file *file, void *priv,
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_g_param(struct file *file, void *priv,
-	struct v4l2_streamparm *param)
+int microdia_vidioc_g_param(struct file *file, void *priv, struct v4l2_streamparm *param)
 {
 	struct usb_microdia *dev;
 
@@ -1278,8 +1260,7 @@ int microdia_vidioc_g_param(struct file *file, void *priv,
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_s_param(struct file *file, void *priv,
-	struct v4l2_streamparm *param)
+int microdia_vidioc_s_param(struct file *file, void *priv, struct v4l2_streamparm *param)
 {
 	struct usb_microdia *dev;
 
@@ -1306,8 +1287,7 @@ int microdia_vidioc_s_param(struct file *file, void *priv,
  *
  * This function permits to manage all the IOCTL from the application.
  */
-static int v4l_microdia_ioctl(struct inode *inode, struct file *fp,
-		unsigned int cmd, unsigned long arg)
+static int v4l_microdia_ioctl(struct inode *inode, struct file *fp, unsigned int cmd, unsigned long arg)
 {
 	int err;
 	struct usb_microdia *dev;
@@ -1352,7 +1332,7 @@ static int v4l_microdia_ioctl(struct inode *inode, struct file *fp,
 	{
 		struct v4l2_format *fmt = (struct v4l2_format *)arg;
 		err = microdia_vidioc_s_fmt_cap(fp, priv, fmt);
-		break;
+                break;
 	}
 	case VIDIOC_G_FMT:
 	{
@@ -1466,7 +1446,7 @@ static int v4l_microdia_ioctl(struct inode *inode, struct file *fp,
  */
 int v4l_microdia_register_video_device(struct usb_microdia *dev)
 {
-	int err;
+        int err;
 
 	strcpy(dev->vdev->name, DRIVER_DESC);
 

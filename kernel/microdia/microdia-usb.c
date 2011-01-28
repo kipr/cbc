@@ -112,7 +112,6 @@ static int contrast = MICRODIA_PERCENT(50, 0xFFFF);
  * @var exposure
  *   Module parameter to set the exposure
  */
-/* static int exposure = MICRODIA_PERCENT(20, 0xFFFF); */
 static int exposure = MICRODIA_PERCENT(2, 0xFFFF);
 
 /**
@@ -145,11 +144,11 @@ static int max_buffers = 5;
  * @var auto_exposure
  *   Module parameter to set the exposure
  */
-static int auto_exposure = 1;
+static int auto_exposure = 0;
 
 /**
  * @var auto_whitebalance
- *   Module parameter to set the exposure
+ *   Module parameter to set the whitebalance
  */
 static int auto_whitebalance = 1;
 
@@ -253,6 +252,8 @@ int microdia_6240_start_stream(struct usb_microdia *dev);
 int microdia_6240_stop_stream(struct usb_microdia *dev);
 int microdia_6242_start_stream(struct usb_microdia *dev);
 int microdia_6242_stop_stream(struct usb_microdia *dev);
+int microdia_6242_set_autofeature(struct usb_microdia *dev);
+int microdia_6242_set_exposure(struct usb_microdia *dev);
 int microdia_624e_initialize(struct usb_microdia *dev);
 int microdia_624e_start_stream(struct usb_microdia *dev);
 int microdia_624e_stop_stream(struct usb_microdia *dev);
@@ -310,10 +311,12 @@ struct microdia_camera cameras[] = {
 		.type = MICRODIA_VGA,
 		.sensor_slave_address = 0x5d,
 		.sensor_flags = SN9C20X_I2C_2WIRE,
-		.supported_fmts = 0x13,
+                .supported_fmts = 0x17,
 		.initialize = microdia_624e_initialize,
 		.start_stream = microdia_6242_start_stream,
 		.stop_stream = microdia_6242_stop_stream,
+                .set_auto_exposure = microdia_6242_set_autofeature,
+                .set_auto_whitebalance = microdia_6242_set_autofeature,
 	},
 	{
 		.model = CAMERA_MODEL(USB_0C45_VID, USB_624E_PID),
@@ -502,8 +505,7 @@ static inline struct microdia_camera *find_camera(__u32 model)
 	return NULL;
 }
 
-struct usb_endpoint_descriptor *find_endpoint(struct usb_host_interface *alts,
-		__u8 epaddr)
+struct usb_endpoint_descriptor *find_endpoint(struct usb_host_interface *alts, __u8 epaddr)
 {
 	unsigned long i;
 	struct usb_endpoint_descriptor *ep;
@@ -528,8 +530,7 @@ struct usb_endpoint_descriptor *find_endpoint(struct usb_host_interface *alts,
  *
  * This function permits to initialize an URB transfert (or isochronous pipe).
  */
-int usb_microdia_isoc_init(struct usb_microdia *dev,
-	struct usb_endpoint_descriptor *ep)
+int usb_microdia_isoc_init(struct usb_microdia *dev, struct usb_endpoint_descriptor *ep)
 {
 	int i, j;
 	__u16 iso_max_frame_size;
@@ -589,8 +590,7 @@ void usb_microdia_bulk_completion_handler(struct urb *urb, struct pt_regs *regs)
 #define FRAME_BODY_SIZE 28800
 #define FRAME_SIZE (FRAME_HEADER_SIZE + FRAME_BODY_SIZE)
 
-int usb_microdia_bulk_init(struct usb_microdia *dev,
-                           struct usb_endpoint_descriptor *ep)
+int usb_microdia_bulk_init(struct usb_microdia *dev, struct usb_endpoint_descriptor *ep)
 {
   struct urb *urb;
   unsigned int pipe, i;
@@ -652,12 +652,13 @@ int usb_microdia_init_urbs(struct usb_microdia *dev)
 			return ret;
 
 		ret = usb_microdia_isoc_init(dev, ep);
-	} else {
+        }
+        else {
 		ep = find_endpoint(usb_altnum_to_altsetting(intf, 0), MICRODIA_BULK);
 		if (ep == NULL)
 			return -EIO;
 
-        UDIA_INFO("Picked enpoint with max packet size %u\n", ep->wMaxPacketSize);
+                UDIA_INFO("Picked enpoint with max packet size %u\n", ep->wMaxPacketSize);
 
 		ret = usb_set_interface(dev->udev, 0, 0);
 		if (ret < 0)
@@ -858,7 +859,7 @@ void usb_microdia_bulk_completion_handler(struct urb *urb, struct pt_regs *regs)
     return;
   }
 
-  UDIA_INFO("bulk: len=%d\n", urb->actual_length);
+  //UDIA_INFO("bulk: len=%d\n", urb->actual_length);
 
   if (urb->actual_length) {
     usb_microdia_receive_bytes(urb->transfer_buffer, urb->actual_length,
@@ -887,49 +888,49 @@ void usb_microdia_receive_frame(struct microdia_video_queue *queue);
 void usb_microdia_receive_bytes(const char *data, size_t len,
                                 struct microdia_video_queue *queue)
 {
-  const char *end = data+len;
-  while (data < end) {
-    if (waiting_for_header >= 0) {
-      while (1) {
-        if (*data == frame_header[waiting_for_header]) {
-          data++;
-          waiting_for_header++;
-          if (waiting_for_header == sizeof(frame_header)) {
-            bytes_so_far = sizeof(frame_header);
-            memcpy(frame_buf, frame_header, sizeof(frame_header));
-            waiting_for_header = -1;
-            break;
-          }
+    const char *end = data+len;
+    while (data < end) {
+        if (waiting_for_header >= 0) {
+            while (1) {
+                if (*data == frame_header[waiting_for_header]) {
+                    data++;
+                    waiting_for_header++;
+                    if (waiting_for_header == sizeof(frame_header)) {
+                        bytes_so_far = sizeof(frame_header);
+                        memcpy(frame_buf, frame_header, sizeof(frame_header));
+                        waiting_for_header = -1;
+                        break;
+                    }
+                }
+                else {
+                    data++;
+                    waiting_for_header = 0;
+                    bytes_dropped++;
+                }
+                if (data == end) return;
+            }
         }
-        else {
-          data++;
-          waiting_for_header = 0;
-          bytes_dropped++;
+
+        {
+            int bytes_to_use = end - data;
+            int bytes_to_finish_frame= bytes_expected - bytes_so_far;
+            if (bytes_to_use > bytes_to_finish_frame) bytes_to_use = bytes_to_finish_frame;
+            memcpy(frame_buf+bytes_so_far, data, bytes_to_use);
+            bytes_so_far += bytes_to_use;
+            data += bytes_to_use;
+
+            if (bytes_expected == bytes_so_far) {
+                // Finish frame
+                waiting_for_header = 0;
+                //UDIA_INFO("Finish frame, bytes = %d (dropped %d)\n", bytes_expected, bytes_dropped);
+                bytes_dropped = 0;
+                bytes_so_far = 0;
+
+                usb_microdia_receive_frame(queue);
+
+            }
         }
-        if (data == end) return;
-      }
     }
-
-    {
-      int bytes_to_use = end - data;
-      int bytes_to_finish_frame= bytes_expected - bytes_so_far;
-      if (bytes_to_use > bytes_to_finish_frame) bytes_to_use = bytes_to_finish_frame;
-      memcpy(frame_buf+bytes_so_far, data, bytes_to_use);
-      bytes_so_far += bytes_to_use;
-      data += bytes_to_use;
-      
-      if (bytes_expected == bytes_so_far) {
-        // Finish frame
-        waiting_for_header = 0;
-        UDIA_INFO("Finish frame, bytes = %d (dropped %d)\n", bytes_expected, bytes_dropped);
-        bytes_dropped = 0;
-        bytes_so_far = 0;
-
-        usb_microdia_receive_frame(queue);
-
-      }
-    }
-  }
 }
 
 void usb_microdia_receive_frame(struct microdia_video_queue *queue)
@@ -1074,7 +1075,7 @@ static int usb_microdia_default_settings(struct usb_microdia *dev)
 	dev->queue.min_buffers = min_buffers;
 	dev->queue.max_buffers = max_buffers;
 
-	def_fmt = v4l2_enum_supported_formats(dev, 0);
+        def_fmt = v4l2_enum_supported_formats(dev, 0);
 
 	switch (dev->webcam_model) {
 	default:
@@ -1095,12 +1096,16 @@ static int usb_microdia_default_settings(struct usb_microdia *dev)
 		dev->vsettings.hue = 0xffff;
 
 		if (def_fmt) {
-			memcpy(&(dev->vsettings.format),
-			       def_fmt,
-			       sizeof(struct v4l2_pix_format));
+                    UDIA_INFO("V4L2_PIX_FMT_YUV420 = %x\n",V4L2_PIX_FMT_YUV420);
+                    UDIA_INFO("V4L2_PIX_FMT_BGR24 = %x\n",V4L2_PIX_FMT_BGR24);
+                    UDIA_INFO("V4L2_PIX_FMT_RGB24 = %x\n",V4L2_PIX_FMT_RGB24);
+                    UDIA_INFO("PIX format=%x\n", def_fmt->pixelformat);
+
+                    memcpy(&(dev->vsettings.format), def_fmt, sizeof(struct v4l2_pix_format));
 		}
 
-		sn9c20x_set_resolution(dev, 640, 480);
+                sn9c20x_set_resolution(dev, 160, 120);
+                //sn9c20x_set_resolution(dev, 640, 480);
 		break;
 	}
 	return 0;
@@ -1187,18 +1192,12 @@ static int usb_microdia_probe(struct usb_interface *interface, const struct usb_
 	dev->sensor_init = camera->sensor_init;
 	dev->stop_stream = camera->stop_stream;
 	dev->start_stream = camera->start_stream;
-	dev->set_contrast = camera->set_contrast == NULL ?
-		sn9c20x_set_contrast : camera->set_contrast;
-	dev->set_brightness = camera->set_brightness == NULL ?
-		sn9c20x_set_brightness : camera->set_brightness;
-	dev->set_gamma = camera->set_gamma == NULL ?
-		sn9c20x_set_gamma : camera->set_gamma;
-	dev->set_sharpness = camera->set_sharpness == NULL ?
-		sn9c20x_set_sharpness : camera->set_sharpness;
-	dev->set_rgb_gain = camera->set_rgb_gain == NULL ?
-		sn9c20x_set_rgb_gain : camera->set_rgb_gain;
-	dev->set_exposure = camera->set_exposure == NULL ?
-		sn9c20x_set_exposure : camera->set_exposure;
+        dev->set_contrast = camera->set_contrast == NULL ? sn9c20x_set_contrast : camera->set_contrast;
+        dev->set_brightness = camera->set_brightness == NULL ? sn9c20x_set_brightness : camera->set_brightness;
+        dev->set_gamma = camera->set_gamma == NULL ? sn9c20x_set_gamma : camera->set_gamma;
+        dev->set_sharpness = camera->set_sharpness == NULL ? sn9c20x_set_sharpness : camera->set_sharpness;
+        dev->set_rgb_gain = camera->set_rgb_gain == NULL ? sn9c20x_set_rgb_gain : camera->set_rgb_gain;
+        dev->set_exposure = camera->set_exposure == NULL ? sn9c20x_set_exposure : camera->set_exposure;
 	if (flip_detect) {
 		UDIA_INFO("Rotate detection enabled\n");
 		dev->flip_detect = camera->flip_detect;
@@ -1361,7 +1360,7 @@ static int __init usb_microdia_init(void)
 	}
 
 	if (altsetting < 1 || altsetting > 8) {
-        UDIA_WARNING("Altsetting out of bounds [1-8]! Defaulting to 8\n");
+                UDIA_WARNING("Altsetting out of bounds [1-8]! Defaulting to 8\n");
 		altsetting = 8;
 	}
 
@@ -1421,9 +1420,9 @@ static int __init usb_microdia_init(void)
 
 	if (min_buffers > max_buffers) {
 		UDIA_WARNING("Minimum buffers must be less then or equal to "
-			     "max buffers! Defaulting to 2, 10\n");
+                             "max buffers! Defaulting to 2\n");
 		min_buffers = 2;
-		max_buffers = 5;
+                max_buffers = 2;
 	}
 
 	/* Register the driver with the USB subsystem */

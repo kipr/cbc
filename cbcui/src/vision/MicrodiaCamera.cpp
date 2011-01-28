@@ -39,57 +39,55 @@ MicrodiaCamera::MicrodiaCamera()
     : Camera(160, 120),
     m_processOneFrame(false), 
     m_processContinuousFrames(false),
-    m_exit(false),
-    m_fd(-1),
+    m_camDevice(-1),
     m_thread(*this)
 {
     system("rmmod microdia");
     system("rmmod videodev");
     system("insmod /mnt/usb/videodev.ko");
-    system("insmod /mnt/usb/microdia.ko max_urbs=20");
+    system("insmod /mnt/usb/microdia.ko max_urbs=50 max_buffers=2 log_level=16");
 
+    openCamera();
     m_thread.start();
 }
 
-MicrodiaCamera::~MicrodiaCamera() {
-    m_exit = true;
-    // Wait for thread to exit
-    m_thread.wait();
+MicrodiaCamera::~MicrodiaCamera()
+{
+    stopFrames();
+    closeCamera();
 }
 
 void MicrodiaCamera::requestOneFrame()
 {
     m_processOneFrame = true;
     m_processContinuousFrames = false;
+    m_thread.start();
 }
 
 void MicrodiaCamera::requestContinuousFrames()
 {
     m_processContinuousFrames = true;
     m_processOneFrame = false;
+    m_thread.start();
 }
 
 void MicrodiaCamera::stopFrames()
 {
     m_processContinuousFrames = false;
     m_processOneFrame = false;
+    m_thread.wait();
 }
 
 bool MicrodiaCamera::openCamera()
 {
-    if (m_fd >= 0) {
-        close(m_fd);
-        m_fd = -1;
-    }
-    int fd = open("/dev/video0", O_RDWR);
-
-    if (fd < 0)
+    if(m_camDevice > 0)
+        return true;
+    m_camDevice = open("/dev/video0", O_RDWR);
+    if(m_camDevice <= 0)
         return false;
 
-    m_fd = fd;
-
     struct v4l2_capability cap;
-    if (ioctl (fd, VIDIOC_QUERYCAP, &cap) != 0) {
+    if (ioctl (m_camDevice, VIDIOC_QUERYCAP, &cap) != 0) {
         perror("ioctl(VIDIOC_QUERYCAP)");
         return false;
     }
@@ -105,77 +103,83 @@ bool MicrodiaCamera::openCamera()
     fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_BGR24;
     fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
 
-    if(ioctl(fd, VIDIOC_S_FMT, &fmt) != 0) {
+    if(ioctl(m_camDevice, VIDIOC_S_FMT, &fmt) != 0) {
         perror("iocts(VIDIOC_S_FMT)");
         return false;
     }
 
-    this->readSettings();
+    this->setParameter(AUTO_WHITE_BALANCE,true);    // turn on the auto white balance to init camera in local ambient lighting
+
+    this->readSettings();   // default settings should turn auto white balance off, unless user has specified
     // print out the settings their locations, values, names, and max value
     //this->checkSettings();
 
     return true;
 }
 
+void MicrodiaCamera::closeCamera()
+{
+    if(m_camDevice > 0)
+        close(m_camDevice);
+    m_camDevice = 0;
+}
+
 void MicrodiaCamera::backgroundLoop()
 {
-    printf("Starting MicrodiaCamera::backgroundLoop()\n");
     check_heap();
-    int buffer_size  = width() * height() * 3;
+    int len;
+    int imgSize = width() * height();
+    int buffer_size  = imgSize * 3;
     unsigned char buffer[buffer_size];
     Image image(height(), width());
 
-    while (1) {
-        // Repeatedly try to open camera
-        while (1) {
-            check_heap();
-            if (m_exit) goto done;
-            if (openCamera()) break;
-            sleep(2);
+    int consecutive_readerrs=0;
+
+    while (1)
+    {
+        check_heap();
+
+        len = read(m_camDevice, buffer, buffer_size);  // read in the image from the camera
+
+        if (len == -1) {                                // check for errors
+            if (consecutive_readerrs >= 10) {
+                //printf("%d consecutive read errors:  try to reopen camera\n",consecutive_readerrs);
+                // Break from loop and try to reopen camera
+                closeCamera();
+                openCamera();
+                consecutive_readerrs=0;
+                //break;
+            }
+            consecutive_readerrs++;
+            QThread::yieldCurrentThread();
+            continue;
         }
 
-        int consecutive_readerrs=0;
-        while (1) {
-            check_heap();
-            if (m_exit) goto done;
-            int len = read (m_fd, buffer, buffer_size);
+        consecutive_readerrs=0;
 
-            if (len == -1) {
-                consecutive_readerrs++;
-                if (consecutive_readerrs >= 10) {
-                    printf("%d consecutive read errors:  try to reopen camera\n",consecutive_readerrs);
-                    // Break from loop and try to reopen camera
-                    break;
-                }
-            }
-            else
-            {
-                consecutive_readerrs=0;
-            }
+        if (len != buffer_size){
+            printf("Error reading from camera:  expected %d bytes, got %d bytes\n", buffer_size, len);
+            continue;
+        }
 
-            if (!m_processOneFrame && !m_processContinuousFrames)
-                continue;
-            if (len != buffer_size)
-                printf("Error reading from camera:  expected %d bytes, got %d bytes\n", buffer_size, len);
-            else
-            {
-                check_heap();
-                m_processOneFrame = false;
-                //printf("Got frame from camera, len=%d\n", len);
-                // Copy to image
-                Pixel565 *out = image.scanLine(0);
-                unsigned char *in = buffer;
-                for (int i = width() * height(); i > 0; i--) {
-                    *(out++) = Pixel565::fromRGB8(in[2], in[1], in[0]);
-                    in += 3;
-                }
-                check_heap();
-            }
-            callFrameHandlers(image);
+        check_heap();
+
+        Pixel565 *out = image.scanLine(0);  // Copy to image
+        unsigned char *in = buffer;
+
+        for (int i = imgSize; i > 0; i--) {
+            *(out++) = Pixel565::fromRGB8(in[2], in[1], in[0]);
+            in += 3;
+        }
+        check_heap();
+
+        callFrameHandlers(image);
+
+        if(m_processOneFrame || !m_processContinuousFrames){
+            m_processOneFrame = false;
+            break;
         }
     }
-    done:
-    printf("Exiting MicrodiaCamera::backgroundLoop()\n");
 }
 
 
@@ -190,13 +194,13 @@ void MicrodiaCamera::checkSettings()
     for (queryctrl.id = V4L2_CID_BASE;
          queryctrl.id < V4L2_CID_LASTP1;
          queryctrl.id++) {
-        if (0 == ioctl (m_fd, VIDIOC_QUERYCTRL, &queryctrl)) {
+        if (0 == ioctl (m_camDevice, VIDIOC_QUERYCTRL, &queryctrl)) {
             //if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
             //  continue;
             qWarning("Control %s", qPrintable(QString("id %1 min %2 max %3").arg(queryctrl.id,0,16).arg(queryctrl.minimum).arg(queryctrl.maximum)));
 
             controls.id = queryctrl.id;
-            if(0==ioctl(m_fd,VIDIOC_G_CTRL, &controls))
+            if(0==ioctl(m_camDevice,VIDIOC_G_CTRL, &controls))
                 qWarning("\t%s %s",queryctrl.name-3,qPrintable(QString("value %1").arg(controls.value)));
         }
     }
@@ -204,14 +208,14 @@ void MicrodiaCamera::checkSettings()
     for (queryctrl.id = V4L2_CID_PRIVATE_BASE;
          queryctrl.id < 24+V4L2_CID_PRIVATE_BASE;
          queryctrl.id++) {
-        if (0 == ioctl (m_fd, VIDIOC_QUERYCTRL, &queryctrl)) {
+        if (0 == ioctl (m_camDevice, VIDIOC_QUERYCTRL, &queryctrl)) {
             //if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED)
             //  continue;
 
             qWarning("PrivCtrl %s", qPrintable(QString("id %1 min %2 max %3").arg(queryctrl.id,0,16).arg(queryctrl.minimum).arg(queryctrl.maximum)));
 
             controls.id = queryctrl.id;
-            if(0==ioctl(m_fd,VIDIOC_G_CTRL, &controls))
+            if(0==ioctl(m_camDevice,VIDIOC_G_CTRL, &controls))
                 qWarning("\t%s %s",queryctrl.name-3,qPrintable(QString("value %1").arg(controls.value)));
 
         }
@@ -237,7 +241,7 @@ int MicrodiaCamera::setParameter(enum cam_parms id, int value)
     ctrlParam.value = value;
     //qWarning("set %s", qPrintable(QString("id %1 value %2").arg(ctrlParam.id,0,16).arg(ctrlParam.value)));
 
-    if(0 != ioctl(m_fd, VIDIOC_S_CTRL, &ctrlParam)){
+    if(0 != ioctl(m_camDevice, VIDIOC_S_CTRL, &ctrlParam)){
         perror("VIDIOC_S_CTRL error");
         return 1;
     }
@@ -257,7 +261,7 @@ int MicrodiaCamera::getParameter(enum cam_parms id)
         ctrlParam.id = 1+V4L2_CID_PRIVATE_BASE;
     else return 0;
 
-    if(0 != ioctl(m_fd, VIDIOC_G_CTRL, &ctrlParam)) perror("VIDIOC_G_CTRL error");
+    if(0 != ioctl(m_camDevice, VIDIOC_G_CTRL, &ctrlParam)) perror("VIDIOC_G_CTRL error");
     //qWarning("get %s", qPrintable(QString("id %1 value %2").arg(ctrlParam.id,0,16).arg(ctrlParam.value)));
     return ctrlParam.value;
 }
@@ -273,11 +277,11 @@ void MicrodiaCamera::readSettings()
     m_settings.beginGroup(QString("Camera"));
     this->setParameter(BRIGHTNESS,m_settings.value("Brightness",32767).toInt());
     this->setParameter(CONTRAST,m_settings.value("Contrast",32767).toInt());
-    this->setParameter(AUTO_WHITE_BALANCE, m_settings.value("AutoBalance",true).toInt());
+    this->setParameter(AUTO_WHITE_BALANCE, m_settings.value("AutoBalance",false).toInt());
     this->setParameter(RED_BALANCE, m_settings.value("RedBalance",31).toInt());
     this->setParameter(BLUE_BALANCE, m_settings.value("BlueBalance",31).toInt());
     this->setParameter(GAMMA, m_settings.value("Gamma",13107).toInt());
-    this->setParameter(EXPOSURE, m_settings.value("Exposure",3072).toInt());
+    this->setParameter(EXPOSURE, m_settings.value("Exposure",512).toInt());
     this->setParameter(H_FLIP, m_settings.value("H_flip",false).toInt());
     this->setParameter(V_FLIP, m_settings.value("V_flip",false).toInt());
     this->setParameter(SHARPNESS, m_settings.value("Sharpness",31).toInt());

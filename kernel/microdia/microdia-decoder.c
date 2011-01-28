@@ -42,27 +42,19 @@
 #define MIN(a, b)	((a) < (b) ? (a) : (b))
 #define CLIP(a, low, high) MAX((low), MIN((high), (a)))
 
-void raw6270_2i420(uint8_t *, uint8_t *, int,
-			int, const int, const int);
+void raw6270_2i420(uint8_t *, uint8_t *, int, int, const int, const int);
 
-void raw6270_2RGB24(uint8_t *raw, uint8_t *rgb, int width,
-			int height, const int hflip,
-			const int vflip);
+void raw6270_2RGB24(uint8_t *raw, uint8_t *rgb, int width, int height, const int hflip, const int vflip);
 
-void raw6270_2BGR24(uint8_t *raw, uint8_t *rgb, int width,
-			int height, const int hflip,
-			const int vflip);
+void raw6270_2BGR24(uint8_t *raw, uint8_t *rgb, int width, int height, const int hflip, const int vflip);
 
 void microdia_getraw(uint8_t *, uint8_t *, int);
 
-void microdia_raw2i420(uint8_t *, uint8_t *, int,
-			int, const int, const int);
+void microdia_raw2i420(uint8_t *, uint8_t *, int, int, const int, const int);
 
-void microdia_raw2bgr24(uint8_t *, uint8_t *, int,
-			int, const int, const int);
+void microdia_raw2bgr24(uint8_t *, uint8_t *, int, int, const int, const int);
 
-void v4l_add_jpegheader(struct usb_microdia *dev, __u8 *buffer,
-	__u32 buffer_size);
+void v4l_add_jpegheader(struct usb_microdia *dev, __u8 *buffer, __u32 buffer_size);
 /**
  * @brief Decompress a frame
  *
@@ -95,7 +87,8 @@ int microdia_decompress(struct usb_microdia *dev, struct v4l2_buffer *buffer)
 	if (dev->set_hvflip) {
 		hflip = 0;
 		vflip = 0;
-	} else {
+        }
+        else {
 		hflip = dev->vsettings.hflip;
 		vflip = dev->vsettings.vflip;
 	}
@@ -130,8 +123,8 @@ int microdia_decompress(struct usb_microdia *dev, struct v4l2_buffer *buffer)
 		    CAMERA_MODEL(USB_0C45_VID, USB_62BB_PID) ||
 		    dev->webcam_model ==
 		    CAMERA_MODEL(USB_145F_VID, USB_013D_PID)) {
-			raw6270_2RGB24(image, data, width,
-				       height, hflip, vflip);
+
+                        raw6270_2RGB24(image, data, width, height, hflip, vflip);
 		}
 		break;
 	case V4L2_PIX_FMT_BGR24:
@@ -148,11 +141,11 @@ int microdia_decompress(struct usb_microdia *dev, struct v4l2_buffer *buffer)
 		    CAMERA_MODEL(USB_0C45_VID, USB_62BB_PID) ||
 		    dev->webcam_model ==
 		    CAMERA_MODEL(USB_145F_VID, USB_013D_PID)) {
-			raw6270_2BGR24(image, data, width,
-				       height, hflip, vflip);
-		} else {
-			microdia_raw2bgr24(image, data, width,
-					   height, hflip, vflip);
+
+                        raw6270_2BGR24(image, data, width, height, hflip, vflip);
+                }
+                else {
+                        microdia_raw2bgr24(image, data, width, height, hflip, vflip);
                         // Uncompressing doubles the amount of data
                         //UDIA_INFO("bytes used=%d\n", buffer->bytesused);
                         buffer->bytesused *= 2;
@@ -190,8 +183,7 @@ done:
 	return ret;
 }
 
-void v4l_add_jpegheader(struct usb_microdia *dev, __u8 *buffer,
-	__u32 buffer_size)
+void v4l_add_jpegheader(struct usb_microdia *dev, __u8 *buffer, __u32 buffer_size)
 {
 	__u8 jpeg_header[589] = {
 		0xff, 0xd8, 0xff, 0xdb, 0x00, 0x84, 0x00, 0x06, 0x04, 0x05,
@@ -344,16 +336,16 @@ static int Y_coords_624x[128][2] = {
  *
  * @retval rgb Buffer with the rgb data
  */
-void microdia_raw2bgr24(uint8_t *raw, uint8_t *rgb,
-			int width, int height, const int hflip,
-			const int vflip)
+void microdia_raw2bgr24(uint8_t *raw, uint8_t *rgb, int width, int height, const int hflip, const int vflip)
 {
 	int i = 0, x = 0, y = 0;
 	unsigned char *buf = raw;
 	unsigned char *buf3 = rgb;
+        int frameSize = width * height + (width * height)/2;
+
         //UDIA_INFO("microdia_raw2bgr24 width=%d height=%d\n", width, height);
 
-	while (i < (width * height + (width * height) / 2)) {
+        while (i < frameSize) {
 		int tile = 0;
 		for (tile = 0; tile < 4; tile++) {
 			int subX = 0;

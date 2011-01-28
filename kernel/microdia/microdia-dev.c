@@ -1059,6 +1059,7 @@ int microdia_6242_start_stream(struct usb_microdia *dev)
           // Change to page 1
           {0xf0, 0x00, 0x01},  // page=1
           {0x3a, 0x73, 0x00},  // R58:1, output format = 0x7300 (RGB565)
+          //{0x9b, 0x73, 0x00},
           // R6:1 was 0x701c in Dave Neuer's code
           //{0x06, 0x30, 0x8c},  // R6:1 = 0x308c  auto exposure off
           // R6:1
@@ -1071,9 +1072,8 @@ int microdia_6242_start_stream(struct usb_microdia *dev)
           // bit 1: enable AWB
 
           // Old values
-          //{0x06, 0x30, 0x8c},  // R6:1 = 0x308c  auto exposure off
-          
-          {0x06, 0x70, 0x8c},  // auto exposure, auto white balance
+          {0x06, 0x30, 0x8c},  // R6:1 = 0x308c  auto exposure off, auto white balance
+          //{0x06, 0x70, 0x8c},  // auto exposure, auto white balance
           
           //{0x25, 0x00, 0x2a},
           // Change back to page 0
@@ -1081,12 +1081,12 @@ int microdia_6242_start_stream(struct usb_microdia *dev)
         };
 
 	__u8 second10c0a[2][5] = {
-          {0x01, 0x00, 0x0e, 0x00, 0x14}, // row start = 0x000e;  col start = 0x0014
-          {0x03, 0x03, 0xc4, 0x05, 0x14}  // window height = 0x03c4;  window width = 0x0514
+          {0x01, 0x00, 0x0e, 0x00, 0x14}, // row start = 0x000e (14);  col start = 0x0014 (20)
+          {0x03, 0x03, 0xc4, 0x05, 0x14}  // window height = 0x03c4 (964);  window width = 0x0514 (1300)
         };
 
 	__u8 second10c0b[3] =
-          {0xc8, 0x00, 0x03}; // R200:0 0x0003 set horiz, vertical blanking
+          {0xc8, 0x00, 0x03}; // R200:0 0x0003 set horiz, vertical blanking to context B
 
 	__u8 third10c0[4][3] = {
           {0x0a, 0x00, 0x01}, // R10:0  0x0001.  pixel clock speed
@@ -6408,3 +6408,56 @@ int microdia_6260_flip_detect(struct usb_microdia *dev)
 	return ret;
 }
 
+
+
+int microdia_6242_set_autofeature(struct usb_microdia *dev)
+{
+    int i=0;
+    __u8 buf[][3] = {
+        {0xf0, 0x00, 0x01},     // page=1
+        {0x06, 0x30, 0x82},     // default auto exp. off
+        {0xf0, 0x00, 0x00}      // switch back to page=0
+    };
+
+    // make sure on page=1
+    sn9c20x_write_i2c_data(dev, dev->sensor_slave_address, 2,
+            buf[0][0], dev->sensor_flags, &buf[0][1]);
+
+    // read bytes from 0x06 address
+    sn9c20x_read_i2c_data(dev, dev->sensor_slave_address, 2,
+            buf[1][0], dev->sensor_flags, &buf[1][1]);
+
+    // set bit 14 of 0x06 address enable auto exp.
+    if(dev->vsettings.auto_exposure) buf[1][1] |= 0x40;         // enable auto exposure
+    else buf[1][1] &= ~0x40;                                    // disable auto exposure
+
+    if(dev->vsettings.auto_whitebalance) buf[1][2] |= 0x02;    // enable auto white balance
+    else buf[1][2] &= ~0x02;                                  // disable auto white balance
+
+    for(i=1;i<3;i++){
+        sn9c20x_write_i2c_data(dev, dev->sensor_slave_address, 2,
+                buf[i][0], dev->sensor_flags, &buf[i][1]);
+    }
+
+    return 0;
+}
+
+int microdia_6242_set_exposure(struct usb_microdia *dev)
+{
+    __u8 buf[3];
+    unsigned int exposure = dev->vsettings.exposure;
+
+    buf[0]=0xf0; buf[1]=0x00; buf[2]=0x00;
+
+    sn9c20x_write_i2c_data(dev, dev->sensor_slave_address, 2,
+            buf[0], dev->sensor_flags, &buf[1]);
+
+    buf[0]=0x09;
+    buf[1]=(__u8)(exposure >> 7);
+    buf[2]=(__u8)(exposure & 0x00ff);
+
+    sn9c20x_write_i2c_data(dev, dev->sensor_slave_address, 2,
+            buf[0], dev->sensor_flags, &buf[1]);
+
+    return 0;
+}

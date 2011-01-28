@@ -168,6 +168,7 @@ int sn9c20x_initialize(struct usb_microdia *dev)
 	if (ret < 0)
 		goto err;
 
+        UDIA_INFO("Initialized !!! \n\n");
 	return 0;
 
 err:
@@ -376,8 +377,7 @@ int sn9c20x_write_i2c_data(struct usb_microdia *dev, __u8 slave, __u8 nbytes,
 
 	ret = usb_microdia_control_write(dev, 0x10c0, row, 8);
 	if (ret >= 0)
-		ret = sn9c20x_i2c_ack_wait(dev, flags & SN9C20X_I2C_400KHZ,
-			&slave_error);
+                ret = sn9c20x_i2c_ack_wait(dev, flags & SN9C20X_I2C_400KHZ, &slave_error);
 
 	if (slave_error) {
 		UDIA_ERROR("I2C slave 0x%02x returned error during %s address 0x%02x\n",
@@ -586,8 +586,7 @@ int sn9c20x_get_closest_resolution(int *width, int *height)
 	int i;
 
 	for (i = ARRAY_SIZE(sn9c20x_win_sizes) - 1; i >= 0; i--) {
-		if (*width >= sn9c20x_win_sizes[i].hsize
-		    && *height >= sn9c20x_win_sizes[i].vsize)
+                if (*width >= sn9c20x_win_sizes[i].hsize && *height >= sn9c20x_win_sizes[i].vsize)
 			break;
 	}
 
@@ -609,8 +608,7 @@ int sn9c20x_get_closest_resolution(int *width, int *height)
  * @return 0
  *
  */
-int sn9c20x_set_resolution(struct usb_microdia *dev,
-	int width, int height)
+int sn9c20x_set_resolution(struct usb_microdia *dev, int width, int height)
 {
 	int ret;
 	__u8 scale;
@@ -628,6 +626,7 @@ int sn9c20x_set_resolution(struct usb_microdia *dev,
 	window[4] = 0x00;
 
 	scale = wsize->scale;
+
 	usb_microdia_control_write(dev, SN9C20X_HSTART, window, 5);
 	usb_microdia_control_write(dev, SN9C20X_SCALE, &scale, 1);
 
