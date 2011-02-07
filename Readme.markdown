@@ -24,6 +24,16 @@ Instructions for downloading and installing the ARM GCC Toolchain necessary to b
 ### Qt Embedded ###
 Instructions for building Qt Embedded can be found [here](http://www.jespersaur.com/drupal/node/30).  It is only necessary to follow the instructions until the installation of Qt is finished.  There's some useful info there though :)
 
+### Version Numbering format ###
+The Userhook0 version format follows the format...
+	Major	Minor	Build
+	  X   .   Y   .   Z
+
+Major = System wide changes for the CBC. (New Vision, Library, etc...)
+Minor = Added new features. (New calibration page, buttons, graphics...)
+Build = Bug fixes and changes to default settings (flags, calibration settings, debug...)
+
+
 Build:
 ---------
 

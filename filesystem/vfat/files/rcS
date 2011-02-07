@@ -55,7 +55,8 @@ fi
 # if there is no external usb userhook0 then we are not upgrading, boot cbc normally
 if [ -z "${upgrade}" ]; then
   # mount the internal drive
-  mount /dev/${internal}1 /mnt/usb -t vfat -o ro
+	# change the line below to -o rw for debugging
+  mount /dev/${internal}1 /mnt/usb -t vfat -o ro 
   
   # execute the userhook0 if it exists
   if [ -e /mnt/usb/userhook0 ]; then

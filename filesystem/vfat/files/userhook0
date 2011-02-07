@@ -5,7 +5,7 @@ VERSION=`cat $ROOT/FIRMWARE_VERSION`
 
 DEBUG=0
 
-if [ $(DEBUG) == 1 ]; then
+if [ "$DEBUG" -ge 1 ]; then
     PRINT=$ROOT/fb_print    # causes printing to the screen
 else
     PRINT=echo
@@ -42,7 +42,7 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-if [ ! $(DEBUG) ]; then
+if [ "$DEBUG" -eq 0 ]; then
     dd if=/mnt/usb/splash_screen.bin of=/dev/fb0
 fi
 
@@ -166,7 +166,7 @@ echo -n "Mounting internal filesystems..." | $PRINT
 mkdir -p $KISS
 mkdir -p $USER
 
-mount ${KISS_DEV} ${KISS} -t ext2 -o ro
+mount ${KISS_DEV} ${KISS} -t ext2 -o ro 
 mount ${USER_DEV} ${USER} -t ext2
 
 mkdir -p /mnt/browser/code
@@ -188,11 +188,11 @@ save_time
 echo "" | $PRINT --echo
 echo "Boot complete" | $PRINT --echo
 
-if [ $(DEBUG) == 1 ]; then
+if [ "$DEBUG" -gt 1 ]; then
 	echo "Trying to start control panel" | $PRINT
 	/usr/chumby/scripts/start_control_panel
-else
+fi
+if [ "$DEBUG" -eq 0 ]; then
 	/mnt/kiss/startup.sh &
 fi
-
 exit
