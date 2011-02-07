@@ -34,6 +34,7 @@ Settings::Settings(QWidget *parent) :
 
     QObject::connect(ui_recalibrateMotorsButton, SIGNAL(clicked()), this, SLOT(recalibrateMotors()));
     QObject::connect(ui_recalibrateAccelerometerButton, SIGNAL(clicked()), this, SLOT(recalibrateAccel()));
+    QObject::connect(ui_recalibrateTouchscreenButton, SIGNAL(clicked()), this, SLOT(recalibrateTS()));
     QObject::connect(ui_resetPIDButton, SIGNAL(clicked()), this, SLOT(resetPID()));
     QObject::connect(ui_cameraDefaultButton, SIGNAL(clicked()), this, SLOT(setCameraDefault()));
     QObject::connect(ui_brightnessButton, SIGNAL(clicked()), &m_brightness, SLOT(raisePage()));
@@ -93,6 +94,17 @@ void Settings::recalibrateAccel()
     msgBox.exec();
 
     storeAccelCal();
+}
+
+void Settings::recalibrateTS()
+{
+    QMessageBox msgBox;
+    msgBox.setText("Calibrating the touch screen!");
+    msgBox.addButton(tr("Calibrate"), QMessageBox::ActionRole);
+    msgBox.exec();
+
+    system("/mnt/kiss/qt/bin/ts_calibrate && /mnt/kiss/startup.sh &");
+    system("killall cbcui");
 }
 
 void Settings::resetPID()

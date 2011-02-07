@@ -127,7 +127,7 @@ font-size:12pt;
 }</string>
          </property>
          <property name="text">
-          <string>Recalibrate Accelerometer</string>
+          <string>Recal. Accelerometer</string>
          </property>
          <property name="iconSize">
           <size>
@@ -149,6 +149,39 @@ font-size:12pt;
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="ui_recalibrateTouchscreenButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>160</horstretch>
+           <verstretch>30</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>160</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton{
+border:0px;
+background-image:url(:/actions/rivet160x30L.png);
+color:black;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet160x30D.png);
+color:white;
+font-size:12pt;
+}</string>
+         </property>
+         <property name="text">
+          <string>Recal. Touch Screen</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

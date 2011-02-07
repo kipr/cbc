@@ -38,6 +38,7 @@ public:
 public slots:
     void recalibrateMotors();
     void recalibrateAccel();
+    void recalibrateTS();
     void resetPID();
     void setCameraDefault();
     void on_ui_consoleShowBox_clicked(bool checked = true);

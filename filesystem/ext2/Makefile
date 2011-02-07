@@ -43,8 +43,8 @@ filesystem: gcc qt
 	mkdir -p $(DEST)/usercode/include
 	mkdir -p $(DEST)/usercode/lib
 
-	(cd files; chmod a+x startup.sh shutdown.sh run_qt_app.sh gcc-usercode run stop compile compile-usb)
-	(cd files; rsync -a startup.sh run_qt_app.sh shutdown.sh $(DEST))
+	(cd files; chmod a+x startup.sh shutdown.sh gcc-usercode run stop compile compile-usb)
+	(cd files; rsync -a startup.sh ts_vars.env shutdown.sh $(DEST))
 	(cd files; rsync -a gcc-usercode run stop compile compile-usb mount-usb umount-usb $(DEST)/usercode)
 	(cd files; rsync -a gdb                                  $(DEST)/bin)
 	(cd files; rsync -a ts.conf                              $(DEST)/qt/etc)
