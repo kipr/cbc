@@ -99,7 +99,7 @@ void CopyDialog::copyData()
 ////////////////////////////////////////////////////////////////
 //  File Manager
 ////////////////
-FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent), m_mntState(false)
+FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent)
 {
     setupUi(this);
     
@@ -147,7 +147,7 @@ void FileManager::updateGUI()
     QString indexName = m_dir.filePath(m_index);
     ui_directoryBrowser->setCurrentIndex(m_index);
 
-    if(m_mntState)
+    if(this->isUSBMounted())
         ui_mountButton->setText("Unmnt. USB");
     else
         ui_mountButton->setText("Mount USB");
@@ -208,14 +208,13 @@ void FileManager::on_ui_mountButton_clicked()
 {
     QProcess mount;
 
-    if(!m_mntState){
+    if(!this->isUSBMounted()){
         mount.start("/mnt/kiss/usercode/mount-usb");
         mount.waitForFinished();
 
         if(mount.exitCode()) return;    // don't change gui if mount fails
 
         m_index = m_dir.index(USB_USER_PATH);
-        m_mntState = true;
     }
     else{
         mount.start("/mnt/kiss/usercode/umount-usb");
@@ -231,7 +230,6 @@ void FileManager::on_ui_mountButton_clicked()
         }
 
         QProcess::startDetached("btplay /mnt/kiss/sounds/disconnected.wav");
-        m_mntState = false;
     }
 
     this->updateGUI();

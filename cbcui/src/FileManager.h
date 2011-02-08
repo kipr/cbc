@@ -74,7 +74,6 @@ private:
    Compiler             m_compiler;
     QFileSystemModel    m_dir;
     QModelIndex         m_index;
-    bool                m_mntState;
 };
 
 #endif
