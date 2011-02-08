@@ -217,8 +217,9 @@ umount $USER
 
 PRINT="/tmp/fb_print --echo"
 
-echo "Firmware update complete"             | $PRINT
-echo ""                                       | $PRINT
-echo "Please remove firmware update USB key " | $PRINT
-echo "and turn off then back on"              | $PRINT
+mv $SELF $SELF-$VERSION.installed
+echo "Rebooting!" | $PRINT
+sleep 2
+reboot
+
 exit 0
