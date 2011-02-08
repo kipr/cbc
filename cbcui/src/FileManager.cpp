@@ -217,17 +217,16 @@ void FileManager::on_ui_mountButton_clicked()
         m_index = m_dir.index(USB_USER_PATH);
     }
     else{
-        mount.start("/mnt/kiss/usercode/umount-usb");
-        mount.waitForFinished();
-
-        if(mount.exitCode()) return;    // don't change gui if unmount fails
-
         if(m_dir.filePath(m_index).startsWith(USB_USER_PATH)){
             m_index = m_dir.index(DEFAULT_PATH);
             ui_directoryBrowser->setRootIndex(m_index);
             ui_directoryBrowser->setCurrentIndex(m_index);
             m_dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
         }
+        mount.start("/mnt/kiss/usercode/umount-usb");
+        mount.waitForFinished();
+
+        if(mount.exitCode()) return;    // don't change gui if unmount fails
 
         QProcess::startDetached("btplay /mnt/kiss/sounds/disconnected.wav");
     }
@@ -304,6 +303,7 @@ void FileManager::on_ui_copyButton_clicked()
 void FileManager::on_ui_deleteButton_clicked()
 {
     QString fPath = m_dir.filePath(ui_directoryBrowser->currentIndex());
+    m_index = ui_directoryBrowser->indexAt(QPoint(1,1));
     fPath.replace(" ",QString("\\ "));
     QString deleteString("rm -rf " + fPath);
 

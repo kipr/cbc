@@ -93,7 +93,7 @@ PRINT="$PRINT --skiptop 72"
 
 echo -n ""| $PRINT 
 
-echo "Backing up user data..." | $PRINT
+echo -n "Backing up user data..." | $PRINT
 USER=/mnt/user
 USER_DEV=/dev/${INTERNAL_DEVICE}3
 insmod /tmp/ext2.ko
@@ -105,7 +105,7 @@ sync
 sync
 umount $USER
 rmmod ext2
-echo "Backup complete!" | $PRINT
+echo "done." | $PRINT
 
 # Check the partition table...
 
@@ -194,10 +194,10 @@ mkdir $USER/code
 mkdir $USER/config
 mkdir $USER/vision
 
-echo "Restoring user data..." | $PRINT
+echo -n "Restoring user data..." | $PRINT
 cp -a -f $ROOT/cbc_backup/user/* $USER/
 rm -rf $ROOT/cbc_backup
-echo "User data restored!" | $PRINT
+echo "done." | $PRINT
 
 echo -n "Updating boot scripts..." | $PRINT
 #rm /psp/rfs1/pointercal
@@ -215,11 +215,12 @@ umount $BOOT
 umount $KISS
 umount $USER
 
-PRINT="/tmp/fb_print --echo"
-
 mv $SELF $SELF-$VERSION.installed
 echo "Rebooting!" | $PRINT
 sleep 2
+
+PRINT="/tmp/fb_print --echo"
+
 reboot
 
 exit 0
