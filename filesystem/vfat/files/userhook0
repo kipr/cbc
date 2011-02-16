@@ -5,7 +5,7 @@ VERSION=`cat $ROOT/FIRMWARE_VERSION`
 
 DEBUG=0
 
-if [ "$DEBUG" -ge 1 ]; then
+if [ ${DEBUG} >= 1 ]; then
     PRINT=$ROOT/fb_print    # causes printing to the screen
 else
     PRINT=echo
@@ -42,7 +42,7 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-if [ "$DEBUG" -eq 0 ]; then
+if [ ${DEBUG} == 0 ]; then
     dd if=/mnt/usb/splash_screen.bin of=/dev/fb0
 fi
 
@@ -83,7 +83,7 @@ fi
 ############################
 echo "ifconfig in 5" | $PRINT
 sleep 5
-ifconfig | $PRINT
+#ifconfig | $PRINT
 ifconfig | grep inet | grep -v 127.0.0.1 | sed 's/Bcast.*//' | $PRINT
 
 # sshd
@@ -188,11 +188,11 @@ save_time
 echo "" | $PRINT --echo
 echo "Boot complete" | $PRINT --echo
 
-if [ "$DEBUG" -gt 1 ]; then
+if [ ${DEBUG} > 1 ]; then
 	echo "Trying to start control panel" | $PRINT
 	/usr/chumby/scripts/start_control_panel
 fi
-if [ "$DEBUG" -eq 0 ]; then
+if [ ${DEBUG} == 0 ]; then
 	/mnt/kiss/startup.sh &
 fi
 exit

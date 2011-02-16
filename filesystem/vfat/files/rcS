@@ -18,23 +18,37 @@ mkdir -p /mnt/usb
 
 internal=""
 upgrade=""
+upgrade_location=""
 maybe_internal=""
+
+if [ -e /psp/rfs1/upgrade ]; then
+    upgrade_location=`cat /psp/rfs1/upgrade`
+    echo ${upgrade_location}
+    rm /psp/rfs1/upgrade
+fi
 
 # loop through usb devices to find the userhook0s internal and external
 for dev in sda sdb sdd sdc;
 do
  # mount a device to location /mnt/usb with type vfat filesystem in a read only state
   mount /dev/${dev}1 /mnt/usb -t vfat -o ro
-  
+
   if [ -e /mnt/usb/userhook0 ]; then
     type=`/mnt/usb/userhook0 --type`
     
+    # found an upgrade on the root of the USB key
     if [ "${type}" == "Upgrade" ]; then
-      upgrade=${dev}
+        upgrade_location="/mnt/usb/userhook0"
+        upgrade=${dev}
+    # boot normally
     elif [ "${type}" == "Firmware" ]; then
       internal=${dev}
     else
       maybe_internal=${dev}
+    fi
+  elif [ -n "${upgrade_location}" ]; then
+    if [ -e ${upgrade_location} -a -z "${upgrade}" ]; then
+        upgrade=${dev}
     fi
   else
     maybe_internal=${dev}
@@ -52,7 +66,7 @@ if [ -z "${internal}" ]; then
   exit 1
 fi
 
-# if there is no external usb userhook0 then we are not upgrading, boot cbc normally
+# if there is no external usb userhook0
 if [ -z "${upgrade}" ]; then
   # mount the internal drive
 	# change the line below to -o rw for debugging
@@ -71,6 +85,10 @@ fi
 # otherwise mount the external drive
 mount /dev/${upgrade}1 /mnt/usb -t vfat
 # and execute an upgrade
-/mnt/usb/userhook0 --upgrade ${internal} &
+if [ -n "${upgrade_location}" -a -e ${upgrade_location} ]; then
+    ${upgrade_location} --upgrade ${internal} &
+else
+    echo "Could not find Upgrade script!" | $PRINT
+fi
 exit 0
 

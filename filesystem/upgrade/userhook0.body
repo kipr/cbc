@@ -5,19 +5,17 @@
 set -x
 
 if echo $0 | grep userhook0 > /dev/null; then
-  # Being called from Botball boot script
-  ROOT=`echo $0 | sed s./userhook0..`
-  SUBHOOK=1
+    # Being called from Botball boot script
+    SELF=`echo $0`
+    SUBHOOK=1
 else
-  # Being called from normal chumby bootup (/etc/init.d/rcS)
-  # We must be on /mnt/usb
-  ROOT=/mnt/usb
-  SUBHOOK=0
+    # Being called from normal chumby bootup (/etc/init.d/rcS) must be on /mnt/usb
+    SELF=/mnt/usb/userhook0
+    SUBHOOK=0
 fi
-  
-cd $ROOT
-SELF=$ROOT/userhook0
 
+ROOT=${SELF%/userhook0}
+cd $ROOT
 
 # Unpack some files we'll need
 $EXTRACT_fb_print > /tmp/fb_print
@@ -93,22 +91,24 @@ PRINT="$PRINT --skiptop 72"
 
 echo -n ""| $PRINT 
 
+###############################################
+# save user data
 echo -n "Backing up user data..." | $PRINT
 USER=/mnt/user
 USER_DEV=/dev/${INTERNAL_DEVICE}3
 insmod /tmp/ext2.ko
 mkdir -p $USER
 mount $USER_DEV $USER -t ext2
-mkdir -p $ROOT/cbc_backup/user/
-cp -a -f $USER/* $ROOT/cbc_backup/user/
+mkdir -p /mnt/usb/cbc_backup/user/
+cp -a -f $USER/* /mnt/usb/cbc_backup/user/
 sync
 sync
 umount $USER
 rmmod ext2
 echo "done." | $PRINT
 
+###############################################
 # Check the partition table...
-
 PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
 echo -n "Checking partition table..." | $PRINT
 
@@ -133,8 +133,8 @@ fi
 
 echo "done." | $PRINT
 
-# MKFS
-
+##############################################
+# Make the File system
 ln -s /proc/mounts /psp/mtab
 
 $EXTRACT_mkdosfs >/tmp/mkdosfs
@@ -194,20 +194,22 @@ mkdir $USER/code
 mkdir $USER/config
 mkdir $USER/vision
 
-echo -n "Restoring user data..." | $PRINT
-cp -a -f $ROOT/cbc_backup/user/* $USER/
-rm -rf $ROOT/cbc_backup
-echo "done." | $PRINT
-
+################################################
+# rewrite the rcS file
 echo -n "Updating boot scripts..." | $PRINT
-#rm /psp/rfs1/pointercal
 cp -f $BOOT/rcS /psp/rfs1
 cp -f $BOOT/fb_print /psp/rfs1
 chmod +x /psp/rfs1/fb_print
 echo "done." | $PRINT
 
-echo "Sync'ing drives..." | $PRINT
+################################################
+# Restore user data
+echo -n "Restoring user data..." | $PRINT
+cp -a -f /mnt/usb/cbc_backup/user/* $USER/
+rm -rf /mnt/usb/cbc_backup
+echo "done." | $PRINT
 
+echo "Sync'ing drives..." | $PRINT
 sync
 sync
 
@@ -215,12 +217,20 @@ umount $BOOT
 umount $KISS
 umount $USER
 
-mv $SELF $SELF-$VERSION.installed
-echo "Rebooting!" | $PRINT
-sleep 2
-
-PRINT="/tmp/fb_print --echo"
-
-reboot
+################################################
+# a new userhook has been installed from the gui
+if [ "/mnt/usb" == "$ROOT" ]; then
+# Updating finished, clear the screen and tell the user to power cycle the CBC
+    PRINT="/tmp/fb_print --echo"
+    echo -n "" | $PRINT
+    echo " " | $PRINT
+    echo "Updating CBC firmware complete!" | $PRINT
+    echo " " | $PRINT
+    echo "Please turn off the CBC and unplug the USB stick." | $PRINT
+else
+    echo "Rebooting!" | $PRINT
+    sleep 1
+    reboot
+fi
 
 exit 0

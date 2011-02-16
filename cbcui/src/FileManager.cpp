@@ -21,6 +21,7 @@
 #include "FileManager.h"
 
 #include <QProcess>
+#include <QMessageBox>
 
 #define DEFAULT_PATH "/mnt/browser"
 #define INTERNAL_USER_PATH "/mnt/browser/code"
@@ -187,6 +188,12 @@ void FileManager::updateGUI()
             ui_actionButton->show();
             ui_stopButton->show();
         }
+        else if(filename == "userhook0")
+        {
+            ui_actionButton->setText("Install");
+            ui_actionButton->show();
+            ui_stopButton->hide();
+        }
         else{
             ui_actionButton->hide();
             ui_stopButton->hide();
@@ -282,6 +289,24 @@ void FileManager::on_ui_actionButton_clicked()
             soundFile.prepend("btplay ");
             qWarning("%s",qPrintable(soundFile));
             QProcess::startDetached(soundFile.toLocal8Bit());
+        }
+        else if(fileInfo.fileName() == "userhook0"){
+
+            int ret = QMessageBox::warning(this,
+                                           "Update Userhook0",
+                                           "This will take a few minutes!\nDo not unplug USB key.",
+                                           QMessageBox::Cancel | QMessageBox::Ok,
+                                           QMessageBox::Cancel);
+
+            if(ret == QMessageBox::Ok){
+                QFile upgradeFile("/psp/rfs1/upgrade");
+                if(upgradeFile.open(QIODevice::WriteOnly | QIODevice::Text))
+                {
+                    upgradeFile.write(fileInfo.absoluteFilePath().remove("/browser").toLocal8Bit());
+                    upgradeFile.close();
+                    ::system("reboot"); // reboot the cbc to install
+                }
+            }
         }
     }
     this->updateGUI();
