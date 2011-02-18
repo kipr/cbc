@@ -30,8 +30,7 @@ void track_init()
 {
   if (!tracklib_initted) {
     tracklib_initted = 1;
-    tracklib_sm_results =
-      shared_mem_create("/tmp/color_tracking_results", sizeof(TrackingResults));
+    tracklib_sm_results = shared_mem_create("/tmp/color_tracking_results", sizeof(TrackingResults));
   }
 }
 
@@ -175,6 +174,7 @@ int track_minor_axis(int ch, int i)
 void track_set_model_hsv(int ch, int h_min, int h_max, int s_min, int v_min)
 {
     if (!channel_in_bounds(ch)) return;
+    tracklib_results_snapshot.channels[ch].new_model = 1;
     tracklib_results_snapshot.channels[ch].hsv_model[0] = h_min;
     tracklib_results_snapshot.channels[ch].hsv_model[1] = h_max;
     tracklib_results_snapshot.channels[ch].hsv_model[2] = s_min;

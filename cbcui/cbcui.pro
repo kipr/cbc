@@ -107,9 +107,9 @@ SOURCES += src/main.cpp \
     src/Volume.cpp
 
 # Vision
-FORMS += src/vision/AdjustColorWidget.ui
-SOURCES += src/vision/AdjustColorWidget.cpp
-HEADERS += src/vision/AdjustColorWidget.h
+#FORMS += src/vision/AdjustColorWidget.ui
+#SOURCES += src/vision/AdjustColorWidget.cpp
+#HEADERS += src/vision/AdjustColorWidget.h
 SOURCES += src/vision/Blob.cpp
 HEADERS += src/vision/Blob.h
 SOURCES += src/vision/Camera.cpp

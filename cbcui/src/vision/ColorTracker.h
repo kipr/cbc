@@ -65,6 +65,7 @@ protected:
     DisplayMode m_displayMode;
     unsigned int m_displayModel; // model # to display (0-based)
     ImageDisplay *m_displayImage; // image to display on
+    int m_matColorFlip;
     bool m_recordSegments;
 
     int m_frameNumber;

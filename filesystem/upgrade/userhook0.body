@@ -71,21 +71,14 @@ if [ "$SUBHOOK" = "1" ]; then
   fi
 fi
 
-echo "" | $PRINT
-echo "CBC Firmware Update Version $VERSION" | $PRINT 
-
-echo "Please plug in your power adapter" | $PRINT 
-echo "Updating firmware in 10 seconds..." | $PRINT 
-sleep 10
-
 echo -n ""| $PRINT 
 echo "*************************************" | $PRINT 
-echo "* UPDATING FIRMWARE                 *" | $PRINT 
+echo "* UPDATING FIRMWARE TO $VERSION     *" | $PRINT 
 echo "* THIS WILL TAKE SEVERAL MINUTES    *" | $PRINT 
 echo "* PLEASE PLUG IN YOUR POWER ADAPTER *" | $PRINT
 echo "* AND KEEP POWER ON                 *" | $PRINT
 echo "*************************************" | $PRINT
-sleep 3
+sleep 10
 
 PRINT="$PRINT --skiptop 72"
 

@@ -44,6 +44,7 @@ typedef struct BlobResultsStr {
 typedef struct ChannelResultsStr {
   int n_blobs;
   int hsv_model[4];
+  int new_model;
   BlobResults blobs[CHANNEL_MAX_BLOBS];
 } ChannelResults;
 

@@ -39,14 +39,17 @@ struct Pixel565 {
   inline uint8 g() const { return (rgb >> 5) & 0x3f; }
   inline uint8 b() const { return rgb & 0x1f; }
   
-  inline static Pixel565 black()   { return Pixel565(   0,    0,    0); }
-  inline static Pixel565 white()   { return Pixel565(RMAX, GMAX, BMAX); }
-  inline static Pixel565 red()     { return Pixel565(RMAX,    0,    0); }
-  inline static Pixel565 yellow()  { return Pixel565(RMAX, GMAX,    0); }
-  inline static Pixel565 green()   { return Pixel565(   0, GMAX,    0); }
-  inline static Pixel565 cyan()    { return Pixel565(   0, GMAX, BMAX); }
-  inline static Pixel565 blue()    { return Pixel565(   0,    0, BMAX); }
-  inline static Pixel565 magenta() { return Pixel565(RMAX,    0, BMAX); }
+  inline static Pixel565 black()        { return Pixel565(   0,    0,    0); }
+  inline static Pixel565 white()        { return Pixel565(RMAX, GMAX, BMAX); }
+  inline static Pixel565 red()          { return Pixel565(RMAX,    0,    0); }
+  inline static Pixel565 yellow()       { return Pixel565(RMAX, GMAX,    0); }
+  inline static Pixel565 green()        { return Pixel565(   0, GMAX,    0); }
+  inline static Pixel565 cyan()         { return Pixel565(   0, GMAX, BMAX); }
+  inline static Pixel565 blue()         { return Pixel565(   0,    0, BMAX); }
+  inline static Pixel565 magenta()      { return Pixel565(RMAX,    0, BMAX); }
+  inline static Pixel565 gray()         { return Pixel565(  15,   32,   15); }
+  inline static Pixel565 darkGray()     { return Pixel565(   7,   14,    7); }
+  inline static Pixel565 lightGray()    { return Pixel565(  28,   57,   28); }
 
   // 8-bit (0-255) accessors and setters
   inline uint8 r8() const { return (r() * (65535/RMAX)) >> 8; }

@@ -46,13 +46,13 @@ const Pixel565 blob_colors[] = {
 };
 
 const int num_colors = sizeof(blob_colors)/sizeof(blob_colors[0]);
+int mat_color=0;
     
 void draw_ellipse(Image &dest, float x, float y, float angle,
                   float major_axis, float minor_axis,
                   Pixel565 color);
 
-void draw_blob(Image &dest, Blob *blob, Pixel565 color,
-               bool /*showseg*/, bool showell)
+void draw_blob(Image &dest, Blob *blob, Pixel565 color, bool /*showseg*/, bool showell)
 {
   Pixel565 accent_color = color;
   MomentStats stats;
@@ -106,13 +106,11 @@ void DrawBlobs::draw(Image &dest, BlobAssembler &bass,
     if(stats.area >= minarea)
     {
       Pixel565 color = (i < num_colors) ? blob_colors[i] : Pixel565::white();
+
       if(showtext)
       {
-	printf("\tBlob %d: area %d, centroid (%f, %f)\n", 
-	       i++, stats.area, stats.centroidX, stats.centroidY);
-	printf("                axis %f, aspect %f\n", 
-	       stats.angle*180.0/M_PI, 
-	       stats.minorDiameter / stats.majorDiameter);
+	printf("\tBlob %d: area %d, centroid (%f, %f)\n", i++, stats.area, stats.centroidX, stats.centroidY);
+        printf("                axis %f, aspect %f\n", stats.angle*180.0/M_PI, stats.minorDiameter / stats.majorDiameter);
       }
       draw_blob(dest, blob, color, showseg, showell);
 
@@ -272,9 +270,7 @@ const short costab[512] = {256, 256, 256, 256, 256, 256, 255,
                            255, 255, 255, 256, 256, 256, 256, 
                            256};
 
-void draw_ellipse(Image &dest, float x, float y, float angle,
-                  float major_axis, float minor_axis,
-                  Pixel565 color)
+void draw_ellipse(Image &dest, float x, float y, float angle, float major_axis, float minor_axis, Pixel565 color)
 {
   int step=1;
   int ix = (int)x, iy = (int)y;

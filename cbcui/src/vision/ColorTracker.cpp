@@ -36,19 +36,22 @@ ColorTracker::ColorTracker(int nmodels)
     : m_displayMode(ColorTracker::DisplayRaw),
     m_displayModel(0),
     m_displayImage(NULL),
+    m_matColorFlip(0),
     m_recordSegments(false),
     m_sharedResults(NULL),
     m_frameNumber(0),
     m_lastFrameTime(0)
 {
+
+    for (int i = 0; i < nmodels; i++)
+        m_assemblers.push_back(new BlobAssembler());
     this->loadModels();
-    for (int i = 0; i < nmodels; i++) m_assemblers.push_back(new BlobAssembler());
 }
 
 ColorTracker::~ColorTracker()
 {
     for (unsigned i = 0; i < m_assemblers.size(); i++) delete m_assemblers[i];
-    stopSharingResults();
+        stopSharingResults();
 }
 
 std::string ColorTracker::modelSaveFile() const {
@@ -73,28 +76,44 @@ HSVRange ColorTracker::getModel(uint8 channel) const
 bool ColorTracker::loadModels()
 {
     ifstream in(this->modelSaveFile().c_str());
-    for (unsigned ch = 0; ch < m_assemblers.size(); ch++) {
-        if (in.good()) {
-            //printf("Loaded channel model %d from %s\n", ch, m_HSVmodelFile);
+    if(in.good()){
+        for (unsigned ch = 0; ch < m_assemblers.size(); ch++)
+        {
             HSVRange model(HSV(330, 127, 127), HSV(30, 255, 255));
             in >> model.h.min >> model.h.max >> model.s.min >> model.v.min;
             setModel(ch, model);
-        } else {
-            //qWarning("loading default models @ %s",this->modelSaveFile().c_str());
-            this->loadDefaultModels();
         }
     }
+    else
+        this->loadDefaultModels();
+
+    if(m_sharedResults)
+    {
+        TrackingResults setupResults;
+        m_sharedResults->read(setupResults);
+        for(int i=0; i<TRACKING_MAX_CHANNELS && i < (int)m_assemblers.size(); i++)
+        {
+            HSVRange model = getModel(i);
+            setupResults.channels[i].hsv_model[0] = model.h.min;
+            setupResults.channels[i].hsv_model[1] = model.h.max;
+            setupResults.channels[i].hsv_model[2] = model.s.min;
+            setupResults.channels[i].hsv_model[3] = model.v.min;
+            setupResults.channels[i].new_model = 0;                 // flag from user code to indicate a new model, init to 0
+        }
+        m_sharedResults->write(setupResults);
+    }
+
     return true;
 }
 
 bool ColorTracker::saveModels()
 {
     ofstream out(this->modelSaveFile().c_str());
-    //printf("Saving models to %s\n", m_HSVmodelFile);
-    for (unsigned ch = 0; ch < m_assemblers.size(); ch++) {
+
+    for (unsigned ch = 0; ch < m_assemblers.size(); ch++)
+    {
         HSVRange model = getModel(ch);
-        out << model.h.min << " " << model.h.max << " "
-                << model.s.min << " " << model.v.min << "\n";
+        out << model.h.min << " " << model.h.max << " " << model.s.min << " " << model.v.min << "\n";
     }
     out << "# File format\n";
     out << "# Each line is a channel (0-3)\n";
@@ -138,13 +157,19 @@ void ColorTracker::processFrame(const Image &image)
 {
     int thisFrameTime= mtime();
     m_frameNumber++;
-    //printf("ColorTracker::processFrame begin\n");
-    check_heap();
 
+    check_heap();
+    //QString warn = QString("ncols %1 nrow %2").arg(image.ncols).arg(image.nrows);
+    //      qWarning("%s",qPrintable(warn));
     Image *display = m_displayImage ? &m_displayImage->m_Image : NULL;
 
     if (display) display->copy_from(image);
-    
+
+    if(m_matColorFlip)
+        m_matColorFlip=0;
+    else
+        m_matColorFlip=1;
+
     for (unsigned ch = 0; ch < m_assemblers.size(); ch++)
     {
         bool displayMatches = (ch == m_displayModel) && (m_displayMode == DisplayMatches || m_displayMode == DisplayBlobs);
@@ -165,7 +190,6 @@ void ColorTracker::processFrame(const Image &image)
     }
     if (display) m_displayImage->update();
     check_heap();
-    //printf("ColorTracker::processFrame end\n");
 
     updateSharedResults(thisFrameTime);
     m_lastFrameTime = thisFrameTime;
@@ -175,6 +199,19 @@ void ColorTracker::shareResults(const char *filename)
 {
     stopSharingResults();
     m_sharedResults = new SharedMem<TrackingResults>(filename);
+
+    TrackingResults setupResults;
+
+    for(int i=0; i<TRACKING_MAX_CHANNELS && i < (int)m_assemblers.size(); i++)
+    {
+        HSVRange model = getModel(i);
+        setupResults.channels[i].hsv_model[0] = model.h.min;
+        setupResults.channels[i].hsv_model[1] = model.h.max;
+        setupResults.channels[i].hsv_model[2] = model.s.min;
+        setupResults.channels[i].hsv_model[3] = model.v.min;
+        setupResults.channels[i].new_model = 0;                 // flag from user code to indicate a new model, init to 0
+    }
+    m_sharedResults->write(setupResults);
 }
 
 void ColorTracker::stopSharingResults()
@@ -191,23 +228,34 @@ void ColorTracker::updateSharedResults(int frameTime)
     if (!m_sharedResults) return;
 
     TrackingResults newResults;
+    m_sharedResults->read(newResults);
+
     newResults.frame_number = m_frameNumber;
     newResults.frame_time = frameTime;
     newResults.previous_frame_time = m_lastFrameTime;
 
     for (newResults.n_channels = 0;
-         newResults.n_channels < TRACKING_MAX_CHANNELS &&
-         newResults.n_channels < (int)m_assemblers.size();
-    newResults.n_channels++)
+         newResults.n_channels < TRACKING_MAX_CHANNELS && newResults.n_channels < (int)m_assemblers.size();
+         newResults.n_channels++)
     {
         ChannelResults &cr = newResults.channels[newResults.n_channels];
+
+        if(cr.new_model)    // if the new model flag is set by the user
+        {
+            HSVRange model(HSV(330, 127, 127), HSV(30, 255, 255));
+            model.h.min = cr.hsv_model[0];
+            model.h.max = cr.hsv_model[1];
+            model.s.min = cr.hsv_model[2];
+            model.v.min = cr.hsv_model[3];
+            this->setModel(newResults.n_channels,model);    // set the model
+            cr.new_model = 0;                               // clear the flag
+        }
 
         std::vector<Blob*> &sortedBlobs = m_assemblers[newResults.n_channels]->getSortedBlobs();
 
         for (cr.n_blobs=0;
-             cr.n_blobs < CHANNEL_MAX_BLOBS &&
-             cr.n_blobs < (int)sortedBlobs.size();
-        cr.n_blobs++)
+             cr.n_blobs < CHANNEL_MAX_BLOBS && cr.n_blobs < (int)sortedBlobs.size();
+             cr.n_blobs++)
         {
             BlobResults &br = cr.blobs[cr.n_blobs];
             Blob *b=sortedBlobs[cr.n_blobs];
@@ -245,8 +293,13 @@ void ColorTracker::assembleBlobs(const Image &src, BlobAssembler &bass, uint8 ch
 {
     // Setup to record segments or not
     Moments::computeAxes= true;
+
     // set blob superposition color
-    Pixel565 matchColor = Pixel565::white();
+    Pixel565 matchColor;
+    if(m_matColorFlip)
+        matchColor = Pixel565::white();
+    else
+        matchColor = Pixel565::lightGray();
 
     // Clear any existing blobs
     bass.Reset();
@@ -277,7 +330,8 @@ void ColorTracker::assembleBlobs(const Image &src, BlobAssembler &bass, uint8 ch
 
             in++; x++;
             // Scan through in-model pixels
-            while (x < src.ncols && m_lut.contains(channel, *in)) {
+            while (x < src.ncols && m_lut.contains(channel, *in))
+            {
                 if (dest) *(Pixel565*)((char*)in+dest_offset)= matchColor;
                 in++; x++;
             }
