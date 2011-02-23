@@ -327,10 +327,17 @@ void FileManager::on_ui_copyButton_clicked()
 
 void FileManager::on_ui_deleteButton_clicked()
 {
-    QString fPath = m_dir.filePath(ui_directoryBrowser->currentIndex());
-    m_index = ui_directoryBrowser->indexAt(QPoint(1,1));
-    fPath.replace(" ",QString("\\ "));
-    QString deleteString("rm -rf " + fPath);
+    int ret = QMessageBox::warning(this,
+                                   "Delete",
+                                   "Do you want to Delete the file?",
+                                   QMessageBox::Cancel | QMessageBox::Ok,
+                                   QMessageBox::Cancel);
+    if(ret == QMessageBox::Ok){
+        QString fPath = m_dir.filePath(ui_directoryBrowser->currentIndex());
+        m_index = ui_directoryBrowser->indexAt(QPoint(1,1));
+        fPath.replace(" ",QString("\\ "));
+        QString deleteString("rm -rf " + fPath);
 
-    ::system(deleteString.toLocal8Bit());
+        ::system(deleteString.toLocal8Bit());
+    }
 }

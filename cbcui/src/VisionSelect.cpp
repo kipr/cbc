@@ -29,6 +29,8 @@ VisionSelect::VisionSelect(QWidget *parent) :
 
     QObject::connect(ui_trackingButton, SIGNAL(clicked()), &m_tracking, SLOT(raisePage()));
     QObject::connect(ui_settingButton, SIGNAL(clicked()), &m_setting, SLOT(raisePage()));
+
+    m_tracking.raisePage();
 }
 
 VisionSelect::~VisionSelect()
