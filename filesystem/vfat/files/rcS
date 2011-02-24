@@ -6,6 +6,8 @@ chmod +x /psp/rfs1/fb_print
 
 export LD_LIBRARY_PATH=/lib
 
+export CBC_DEBUG=1
+
 echo "Starting udevd as daemon"
 /sbin/udevd --daemon
 
@@ -69,9 +71,12 @@ fi
 # if there is no external usb userhook0
 if [ -z "${upgrade}" ]; then
   # mount the internal drive
-	# change the line below to -o rw for debugging
-  mount /dev/${internal}1 /mnt/usb -t vfat -o ro 
-  
+  if [ ${CBC_DEBUG} -eq 0 ]; then
+    mount /dev/${internal}1 /mnt/usb -t vfat -o ro
+  else
+    mount /dev/${internal}1 /mnt/usb -t vfat -o rw
+  fi
+
   # execute the userhook0 if it exists
   if [ -e /mnt/usb/userhook0 ]; then
 	 . /mnt/usb/userhook0 ${internal}

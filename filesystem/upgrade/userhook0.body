@@ -72,12 +72,12 @@ if [ "$SUBHOOK" = "1" ]; then
 fi
 
 echo -n ""| $PRINT 
-echo "*************************************" | $PRINT 
-echo "* UPDATING FIRMWARE TO $VERSION     *" | $PRINT 
-echo "* THIS WILL TAKE SEVERAL MINUTES    *" | $PRINT 
-echo "* PLEASE PLUG IN YOUR POWER ADAPTER *" | $PRINT
-echo "* AND KEEP POWER ON                 *" | $PRINT
-echo "*************************************" | $PRINT
+echo "***************************************" | $PRINT
+echo "* UPDATING FIRMWARE TO $VERSION          *" | $PRINT
+echo "* THIS WILL TAKE SEVERAL MINUTES      *" | $PRINT
+echo "* PLEASE PLUG IN YOUR POWER ADAPTER   *" | $PRINT
+echo "* AND KEEP POWER ON                   *" | $PRINT
+echo "***************************************" | $PRINT
 sleep 10
 
 PRINT="$PRINT --skiptop 72"
