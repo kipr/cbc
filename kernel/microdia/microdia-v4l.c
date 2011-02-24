@@ -352,7 +352,8 @@ int v4l2_enable_video(struct usb_microdia *dev, int mode)
 {
 	int ret;
 
-	if (mode == MICRODIA_MODE_IDLE) {
+        if (mode == MICRODIA_MODE_IDLE)
+        {
 		dev_microdia_stop_stream(dev);
 		usb_microdia_uninit_urbs(dev);
 		microdia_queue_enable(&dev->queue, 0);
@@ -472,8 +473,7 @@ static ssize_t v4l_microdia_read(struct file *fp, char __user *buf, size_t count
 	if (ret < 0)
 		return ret;
 
-	if (dev->mode != MICRODIA_MODE_IDLE &&
-	    dev->mode != MICRODIA_MODE_READ)
+	if (dev->mode != MICRODIA_MODE_IDLE && dev->mode != MICRODIA_MODE_READ)
 		return -EBUSY;
 
 	buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -551,7 +551,6 @@ static void microdia_vm_open(struct vm_area_struct *vma)
 {
 	struct microdia_buffer *buffer = vma->vm_private_data;
 	buffer->vma_use_count++;
-
 }
 
 /**
@@ -692,12 +691,34 @@ int microdia_vidioc_enum_input(struct file *file, void *priv, struct v4l2_input 
  */
 int microdia_vidioc_g_input(struct file *file, void *priv, unsigned int *index)
 {
-	UDIA_DEBUG("GET INPUT %d\n", *index);
+        __u8 buf[4];
+        struct usb_microdia *dev;
 
-	if (index)
-		return -EINVAL;
+        __u8 page = (__u8)index[0];
+        __u8 adder = (__u8)index[1];
+        __u8 count = (__u8)index[2];
 
-	return 0;
+        dev = video_get_drvdata(priv);
+
+        UDIA_DEBUG("GET INPUT %d\n", *index);
+
+        buf[0] = 0xf0;
+        buf[1] = 0x00;
+        buf[2] = page;
+
+        if (count > 4)
+            return -EINVAL;
+
+        sn9c20x_write_i2c_data(dev, dev->sensor_slave_address, 2,
+                               0xf0, dev->sensor_flags, &buf[1]);
+
+        sn9c20x_read_i2c_data(dev, dev->sensor_slave_address, count,
+                              adder, dev->sensor_flags, buf);
+
+        index[0] = buf[0];
+        index[1] = buf[1];
+      // UDIA_INFO("reg %x is %x %x\n",adder,index[0],index[1]);
+       return 0;
 }
 
 /**
@@ -708,15 +729,34 @@ int microdia_vidioc_g_input(struct file *file, void *priv, unsigned int *index)
  * @return 0 or negative error code
  *
  */
-int microdia_vidioc_s_input(struct file *file, void *priv, unsigned int index)
+int microdia_vidioc_s_input(struct file *file, void *priv, unsigned int *index)
 {
+        __u8 buf[3];
+        struct usb_microdia *dev;
+
+        __u8 page = (__u8)index[0];
+        __u8 adder = (__u8)index[1];
+        __u8 count = (__u8)index[2];
+
+        dev = video_get_drvdata(priv);
+
 	UDIA_DEBUG("SET INPUT %d\n", index);
 
 	if (v4l_get_privileges(file) < 0)
 		return -EBUSY;
 
-	if (index != 0)
-		return -EINVAL;
+        buf[0] = 0xf0;
+        buf[1] = 0x00;
+        buf[2] = page;
+
+        sn9c20x_write_i2c_data(dev, dev->sensor_slave_address, 2,
+                               0xf0, dev->sensor_flags, &buf[1]);
+        buf[0] = adder;
+        buf[1] = (__u8)index[3];
+        buf[2] = (__u8)index[4];
+        sn9c20x_write_i2c_data(dev, dev->sensor_slave_address, count,
+                               buf[0], dev->sensor_flags, &buf[1]);
+
 
 	return 0;
 }
@@ -1318,7 +1358,7 @@ static int v4l_microdia_ioctl(struct inode *inode, struct file *fp, unsigned int
 	}
 	case VIDIOC_S_INPUT:
 	{
-		unsigned int i = arg;
+                unsigned int *i = (unsigned int *)arg;
 		err = microdia_vidioc_s_input(fp, priv, i);
 		break;
 	}

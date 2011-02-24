@@ -6,8 +6,8 @@ TRACK_DIR=../../userlib/tracklib
 LIBCBC_DIR=../../userlib/libcbc
 INIT_DIR=../../userlib/init
 
-CBC_QT=CBC_Qt-4.5.2-Mini
-#CBC_QT=CBC_Qt-4.7.1-Mini
+#CBC_QT=CBC_Qt-4.5.2-Mini
+CBC_QT=CBC_Qt-4.7.1-Mini
 CBC_QT_TARFILE=$(CBC_QT).tar.bz2
 
 WGET=wget
