@@ -2,6 +2,7 @@
 
 #upgrade
 
+# Print commands and their arguments as executed
 set -x
 
 if echo $0 | grep userhook0 > /dev/null; then
@@ -17,22 +18,21 @@ fi
 ROOT=${SELF%/userhook0}
 cd $ROOT
 
-# Unpack some files we'll need
-$EXTRACT_fb_print > /tmp/fb_print
-chmod +x /tmp/fb_print
-$EXTRACT_ext2_ko > /tmp/ext2.ko
-PRINT="/tmp/fb_print --echo"
-#PRINT="echo"
-
+# check if the KISS rcS startup file exists
 if [ -e /psp ]; then
   # yes we're on a chumby
   if [ ! -e /psp/rfs1/rcS ]; then
-    # this chumby didn't start the correct way, fix it
     mkdir -p /psp/rfs1
+
+    # unpack the KISS rcS startup file
     $EXTRACT_rcS >/psp/rfs1/rcS
+    # unpack the frame buffer print character writer
     $EXTRACT_fb_print >/psp/rfs1/fb_print
+
+    # make them executable
     chmod +x /psp/rfs1/rcS
     chmod +x /psp/rfs1/fb_print
+    PRINT="/psp/rfs1/fb_print --echo"
     echo "Boot scripts updated...rebooting in 3 seconds" | $PRINT
     sleep 2
     sync
@@ -40,6 +40,8 @@ if [ -e /psp ]; then
     reboot
   fi
 fi
+
+PRINT="/psp/rfs1/fb_print --echo"
 
 if [ "$SUBHOOK" = "1" ]; then
   if [ "$1" = "--version" ]; then
@@ -50,14 +52,11 @@ if [ "$SUBHOOK" = "1" ]; then
     exit 0
   elif [ "$1" = "--extract" ]; then
     echo Extract
-    $EXTRACT_ptable_bin  >ptable.bin
-    $EXTRACT_dosmkfs     >dosmkfs
+    $EXTRACT_fdisk       >fdisk
     $EXTRACT_mkfs_ext2   >mkfs.ext2
-    $EXTRACT_block_probe >block_probe
     $EXTRACT_rcS         >rcS
     $EXTRACT_fb_print    >fb_print
     $EXTRACT_ext2_ko     >ext2.ko
-    $EXTRACT_vfat_tgz    >vfat.tgz
     $EXTRACT_ext2_tgz    >ext2.tgz
     exit 0
   elif [ "$1" = "--upgrade" ]; then
@@ -71,6 +70,7 @@ if [ "$SUBHOOK" = "1" ]; then
   fi
 fi
 
+# clear screen
 echo -n ""| $PRINT 
 echo "***************************************" | $PRINT
 echo "* UPDATING FIRMWARE TO $VERSION          *" | $PRINT
@@ -80,16 +80,22 @@ echo "* AND KEEP POWER ON                   *" | $PRINT
 echo "***************************************" | $PRINT
 sleep 10
 
+# tell fb_print to skip the top 72 pixels
 PRINT="$PRINT --skiptop 72"
 
+# clear screen
 echo -n ""| $PRINT 
+
+# unpack the ext2 filesystem kernel module so mounting is possible
+$EXTRACT_ext2_ko >/tmp/ext2.ko
+# install the module
+insmod /tmp/ext2.ko
 
 ###############################################
 # save user data
 echo -n "Backing up user data..." | $PRINT
 USER=/mnt/user
 USER_DEV=/dev/${INTERNAL_DEVICE}3
-insmod /tmp/ext2.ko
 mkdir -p $USER
 mount $USER_DEV $USER -t ext2
 mkdir -p /mnt/usb/cbc_backup/user/
@@ -97,7 +103,6 @@ cp -a -f $USER/* /mnt/usb/cbc_backup/user/
 sync
 sync
 umount $USER
-rmmod ext2
 echo "done." | $PRINT
 
 ###############################################
@@ -105,19 +110,45 @@ echo "done." | $PRINT
 PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
 echo -n "Checking partition table..." | $PRINT
 
-if [ "$PARTITION_COUNT" != "4" ]; then
+# the internal USB flash stick has 2 partitions
+# the first contains all KISS system files
+# the second is for the users code
+if [ "$PARTITION_COUNT" != "2" ]; then
   echo -n "updating..." | $PRINT
-  
-  $EXTRACT_ptable_bin >/tmp/ptable.bin
-  $EXTRACT_block_probe >/tmp/block_probe
-  chmod +x /tmp/block_probe
-  
-  dd if=/tmp/ptable.bin of=/dev/${INTERNAL_DEVICE} bs=512 count=1
-  /tmp/block_probe /dev/${INTERNAL_DEVICE}
-  
+
+    # extract the fdisk program for partition creation
+    $EXTRACT_fdisk >/tmp/fdisk
+    chmod +x /tmp/fdisk
+
+    # The following formats the two partitions
+    # d1 d1 d1                  - deletes the existing partitions
+    # n p 1 {default} 128M      - creates the first part. with default start to 128Mb size
+    # n p 2 {default} {default} - creates the second part. with default (@ end of 128) to default or end of disk
+    # w                         - writes and saves the partition table
+/tmp/fdisk /dev/${INTERNAL_DEVICE} <<FDISKINPUT
+d
+1
+d
+1
+d
+1
+n
+p
+1
+
+128M
+n
+p
+2
+
+
+w
+
+FDISKINPUT
+
   PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
-  if [ "$PARTITION_COUNT" != "4" ]; then
-    echo "failed!" | $PRINT
+  if [ "$PARTITION_COUNT" != "2" ]; then
+    echo "FAILD!" | $PRINT
     echo "" | $PRINT
     echo "You probably have a bad internal flash drive, call KIPR for support" | $PRINT
     exit 1
@@ -127,78 +158,61 @@ fi
 echo "done." | $PRINT
 
 ##############################################
-# Make the File system
+# Make the Filesystem
 ln -s /proc/mounts /psp/mtab
 
-$EXTRACT_mkdosfs >/tmp/mkdosfs
-chmod +x /tmp/mkdosfs
+KISS_DEV=/dev/${INTERNAL_DEVICE}1
+USER_DEV=/dev/${INTERNAL_DEVICE}2
+
 $EXTRACT_mkfs_ext2 >/tmp/mkfs.ext2
 chmod +x /tmp/mkfs.ext2
 
-echo -n "Creating vfat partition on /dev/${INTERNAL_DEVICE}1..." | $PRINT
-/tmp/mkdosfs /dev/${INTERNAL_DEVICE}1
+echo -n "Creating ext2 partition on $KISS_DEV..." | $PRINT
+/tmp/mkfs.ext2 $KISS_DEV
 if [ "$?" != "0" ]; then
   echo "failed!" | $PRINT
   exit 1
 fi
 echo "done." | $PRINT
 
-echo -n "Creating ext2 partition on /dev/${INTERNAL_DEVICE}2..." | $PRINT
-/tmp/mkfs.ext2 /dev/${INTERNAL_DEVICE}2
+echo -n "Creating ext2 partition on $USER_DEV..." | $PRINT
+/tmp/mkfs.ext2 $USER_DEV
 if [ "$?" != "0" ]; then
   echo "failed!" | $PRINT
   exit 1
 fi
 echo "done." | $PRINT
 
-echo -n "Creating ext2 partition on /dev/${INTERNAL_DEVICE}3..." | $PRINT
-/tmp/mkfs.ext2 /dev/${INTERNAL_DEVICE}3
-if [ "$?" != "0" ]; then
-  echo "failed!" | $PRINT
-  exit 1
-fi
-echo "done." | $PRINT
-
-BOOT=/mnt/kiss-usb
+###############################################
+# add files to the new file systems
 KISS=/mnt/kiss
 USER=/mnt/user
 
-BOOT_DEV=/dev/${INTERNAL_DEVICE}1
-KISS_DEV=/dev/${INTERNAL_DEVICE}2
-USER_DEV=/dev/${INTERNAL_DEVICE}3
+# make the Kiss system directory
+mkdir -p $KISS
+# make the users code directory
+mkdir -p $USER/code
 
-mkdir -p $BOOT $KISS $USER
-
-$EXTRACT_ext2_ko >/tmp/ext2.ko
-insmod /tmp/ext2.ko
-
-mount $BOOT_DEV $BOOT -t vfat 
+# mount the filesystems
 mount $KISS_DEV $KISS -t ext2 
 mount $USER_DEV $USER -t ext2 
 
-df $BOOT_DEV $KISS_DEV $USER_DEV | $PRINT
-$EXTRACT_vfat_tgz | tar -xvzf - -C $BOOT | $PRINT
-sync
-sync
+df $KISS_DEV $USER_DEV | $PRINT
 $EXTRACT_ext2_tgz | tar -xvzf - -C $KISS | $PRINT
-df $BOOT_DEV $KISS_DEV $USER_DEV | $PRINT
-
-mkdir $USER/code
-mkdir $USER/config
-mkdir $USER/vision
+sync
+sync
+df $KISS_DEV $USER_DEV | $PRINT
 
 ################################################
 # rewrite the rcS file
 echo -n "Updating boot scripts..." | $PRINT
-cp -f $BOOT/rcS /psp/rfs1
-cp -f $BOOT/fb_print /psp/rfs1
-chmod +x /psp/rfs1/fb_print
+cp -f $KISS/rcS /psp/rfs1
 echo "done." | $PRINT
 
 ################################################
 # Restore user data
 echo -n "Restoring user data..." | $PRINT
-cp -a -f /mnt/usb/cbc_backup/user/* $USER/
+cp -a -f /mnt/usb/cbc_backup/user/* $USER/code
 rm -rf /mnt/usb/cbc_backup
 echo "done." | $PRINT
 
@@ -206,7 +220,6 @@ echo "Sync'ing drives..." | $PRINT
 sync
 sync
 
-umount $BOOT
 umount $KISS
 umount $USER
 

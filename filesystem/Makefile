@@ -1,26 +1,18 @@
-# Makefile for building the filesystems to go on the thumb drive
-#
+# Makefile for building the filesystems to go on the internal USB drive
 
 all: filesystems
 
 make-kiss-ext2:
 	make -C ext2
 
-make-kiss-vfat:
-	make -C vfat
-
 kiss-ext2-install:
 	rm -rf /mnt/kiss/*
 	cp -a kiss-ext2/* /mnt/kiss
 
-kiss-vfat-install:
-	rm -rf /mnt/usb/*
-	cp -r kiss-vfat/* /mnt/usb
-
-filesystems: make-kiss-ext2 make-kiss-vfat
+filesystems: make-kiss-ext2
 
 ifeq ($(NUKE),1)
-install: kiss-ext2-install kiss-vfat-install
+install: kiss-ext2-install
 else
 install: install-help
 endif
@@ -32,5 +24,4 @@ install-help:
 	@echo
 
 clean:
-	make -C ext2 clean
-	make -C vfat clean
+        make -C ext2 clean
