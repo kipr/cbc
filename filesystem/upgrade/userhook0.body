@@ -168,7 +168,7 @@ $EXTRACT_mkfs_ext2 >/tmp/mkfs.ext2
 chmod +x /tmp/mkfs.ext2
 
 echo -n "Creating ext2 partition on $KISS_DEV..." | $PRINT
-/tmp/mkfs.ext2 $KISS_DEV
+/tmp/mkfs.ext2 -L kissys $KISS_DEV
 if [ "$?" != "0" ]; then
   echo "failed!" | $PRINT
   exit 1
@@ -176,7 +176,7 @@ fi
 echo "done." | $PRINT
 
 echo -n "Creating ext2 partition on $USER_DEV..." | $PRINT
-/tmp/mkfs.ext2 $USER_DEV
+/tmp/mkfs.ext2 -L userpart $USER_DEV
 if [ "$?" != "0" ]; then
   echo "failed!" | $PRINT
   exit 1
@@ -191,7 +191,7 @@ USER=/mnt/user
 # make the Kiss system directory
 mkdir -p $KISS
 # make the users code directory
-mkdir -p $USER/code
+mkdir -p $USER
 
 # mount the filesystems
 mount $KISS_DEV $KISS -t ext2 
@@ -203,6 +203,8 @@ sync
 sync
 df $KISS_DEV $USER_DEV | $PRINT
 
+mkdir -p $USER/code
+
 ################################################
 # rewrite the rcS file
 echo -n "Updating boot scripts..." | $PRINT
@@ -212,7 +214,7 @@ echo "done." | $PRINT
 ################################################
 # Restore user data
 echo -n "Restoring user data..." | $PRINT
-cp -a -f /mnt/usb/cbc_backup/user/* $USER/code
+cp -a -f /mnt/usb/cbc_backup/user/code/* $USER/code
 rm -rf /mnt/usb/cbc_backup
 echo "done." | $PRINT
 

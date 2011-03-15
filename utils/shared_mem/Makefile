@@ -38,5 +38,5 @@ install: libshared.a
 	scp libshared.a root@$(CHUMBY_TARGET):/mnt/kiss/usercode/lib
 
 install_filesystem: libshared.a $(DEST)
-	rsync -av libshared.a $(DEST)/usercode/lib
+	rsync -av libshared.a $(DEST)
 

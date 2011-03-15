@@ -15,5 +15,5 @@ clean:
 	rm -f init.o
 
 install_filesystem: init.o
-	rsync -a init.o $(DEST)/usercode/lib
+	rsync -a init.o $(DEST)
 

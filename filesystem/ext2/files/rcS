@@ -1,11 +1,13 @@
 #!/bin/sh
 
+USBINT=/mnt/usbint
+USBEXT=/mnt/usbext
+
 #PRINT=/psp/rfs1/fb_print
 PRINT=echo
 chmod +x /psp/rfs1/fb_print
 
 export LD_LIBRARY_PATH=/lib
-
 export CBC_DEBUG=1
 
 echo "Starting udevd as daemon"
@@ -16,12 +18,13 @@ echo "Starting udevd as daemon"
 
 echo "CBC Internal Boot Script" | $PRINT
 
-mkdir -p /mnt/usb
+# check for internal USB stick
+if [ ! -d /mnt/usbint ]; then
+	# startup terminal console if not there
+	exit 1
+fi
 
-internal=""
-upgrade=""
-upgrade_location=""
-maybe_internal=""
+mkdir -p $USBEXT
 
 if [ -e /psp/rfs1/upgrade ]; then
     upgrade_location=`cat /psp/rfs1/upgrade`

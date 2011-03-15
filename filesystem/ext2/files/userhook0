@@ -4,7 +4,7 @@ ROOT=/mnt/usb
 VERSION=`cat $ROOT/FIRMWARE_VERSION`
 
 if [ ${CBC_DEBUG} -ge 1 ]; then
-    PRINT=$ROOT/fb_print    # causes printing to the screen
+    PRINT=/psp/rfs1/fb_print    # causes printing to the screen
 else
     PRINT=echo
 fi
@@ -22,18 +22,6 @@ if [ -e /etc/rfs2 ]; then
 fi
 
 echo "CBC Firmware Version $VERSION" | $PRINT --echo
-
-if [ ! -e /psp/rfs1/rcS ]; then
-  echo "Updating internal boot script..." | $PRINT
-  mkdir -p /psp/rfs1
-  cp $ROOT/rcS /psp/rfs1
-  cp $ROOT/fb_print /psp/rfs1
-  chmod +x /psp/rfs1/rcS
-  chmod +x /psp/rfs1/fb_print
-  sync
-  sync
-  reboot
-fi
 
 if [ -z "$1" ]; then
   echo "BUG: Didn't get a device from rcS" | $PRINT --echo
@@ -69,11 +57,11 @@ if [ -e /mnt/usb/network_config ]; then
 	/usr/chumby/scripts/start_network &
 else
 	if [ -e /psp/network_config ]; then
-                echo "Starting network" | $PRINT
+        echo "Starting network" | $PRINT
 		/usr/chumby/scripts/start_network &
 	else
-                echo "Raising usb network" | $PRINT
-                ifconfig rausb0 up
+        echo "Raising usb network" | $PRINT
+        ifconfig rausb0 up
 	fi
 fi
 
@@ -140,8 +128,8 @@ INTERNAL_DEVICE=$1
 KISS=/mnt/kiss
 USER=/mnt/user
 
-KISS_DEV=/dev/${INTERNAL_DEVICE}2
-USER_DEV=/dev/${INTERNAL_DEVICE}3
+KISS_DEV=/dev/${INTERNAL_DEVICE}1
+USER_DEV=/dev/${INTERNAL_DEVICE}2
 
 echo "Adding ext2 driver"
 insmod /mnt/usb/ext2.ko
@@ -156,7 +144,7 @@ insmod /drivers/snd-hwdep.ko
 insmod /drivers/snd-usb-audio.ko
 
 echo -n "Checking internal filesystems..." | $PRINT
-/mnt/usb/fsck.ext2 -y ${USER_DEV} | $PRINT
+/mnt/usb/drivers/fsck.ext2 -y ${USER_DEV} | $PRINT
 echo "done." | $PRINT
 
 echo -n "Mounting internal filesystems..." | $PRINT
@@ -164,13 +152,8 @@ echo -n "Mounting internal filesystems..." | $PRINT
 mkdir -p $KISS
 mkdir -p $USER
 
-if [ ${CBC_DEBUG} -lt 1 ]; then
-    mount ${KISS_DEV} ${KISS} -t ext2 -o ro
-    mount ${USER_DEV} ${USER} -t ext2
-else
-    mount ${KISS_DEV} ${KISS} -t ext2 -o rw
-    mount ${USER_DEV} ${USER} -t ext2
-fi
+mount ${KISS_DEV} ${KISS} -t ext2 -o rw
+mount ${USER_DEV} ${USER} -t ext2
 
 mkdir -p /mnt/browser/code
 mount --bind /mnt/user/code /mnt/browser/code

@@ -11,7 +11,7 @@
 
 #define VERSION_STRING (VERSION " " BUILD_DATE)
 
-#define CBOB_VERSION 217
+#define CBOB_VERSION 219
 
 #define MCK 48054857
 

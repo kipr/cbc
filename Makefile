@@ -44,10 +44,8 @@ cbcui_clean:
 
 userhook0: cbcui userlib fb_print
 	make -C filesystem/upgrade
-#	ln -sf filesystem/upgrade/userhook0 userhook0
 
 userhook0_clean: cbcui_clean userlib_clean fb_print_clean
 	make -C filesystem/upgrade clean
-#	rm -f userhook0
 
 .PHONY: userhook0 cbcui userlib libcbc tracklib shared_mem fb_print

@@ -227,7 +227,7 @@ void DigitalOutState(int mask)
 // state = 1 pin is HIGH
 // state = 0 pin is LOW
 void ADigitalOut(int port, int state)
-{	
+{
 	if(port < 0 || port > 8) 
 		return;
 	
@@ -271,7 +271,7 @@ short GetDigitalConfig()
 }
 
 void UpdateAnalogs(void)
-{	
+{
 	ADC_StartConversion(AT91C_BASE_ADC1);
 	while((ADC_GetStatus(AT91C_BASE_ADC1) & 0x80) != 0x80) nop();
 	//g_AnalogReading[0] = ADC_GetConvertedData(AT91C_BASE_ADC1,0);
