@@ -201,6 +201,7 @@ void FileManager::updateGUI()
     }
 }
 
+// moves the file browser to the default CBC home 
 void FileManager::on_ui_homeButton_clicked()
 {
     m_index = m_dir.index(DEFAULT_PATH);
@@ -211,6 +212,7 @@ void FileManager::on_ui_homeButton_clicked()
     updateGUI();
 }
 
+// mounts and Unmounts the external usb stick
 void FileManager::on_ui_mountButton_clicked()
 {
     QProcess mount;
@@ -241,9 +243,10 @@ void FileManager::on_ui_mountButton_clicked()
     this->updateGUI();
 }
 
+// determines what to do with the currently highlighted index when the action button is pressed
 void FileManager::on_ui_actionButton_clicked()
 {
-    if(m_dir.isDir(m_index)){
+    if(m_dir.isDir(m_index)){	// selected index is a directory
         QString path = m_dir.fileInfo(m_index).canonicalFilePath();
 
         if(path == DEFAULT_PATH)
@@ -254,9 +257,11 @@ void FileManager::on_ui_actionButton_clicked()
         ui_directoryBrowser->setRootIndex(m_dir.index(path));
         m_index = m_dir.index(path);
     }
-    else{
+    else{	// selected index is a file
         QFileInfo fileInfo = m_dir.fileInfo(m_index);
         //QString filePath = m_dir.filePath(m_index);
+		
+		// file is a c program
         if(fileInfo.suffix() == "c"){
 
             // if the file to compile is on the external usb, copy it to the internal storage
@@ -283,6 +288,7 @@ void FileManager::on_ui_actionButton_clicked()
             QProcess::startDetached("aplay /mnt/kiss/sounds/compiling.wav");
             m_compiler.compileFile(fileInfo.absoluteFilePath());
         }
+		// file is a sound .wav or .mp3
         else if(fileInfo.fileName().endsWith(".wav",Qt::CaseInsensitive) || fileInfo.fileName().endsWith(".mp3",Qt::CaseInsensitive)){
             QString soundFile = fileInfo.absoluteFilePath();
             soundFile.replace(" ","\\ ");
@@ -290,6 +296,7 @@ void FileManager::on_ui_actionButton_clicked()
             qWarning("%s",qPrintable(soundFile));
             QProcess::startDetached(soundFile.toLocal8Bit());
         }
+		// file is a userhook0 update file
         else if(fileInfo.fileName() == "userhook0"){
 
             int ret = QMessageBox::warning(this,
@@ -299,7 +306,7 @@ void FileManager::on_ui_actionButton_clicked()
                                            QMessageBox::Cancel);
 
             if(ret == QMessageBox::Ok){
-                QFile upgradeFile("/psp/rfs1/upgrade");
+                QFile upgradeFile("/psp/kiss_upgrade");
                 if(upgradeFile.open(QIODevice::WriteOnly | QIODevice::Text))
                 {
                     upgradeFile.write(fileInfo.absoluteFilePath().remove("/browser").toLocal8Bit());
@@ -312,11 +319,14 @@ void FileManager::on_ui_actionButton_clicked()
     this->updateGUI();
 }
 
+// stop playing sound file
 void FileManager::on_ui_stopButton_clicked()
 {
     ::system("echo stop > /tmp/.btplay-cmdin");
 }
 
+// copy button opens the copy dialog defined at the top of this file
+// allows the user to copy the currently selected index to the usb stick
 void FileManager::on_ui_copyButton_clicked()
 {
     QString fromPath = m_dir.filePath(ui_directoryBrowser->currentIndex());
@@ -325,6 +335,7 @@ void FileManager::on_ui_copyButton_clicked()
     cpDialog.exec();
 }
 
+// deletes the currently selected index item, assuming it is not being used ie. program file
 void FileManager::on_ui_deleteButton_clicked()
 {
     int ret = QMessageBox::warning(this,

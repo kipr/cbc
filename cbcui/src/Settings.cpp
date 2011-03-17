@@ -26,7 +26,7 @@
 
 Settings::Settings(QWidget *parent) :
         Page(parent),
-        m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat),
+        m_settings("/mnt/kiss/config/cbc_v2.config",QSettings::NativeFormat),
         m_brightness(parent),
         m_volume(parent)
 {
@@ -103,7 +103,7 @@ void Settings::recalibrateTS()
     msgBox.addButton(tr("Calibrate"), QMessageBox::ActionRole);
     msgBox.exec();
 
-    system("/mnt/kiss/qt/bin/ts_calibrate && /mnt/kiss/startup.sh &");
+    system("/mnt/kiss/qt/bin/ts_calibrate && /mnt/kiss/gui/startup.sh &");
     system("killall cbcui");
 }
 
@@ -116,7 +116,7 @@ void Settings::resetPID()
 void Settings::setCameraDefault()
 {
 #ifdef QT_ARCH_ARM
-  QFile::remove("/mnt/user/vision/track_colors");
+  QFile::remove("/mnt/kiss/config/track_colors");
 #else
   QString str = QDir::homePath() + "/track_colors";
   QFile::remove(str);

@@ -236,7 +236,7 @@ void CbobData::defaultPIDgains(int motor)
     ioctl(m_pid[motor], CBOB_PID_RESET_GAINS);
     this->motorGains(motor,PIDgains);
 
-    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    QSettings m_settings("/mnt/kiss/config/cbc_v2.config",QSettings::NativeFormat);
     m_settings.beginGroup(QString("PIDgainsMotor%1").arg(motor));
     m_settings.setValue("ProportionalMult",PIDgains[0]);
     m_settings.setValue("IntegralMult",PIDgains[1]);

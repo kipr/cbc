@@ -26,11 +26,11 @@ UserProgram *UserProgram::instance()
 
 void UserProgram::toggleState()
 {
-  QFileInfo robot("/mnt/user/bin/robot");
+  QFileInfo robot("/mnt/kiss/usercode/bin/robot");
   
   if(m_userProgram.state() == QProcess::NotRunning) {
     if(robot.exists()) {
-      m_userProgram.start("/mnt/user/bin/robot");
+      m_userProgram.start("/mnt/kiss/usercode/bin/robot");
     }
     else {
       emit consoleOutput(QString("No program to run!\n"));
@@ -58,7 +58,7 @@ void UserProgram::programStarted()
   emit stateChange(1);
   emit started();
 
-  QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+  QSettings m_settings("/mnt/kiss/config/cbc_v2.config",QSettings::NativeFormat);
   if(m_settings.value("consoleShowOnRun", true).toBool())
       emit consoleRaise();
 }
@@ -101,7 +101,7 @@ void UserProgram::stop()
 
 void UserProgram::updateProgramName()
 {
-    QFile fn(QString("/mnt/user/bin/robot_name.txt"));
+    QFile fn(QString("/mnt/kiss/usercode/bin/robot_name.txt"));
     if(fn.exists()){
         fn.open(QIODevice::ReadOnly);
         QString path(fn.readLine());

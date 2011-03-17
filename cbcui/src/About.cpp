@@ -28,9 +28,8 @@ About::About(QWidget *parent) : Page(parent)
 {
     setupUi(this);
 
-    QFile osVersion("/etc/software_version");
-    QFile swVersion("/mnt/usb/FIRMWARE_VERSION");
-
+	// chumby software version
+	QFile osVersion("/etc/software_version");
     if(osVersion.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         m_OSVersion = osVersion.readLine();
@@ -38,6 +37,9 @@ About::About(QWidget *parent) : Page(parent)
             m_OSVersion.chop(1);
         ui_OSVersion->setText(m_OSVersion);
     }
+	
+	// CBC software version
+	QFile swVersion("/mnt/kiss/FIRMWARE_VERSION");
     if(swVersion.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         m_SWVersion = swVersion.readLine();
@@ -46,13 +48,13 @@ About::About(QWidget *parent) : Page(parent)
         ui_SWVersion->setText(m_SWVersion);
     }
 
+	// BoB software version
     short version = 0;
     int fd = ::open("/dev/cbc/status", O_RDONLY);
     if(fd > 0) {
         ::read(fd, &version, 2);
         ::close(fd);
     }
-
     if(version)
         ui_FWVersion->setText(QString::number(version));
     else

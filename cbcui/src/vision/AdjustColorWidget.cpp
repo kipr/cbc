@@ -82,7 +82,7 @@ void AdjustColorWidget::displayModel(int ch) {
 
 std::string AdjustColorWidget::modelSaveFile() const {
 #ifdef QT_ARCH_ARM  
-  return "/mnt/user/vision/track_colors";
+  return "/mnt/kiss/config/track_colors";
 #else
   return QDir::homePath().toStdString() + "/track_colors";
 #endif

@@ -44,8 +44,8 @@ MicrodiaCamera::MicrodiaCamera()
 {
     system("rmmod microdia");
     system("rmmod videodev");
-    system("insmod /mnt/usb/videodev.ko");
-    system("insmod /mnt/usb/microdia.ko max_urbs=50 max_buffers=2 log_level=16");
+    system("insmod /mnt/kiss/drivers/videodev.ko");
+    system("insmod /mnt/kiss/drivers/microdia.ko max_urbs=50 max_buffers=2 log_level=16");
 
     openCamera();
     m_thread.start();
@@ -268,7 +268,7 @@ int MicrodiaCamera::getParameter(enum cam_parms id)
 
 void MicrodiaCamera::readSettings()
 {
-    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    QSettings m_settings("/mnt/kiss/config/cbc_v2.config",QSettings::NativeFormat);
 
     //qWarning("%s",qPrintable(m_settings.fileName()));
     // reads in the Camera settings that have been saved to memory
@@ -294,7 +294,7 @@ void MicrodiaCamera::readSettings()
 
 void MicrodiaCamera::setDefaultParams()
 {
-    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    QSettings m_settings("/mnt/kiss/config/cbc_v2.config",QSettings::NativeFormat);
     // remove all camera settings from settings file
     m_settings.remove("Camera");
     // reset all to default values because the settings are not there
@@ -341,7 +341,7 @@ void MicrodiaCamera::writeSetting(enum cam_parms id, int value)
         break;
     }
 
-    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    QSettings m_settings("/mnt/kiss/config/cbc_v2.config",QSettings::NativeFormat);
     m_settings.beginGroup("Camera");
     m_settings.setValue(name,value);
     m_settings.endGroup();

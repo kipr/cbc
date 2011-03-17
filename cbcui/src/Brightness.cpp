@@ -30,7 +30,7 @@
 
 Brightness::Brightness(QWidget *parent) :
     Page(parent),
-    m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat),
+    m_settings("/mnt/kiss/config/cbc_v2.config",QSettings::NativeFormat),
     m_mouseUpdate(this),
     m_dimmer(this),
     m_dimmed(true)

@@ -257,7 +257,7 @@ void MotorTuning::motorCheckBoxes()
 void MotorTuning::readSettings()
 {
     int i;
-    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    QSettings m_settings("/mnt/kiss/config/cbc_v2.config",QSettings::NativeFormat);
 
     //qWarning("%s",qPrintable(m_settings.fileName()));
     // reads in the PID settings that have been saved to memory
@@ -278,7 +278,7 @@ void MotorTuning::readSettings()
 
 void MotorTuning::writeSettings(int motor)
 {
-    QSettings m_settings("/mnt/user/cbc_v2.config",QSettings::NativeFormat);
+    QSettings m_settings("/mnt/kiss/config/cbc_v2.config",QSettings::NativeFormat);
 
     m_settings.beginGroup(QString("PIDgainsMotor%1").arg(motor));
     m_settings.setValue("ProportionalMult",PIDgains[0]);

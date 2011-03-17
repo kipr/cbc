@@ -56,7 +56,7 @@ ColorTracker::~ColorTracker()
 
 std::string ColorTracker::modelSaveFile() const {
 #ifdef QT_ARCH_ARM
-    return "/mnt/user/vision/track_colors";
+    return "/mnt/kiss/config/track_colors";
 #else
     QString str = QDir::homePath() + "/track_colors";
     return str.toStdString();
