@@ -1,210 +1,230 @@
-#!/bin/sh
+#!/bin/bash
 
-#upgrade
+# set upgrade options
+# repartitions internal usb drive
+REPARTITION=1
+# copies chumby update to vfat partition
+CHUMB_UPDATE=1
+# install the frame buffer print program
+FRAME_PRINT=1
 
 # Print commands and their arguments as executed
 set -x
 
-if echo $0 | grep userhook0 > /dev/null; then
-    # Being called from Botball boot script
-    SELF=`echo $0`
-    SUBHOOK=1
-else
-    # Being called from normal chumby bootup (/etc/init.d/rcS) must be on /mnt/usb
-    SELF=/mnt/usb/userhook0
-    SUBHOOK=0
+SELF=$0
+EXTUSB=${SELF%/userhook0}
+cd $EXTUSB
+
+CHUMB=/mnt/usb
+KISS=/mnt/kiss
+USER=/mnt/user
+
+SYS_PART_COUNT=4
+
+# if the frame buffer print is not there or needs to be updated
+if [ ! -e /psp/fb_print -o "$FRAME_PRINT" == "1" ]; then
+    # unpack the frame buffer print character writer
+    $EXTRACT_fb_print >/psp/fb_print
+    chmod +x /psp/fb_print
 fi
-
-ROOT=${SELF%/userhook0}
-cd $ROOT
-
-# unpack the frame buffer print character writer
-$EXTRACT_fb_print >/psp/fb_print
-chmod +x /psp/fb_print
 PRINT="/psp/fb_print --echo"
 
-# remove the old cbc rcS file to keep from confusing at startup
-if [ -e /psp/rfs1 ]; then
-	rm -r /psp/rfs1
-fi
-
-if [ "$SUBHOOK" = "1" ]; then
-  if [ "$1" = "--version" ]; then
+if [ "$1" == "--version" ]; then
     echo $VERSION
     exit 0
-  elif [ "$1" = "--type" ]; then
+elif [ "$1" == "--type" ]; then
     echo Upgrade
     exit 0
-  elif [ "$1" = "--extract" ]; then
-    echo Extract
-    #$EXTRACT_fdisk       >fdisk
-    $EXTRACT_ptable_bin  >ptable.bin
-    $EXTRACT_block_probe >block_probe
-    $EXTRACT_mkfs_ext2   >mkfs.ext2
-    $EXTRACT_rcS         >rcS
-    $EXTRACT_fb_print    >fb_print
-    $EXTRACT_ext2_ko     >ext2.ko
-    $EXTRACT_ext2_tgz    >ext2.tgz
-    exit 0
-  elif [ "$1" = "--upgrade" ]; then
-    INTERNAL_DEVICE=$2
-    if [ ! -b /dev/${INTERNAL_DEVICE} ]; then
-      echo "Incorrect option passed to --upgrade" | $PRINT
-      exit 1
+elif [ "$1" == "--upgrade" ]; then
+    if [ $# -gt 1 ]; then
+        UPDATE_TYPE=old
+        INTERNAL_DEVICE=$2
+        echo "Upgrade requested from old filesystem" | $PRINT
+        REPARTITION=1
+        CHUMB=/mnt/tmp
+        # unpack the ext2 filesystem kernel module
+        # so mounting is possible under the old filesystem
+        $EXTRACT_ext2_ko >/tmp/ext2.ko
+        # install the module
+        insmod /tmp/ext2.ko
     else
-      echo "Upgrade requested" | $PRINT
+        UPDATE_TYPE=new
+        # setting the internal device need to be searched for properly
+        # this should work for now because the internal drive is found first
+        INTERNAL_DEVICE=sda
     fi
-  fi
+else
+    echo "Userhook0 options are: --version --type --upgrade" | $PRINT
+    exit 0
 fi
 
-# clear screen
-echo -n ""| $PRINT 
+# clear screen and begin the update
+echo -n ""| $PRINT
 echo "***************************************" | $PRINT
 echo "* UPDATING FIRMWARE TO $VERSION          *" | $PRINT
 echo "* THIS WILL TAKE SEVERAL MINUTES      *" | $PRINT
 echo "* PLEASE PLUG IN YOUR POWER ADAPTER   *" | $PRINT
 echo "* AND KEEP POWER ON                   *" | $PRINT
 echo "***************************************" | $PRINT
-sleep 10
-
 # tell fb_print to skip the top 72 pixels
 PRINT="$PRINT --skiptop 72"
-
 # clear screen
-echo -n ""| $PRINT 
-
-# unpack the ext2 filesystem kernel module so mounting is possible
-$EXTRACT_ext2_ko >/tmp/ext2.ko
-# install the module
-insmod /tmp/ext2.ko
-
-###############################################
-# save user data
-echo -n "Backing up user data..." | $PRINT
-USER=/mnt/user
-USER_DEV=/dev/${INTERNAL_DEVICE}3
-mkdir -p $USER
-mount $USER_DEV $USER -t ext2
-mkdir -p /mnt/usb/cbc_backup/user/
-cp -a -f $USER/* /mnt/usb/cbc_backup/user/
-sync
-sync
-umount $USER
-echo "done." | $PRINT
+echo -n ""| $PRINT
 
 ###############################################
 # Check the partition table...
 PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
 echo -n "Checking partition table..." | $PRINT
-
-# the internal USB flash stick has 2 partitions eg. sda1,sda2, not including device eg. sda,sdb
-# the first contains all KISS system files
-# the second is for the users code
-if [ "$PARTITION_COUNT" != "3" ]; then
-  echo -n "partitioning..." | $PRINT
-
-# use the partition table until fdisk can be installed
-$EXTRACT_ptable_bin >/tmp/ptable.bin
-$EXTRACT_block_probe >/tmp/block_probe
-chmod +x /tmp/block_probe
-dd if=/tmp/ptable.bin of=/dev/${INTERNAL_DEVICE} bs=512 count=1
-/tmp/block_probe /dev/${INTERNAL_DEVICE}
-
-    # extract the fdisk program for partition creation
-#    $EXTRACT_fdisk >/tmp/fdisk
-#    chmod +x /tmp/fdisk
-
-    # The following formats the two partitions
-    # d1 d1 d1                  - deletes the existing partitions
-    # n p 1 {default} 128M      - creates the first part. with default start to 128Mb size
-    # n p 2 {default} {default} - creates the second part. with default (@ end of 128) to default or end of disk
-    # w                         - writes and saves the partition table
-#/tmp/fdisk /dev/${INTERNAL_DEVICE} <<FDISKINPUT
-#d
-#1
-#d
-#1
-#d
-#1
-#n
-#p
-#1
-
-#128M
-#n
-#p
-#2
-
-
-#w
-
-#FDISKINPUT
-
-  PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
-  if [ "$PARTITION_COUNT" != "3" ]; then
-    echo "FAILD!" | $PRINT
-    echo "" | $PRINT
-    echo "You probably have a bad internal flash drive, call KIPR for support" | $PRINT
-    exit 1
-  fi
+if [ "$PARTITION_COUNT" != $SYS_PART_COUNT ]
+    REPARTITION=1
+fi
+if [ "$REPARTITION" != "1" ]; then
+    echo "Good" | $PRINT
+else
+    echo "Repartitioning" | $PRINT
 fi
 
-echo "done." | $PRINT
-
-##############################################
-# Make the Filesystem
-ln -s /proc/mounts /psp/mtab
-
-KISS_DEV=/dev/${INTERNAL_DEVICE}1
-USER_DEV=/dev/${INTERNAL_DEVICE}2
-
-$EXTRACT_mkfs_ext2 >/tmp/mkfs.ext2
-chmod +x /tmp/mkfs.ext2
-
-echo -n "Creating ext2 partition on $KISS_DEV..." | $PRINT
-/tmp/mkfs.ext2 -L kissys $KISS_DEV
-if [ "$?" != "0" ]; then
-  echo "failed!" | $PRINT
-  exit 1
+# make sure the user has placed the update2 folder
+# which contains the new kernel file: k1.bin.zip
+# and the new root file system, cramfs: rfs1.bin.zip
+# which will be uploaded through the special options menu
+# after the userhook0 has installed the new partitions.
+# The user will be prompted to reboot the CBC while touching
+# the screen until the special options menu appears
+if [ "$CHUMB_UPDATE" == "1" -o "$REPARTITION" == "1" ]; then
+    if [ ! "$(ls -A $EXTUSB/update2)" ]; then
+        echo "No files in update2 directory!" | $PRINT
+        echo " " | $PRINT
+        echo "Retry with update2 folder is in the same location as Userhook0!" | $PRINT
+        exit 1
+    fi
 fi
-echo "done." | $PRINT
+sleep 10
 
-echo -n "Creating ext2 partition on $USER_DEV..." | $PRINT
-/tmp/mkfs.ext2 -L userpart $USER_DEV
-if [ "$?" != "0" ]; then
-  echo "failed!" | $PRINT
-  exit 1
+# the internal USB flash stick has 3 partitions eg. sda1,sda2,sda3 not including device eg. sda,sdb
+# the first is for updating the chumby and must be vfat to boot     ~ 30M
+# the second contains all KISS system files                         ~ 100M
+# the third is for the users code                                   ~ 800M
+if [ "$REPARTITION" == "1" ]; then
+
+    ###############################################
+    # save user data
+    echo -n "Backing up user data..." | $PRINT
+    mkdir -p $EXTUSB/cbc_backup/
+    if [ "$UPDATE_TYPE" == "old" ]; then
+        USER_DEV=/dev/${INTERNAL_DEVICE}3
+        mkdir -p $USER
+        mount $USER_DEV $USER -t ext2
+        cp -a -f $USER/* $EXTUSB/cbc_backup/
+        sync
+        sync
+        umount $USER
+    else
+        cp -a -f $KISS/config/track_colors $EXTUSB/cbc_backup/track_colors
+        cp -a -f $USER/* $EXTUSB/cbc_backup/
+        sync
+        sync
+        umount $USER
+        umount $KISS
+        umount $CHUMB
+    fi
+    echo "done." | $PRINT
+
+    echo -n "Partitioning..." | $PRINT
+
+    # use the partition table until fdisk can be installed
+    $EXTRACT_ptable_bin >/tmp/ptable.bin
+    $EXTRACT_block_probe >/tmp/block_probe
+    chmod +x /tmp/block_probe
+    dd if=/tmp/ptable.bin of=/dev/${INTERNAL_DEVICE} bs=512 count=1
+    /tmp/block_probe /dev/${INTERNAL_DEVICE}
+
+    PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
+    if [ "$PARTITION_COUNT" != $SYS_PART_COUNT ]; then
+        echo "FAILD!" | $PRINT
+        echo "" | $PRINT
+        echo "You probably have a bad internal flash drive, call KIPR for support" | $PRINT
+        exit 1
+    fi
+    # partitioning done
+    echo "done." | $PRINT
+
+    ##############################################
+    # Make the Filesystem
+    ln -s /proc/mounts /psp/mtab
+
+    VFAT_DEV=/dev/${INTERNAL_DEVICE}1
+    KISS_DEV=/dev/${INTERNAL_DEVICE}2
+    USER_DEV=/dev/${INTERNAL_DEVICE}3
+
+    $EXTRACT_mkdosfs >/tmp/mkdosfs
+    chmod +x /tmp/mkdosfs
+    echo -n "Creating vfat partition on $VFAT_DEV..." | $PRINT
+    /tmp/mkdosfs -n chumb_boot $VFAT_DEV
+    if [ "$?" != "0" ]; then
+        echo "failed!" | $PRINT
+        exit 1
+    fi
+    echo "done." | $PRINT
+
+    $EXTRACT_mkfs_ext2 >/tmp/mkfs.ext2
+    chmod +x /tmp/mkfs.ext2
+
+    echo -n "Creating ext2 partition on $KISS_DEV..." | $PRINT
+    /tmp/mkfs.ext2 -L kissys $KISS_DEV
+    if [ "$?" != "0" ]; then
+        echo "failed!" | $PRINT
+        exit 1
+    fi
+    echo "done." | $PRINT
+
+    echo -n "Creating ext2 partition on $USER_DEV..." | $PRINT
+    /tmp/mkfs.ext2 -L userpart $USER_DEV
+    if [ "$?" != "0" ]; then
+        echo "failed!" | $PRINT
+        exit 1
+    fi
+    echo "done." | $PRINT
 fi
-echo "done." | $PRINT
 
 ###############################################
-# add files to the new file systems
-KISS=/mnt/kiss
-USER=/mnt/user
+# add Chumby update2 files to the vfat filesystem
+if [ "$CHUMB_UPDATE" == "1" -o "$REPARTITION" == "1" ]; then
+    echo -n "Copying Update2 folder to $VFAT_DEV..." | $PRINT
+    mkdir -p $CHUMB
+    mount $VFAT_DEV $CHUMB -t vfat
+    # remove the folder if it exists
+    rm -rf $CHUMB/upgrade2
+    # copy the upgrade2 folder
+    cp -r $EXTUSB/upgrade2 $CHUMB
+    sync
+    sync
+    umount $CHUMB
+    echo "done." | $PRINT
+fi
 
-# make the Kiss system directory
+# add the files to the new kiss filesystem
 mkdir -p $KISS
-# make the users code directory
-mkdir -p $USER
-
-# mount the filesystems
-mount $KISS_DEV $KISS -t ext2 
-mount $USER_DEV $USER -t ext2 
-
-df $KISS_DEV $USER_DEV | $PRINT
+mount $KISS_DEV $KISS -t ext2
 $EXTRACT_ext2_tgz | tar -xvzf - -C $KISS | $PRINT
 sync
 sync
-df $KISS_DEV $USER_DEV | $PRINT
 
+# add the code directory to the user filesystem
+USER=/mnt/user
+# make the users code directory
+mkdir -p $USER
+mount $USER_DEV $USER -t ext2 
 mkdir -p $USER/code
+
+df $CHUMB $KISS_DEV $USER_DEV | $PRINT
 
 ################################################
 # Restore user data
 echo -n "Restoring user data..." | $PRINT
-cp -a -f /mnt/usb/cbc_backup/user/code/* $USER/code
-cp /mnt/usb/cbc_backup/user/vision/track_colors $KISS/config/track_colors
-rm -rf /mnt/usb/cbc_backup
+cp -a -f $EXTUSB/cbc_backup/code/* $USER/code
+cp $EXTUSB/cbc_backup/vision/track_colors $KISS/config/track_colors
+rm -rf $EXTUSB/cbc_backup
 echo "done." | $PRINT
 
 echo "Sync'ing drives..." | $PRINT
@@ -214,9 +234,14 @@ sync
 umount $KISS
 umount $USER
 
+# remove the old cbc rcS file to keep from confusing at startup
+if [ -e /psp/rfs1 ]; then
+    rm -r /psp/rfs1
+fi
+
 ################################################
 # a new userhook has been installed from the gui
-if [ "/mnt/usb" == "$ROOT" ]; then
+if [ "$CHUMB_UPDATE" == "1" -o "$REPARTITION" == "1" ]; then
 # Updating finished, clear the screen and tell the user to power cycle the CBC
     PRINT="/psp/fb_print --echo"
     echo -n "" | $PRINT
@@ -224,6 +249,9 @@ if [ "/mnt/usb" == "$ROOT" ]; then
     echo "Updating CBC firmware complete!" | $PRINT
     echo " " | $PRINT
     echo "Please turn off the CBC and unplug the USB stick." | $PRINT
+
+    echo "Touch screen during boot until Special Options is visible." | $PRINT
+    echo "Then install Chumby Update!" | $PRINT
 else
     echo "Rebooting!" | $PRINT
     sleep 1

@@ -3,6 +3,14 @@
 ROOT=/mnt/kiss
 VERSION=`cat $ROOT/FIRMWARE_VERSION`
 
+if [ "$1" == "--version" ]; then
+  echo $VERSION
+  exit 0
+elif [ "$1" == "--type" ]; then
+  echo Firmware
+  exit 0
+fi
+
 export LD_LIBRARY_PATH=/lib
 export CBC_DEBUG=1
 
@@ -10,14 +18,6 @@ if [ ${CBC_DEBUG} -ge 1 ]; then
     PRINT=/psp/fb_print    # causes printing to the screen
 else
     PRINT=echo
-fi
-
-if [ "$1" == "--version" ]; then
-  echo $VERSION
-  exit 0
-elif [ "$1" == "--type" ]; then
-  echo Firmware
-  exit 0
 fi
 
 if [ -e /etc/rfs2 ]; then

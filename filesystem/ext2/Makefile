@@ -61,7 +61,6 @@ filesystem: gcc qt
 	(cd gcc; rsync -a * $(DEST))
 	(cd qt; rsync -a * $(DEST))
 	(cd files; rsync -a gdb $(DEST)/bin)
-	(cd files; rsync -a rcS $(DEST))
 	(cd files; rsync -a userhook0 $(DEST))
 	(cd files; rsync -a FIRMWARE_VERSION $(DEST))
 
