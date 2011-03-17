@@ -16,11 +16,17 @@ CBOB_MODULE = $(CBOB_DIR)/cbob.ko
 MICRODIA_DIR = microdia
 MICRODIA_MODULE = $(MICRODIA_DIR)/microdia.ko
 
-all: $(ZIPFILE) $(MICRODIA_MODULE) $(CBOB_MODULE)
+RT73_DIR = rt73-chumby-1.7.0
+RT73_MODULE = $(RT73_DIR)/Module/rt73.ko
+RT73_TARFILE = $(RT73_DIR).tar.gz
+RT73_DOWNLOAD = http://files.kipr.org/cbc/$(RT73_TARFILE)
+
+all: $(ZIPFILE) $(MICRODIA_MODULE) $(CBOB_MODULE) 
 
 kernel: $(KERNEL)
 cbc_spi: $(CBOB_MODULE)
 microdia: $(MICRODIA_MODULE)
+rt73: $(RT73_MODULE)
 
 $(ZIPFILE): $(KERNEL)
 	perl align.pl $(KERNEL); zip k1.bin.zip $(KERNEL)
@@ -30,6 +36,13 @@ $(MICRODIA_MODULE): $(KERNEL)
 
 $(CBOB_MODULE): $(KERNEL)
 	make -C $(CBOB_DIR)
+
+$(RT73_MODULE): $(RT73_TARFILE) $(KERNEL)
+	tar xvfz $(RT73_TARFILE)
+	make -C $(RT73_DIR)/Module ARCH=arm CROSS_COMPILE=arm-linux- KERNDIR=../../$(KERNEL_DIR) arm
+
+$(RT73_TARFILE):
+	wget $(RT73_DOWNLOAD)
 
 $(KERNEL): $(KERNEL_DIR) $(COMPILER)
 	ARCH=arm BOARD=mx21ads CROSS_COMPILE=arm-linux- make -C $(KERNEL_DIR)

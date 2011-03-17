@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PRINT="/mnt/usb/fb_print --skiptop 50"
+PRINT="/psp/fb_print --skiptop 50"
 PROG=/mnt/user/code/robot
 
 if killall robot; then

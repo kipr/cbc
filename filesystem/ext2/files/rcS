@@ -18,13 +18,6 @@ echo "Starting udevd as daemon"
 
 echo "CBC Internal Boot Script" | $PRINT
 
-# check for internal USB stick
-if [ ! -d /mnt/usbint ]; then
-	# startup terminal console if not there
-	exit 1
-fi
-
-mkdir -p $USBEXT
 
 if [ -e /psp/rfs1/upgrade ]; then
     upgrade_location=`cat /psp/rfs1/upgrade`

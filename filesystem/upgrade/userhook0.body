@@ -18,30 +18,15 @@ fi
 ROOT=${SELF%/userhook0}
 cd $ROOT
 
-# check if the KISS rcS startup file exists
-if [ -e /psp ]; then
-  # yes we're on a chumby
-  if [ ! -e /psp/rfs1/rcS ]; then
-    mkdir -p /psp/rfs1
+# unpack the frame buffer print character writer
+$EXTRACT_fb_print >/psp/fb_print
+chmod +x /psp/fb_print
+PRINT="/psp/fb_print --echo"
 
-    # unpack the KISS rcS startup file
-    $EXTRACT_rcS >/psp/rfs1/rcS
-    # unpack the frame buffer print character writer
-    $EXTRACT_fb_print >/psp/rfs1/fb_print
-
-    # make them executable
-    chmod +x /psp/rfs1/rcS
-    chmod +x /psp/rfs1/fb_print
-    PRINT="/psp/rfs1/fb_print --echo"
-    echo "Boot scripts updated...rebooting in 3 seconds" | $PRINT
-    sleep 2
-    sync
-    sync
-    reboot
-  fi
+# remove the old cbc rcS file to keep from confusing at startup
+if [ -e /psp/rfs1 ]; then
+	rm -r /psp/rfs1
 fi
-
-PRINT="/psp/rfs1/fb_print --echo"
 
 if [ "$SUBHOOK" = "1" ]; then
   if [ "$1" = "--version" ]; then
@@ -52,7 +37,9 @@ if [ "$SUBHOOK" = "1" ]; then
     exit 0
   elif [ "$1" = "--extract" ]; then
     echo Extract
-    $EXTRACT_fdisk       >fdisk
+    #$EXTRACT_fdisk       >fdisk
+    $EXTRACT_ptable_bin  >ptable.bin
+    $EXTRACT_block_probe >block_probe
     $EXTRACT_mkfs_ext2   >mkfs.ext2
     $EXTRACT_rcS         >rcS
     $EXTRACT_fb_print    >fb_print
@@ -110,44 +97,51 @@ echo "done." | $PRINT
 PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
 echo -n "Checking partition table..." | $PRINT
 
-# the internal USB flash stick has 2 partitions
+# the internal USB flash stick has 2 partitions eg. sda1,sda2, not including device eg. sda,sdb
 # the first contains all KISS system files
 # the second is for the users code
-if [ "$PARTITION_COUNT" != "2" ]; then
-  echo -n "updating..." | $PRINT
+if [ "$PARTITION_COUNT" != "3" ]; then
+  echo -n "partitioning..." | $PRINT
+
+# use the partition table until fdisk can be installed
+$EXTRACT_ptable_bin >/tmp/ptable.bin
+$EXTRACT_block_probe >/tmp/block_probe
+chmod +x /tmp/block_probe
+dd if=/tmp/ptable.bin of=/dev/${INTERNAL_DEVICE} bs=512 count=1
+/tmp/block_probe /dev/${INTERNAL_DEVICE}
 
     # extract the fdisk program for partition creation
-    $EXTRACT_fdisk >/tmp/fdisk
-    chmod +x /tmp/fdisk
+#    $EXTRACT_fdisk >/tmp/fdisk
+#    chmod +x /tmp/fdisk
 
     # The following formats the two partitions
     # d1 d1 d1                  - deletes the existing partitions
     # n p 1 {default} 128M      - creates the first part. with default start to 128Mb size
     # n p 2 {default} {default} - creates the second part. with default (@ end of 128) to default or end of disk
     # w                         - writes and saves the partition table
-/tmp/fdisk /dev/${INTERNAL_DEVICE} <<FDISKINPUT
-d
-1
-d
-1
-d
-1
-n
-p
-1
+#/tmp/fdisk /dev/${INTERNAL_DEVICE} <<FDISKINPUT
+#d
+#1
+#d
+#1
+#d
+#1
+#n
+#p
+#1
 
-128M
-n
-p
-2
+#128M
+#n
+#p
+#2
 
 
-w
+#w
 
-FDISKINPUT
+#FDISKINPUT
 
   PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
-  if [ "$PARTITION_COUNT" != "2" ]; then
+  if [ "$PARTITION_COUNT" != "3" ]; then
     echo "FAILD!" | $PRINT
     echo "" | $PRINT
     echo "You probably have a bad internal flash drive, call KIPR for support" | $PRINT
@@ -206,15 +200,10 @@ df $KISS_DEV $USER_DEV | $PRINT
 mkdir -p $USER/code
 
 ################################################
-# rewrite the rcS file
-echo -n "Updating boot scripts..." | $PRINT
-cp -f $KISS/rcS /psp/rfs1
-echo "done." | $PRINT
-
-################################################
 # Restore user data
 echo -n "Restoring user data..." | $PRINT
 cp -a -f /mnt/usb/cbc_backup/user/code/* $USER/code
+cp /mnt/usb/cbc_backup/user/vision/track_colors $KISS/config/track_colors
 rm -rf /mnt/usb/cbc_backup
 echo "done." | $PRINT
 
@@ -229,7 +218,7 @@ umount $USER
 # a new userhook has been installed from the gui
 if [ "/mnt/usb" == "$ROOT" ]; then
 # Updating finished, clear the screen and tell the user to power cycle the CBC
-    PRINT="/tmp/fb_print --echo"
+    PRINT="/psp/fb_print --echo"
     echo -n "" | $PRINT
     echo " " | $PRINT
     echo "Updating CBC firmware complete!" | $PRINT
