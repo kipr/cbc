@@ -10,7 +10,6 @@ TRACK_DIR=../../userlib/tracklib
 LIBCBC_DIR=../../userlib/libcbc
 INIT_DIR=../../userlib/init
 
-FB_PRINT_DIR=../../utils/fb_print
 SHARED_DIR=../../utils/shared_mem
 
 KERNEL_DIR=../../kernel
@@ -73,7 +72,6 @@ filesystem: gcc qt
 	make -C $(SHARED_DIR) DEST=$(DEST)/usercode/lib install_filesystem
 	make -C $(TRACK_DIR) DEST=$(DEST) install_filesystem
 	make -C $(INIT_DIR) DEST=$(DEST)/usercode/lib install_filesystem
-	make -C $(FB_PRINT_DIR) DEST=$(DEST)/drivers install_filesystem
 
 	# CBC library
 	make -C $(LIBCBC_DIR)

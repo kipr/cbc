@@ -1,33 +1,43 @@
-#!/bin/sh
+#!/bin/bash
 
+export LD_LIBRARY_PATH=/lib
+CBC_DEBUG=1
 ROOT=/mnt/kiss
 VERSION=`cat $ROOT/FIRMWARE_VERSION`
 
 if [ "$1" == "--version" ]; then
   echo $VERSION
   exit 0
-elif [ "$1" == "--type" ]; then
-  echo Firmware
-  exit 0
 fi
 
-export LD_LIBRARY_PATH=/lib
-export CBC_DEBUG=1
+BROWSER_UPGRADE=""
+if [ -e /psp/upgrade ]; then
+	BROWSER_UPGRADE=`cat /psp/upgrade`
+fi
+
+# make sure a full reflash is possible with the userhook on the root of a usb drive
+for dev in sdb sdc sdd;
+do
+	# mount the external usb stick and look for a Userhook0 file on it's root
+	mount /dev/${dev}1 /mnt/extusb -t vfat -o ro
+	if [ -e /mnt/extusb/userhook0 ]; then
+    	/mnt/extusb/userhook0 --upgrade &
+		exit 0
+		# Make sure the string is not null and get the first word in the string ${string%% *}
+	elif [ -n $BROWSER_UPGRADE -a -e ${BROWSER_UPGRADE%% *} ]; then
+		exec $BROWSER_UPGRADE
+		rm -rf /psp/upgrade
+		exit 0
+	fi
+	umount /mnt/extusb
+done
 
 if [ ${CBC_DEBUG} -ge 1 ]; then
     PRINT=/psp/fb_print    # causes printing to the screen
+	echo "CBC Firmware Version $VERSION" | $PRINT --echo
 else
     PRINT=echo
-fi
-
-if [ -e /etc/rfs2 ]; then
-	exit 0
-fi
-
-echo "CBC Firmware Version $VERSION" | $PRINT --echo
-
-if [ ${CBC_DEBUG} -eq 0 ]; then
-    dd if=$ROOT/images/splash_screen.bin of=/dev/fb0
+	dd if=$ROOT/images/splash_screen.bin of=/dev/fb0
 fi
 
 #######################################
@@ -50,8 +60,8 @@ echo "Starting wireless network driver" | $PRINT
 #insmod /drivers/rt73.ko
 insmod $ROOT/drivers/rt73.ko
 if [ -e $ROOT/config/network_config ]; then
-        echo "Copying network config" | $PRINT
-        cp $ROOT/config/network_config /psp
+	echo "Copying network config" | $PRINT
+    cp $ROOT/config/network_config /psp
 	/usr/chumby/scripts/start_network &
 else
 	if [ -e /psp/network_config ]; then
@@ -164,6 +174,6 @@ if [ ${CBC_DEBUG} -gt 1 ]; then
 	/usr/chumby/scripts/start_control_panel
 fi
 if [ ${CBC_DEBUG} -eq 0 ]; then
-        /mnt/kiss/gui/startup.sh &
+    /mnt/kiss/gui/startup.sh &
 fi
 exit

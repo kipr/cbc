@@ -2,11 +2,18 @@
 
 # set upgrade options
 # repartitions internal usb drive
-REPARTITION=1
-# copies chumby update to vfat partition
-CHUMB_UPDATE=1
-# install the frame buffer print program
-FRAME_PRINT=1
+REPARTITION=0
+# copies rfs update to vfat partition - rfs_boot
+RFS_UPDATE=0
+# copies Kiss filesystem to ext2 partition - kissys
+KISS_CONFIG=0
+KISS_DRIVERS=0
+KISS_GUI=0
+KISS_IMAGES=0
+KISS_SOUNDS=0
+KISS_USERCODE=0
+KISS_QT=0
+KISS_GCC=0
 
 # Print commands and their arguments as executed
 set -x
@@ -15,48 +22,106 @@ SELF=$0
 EXTUSB=${SELF%/userhook0}
 cd $EXTUSB
 
-CHUMB=/mnt/usb
+RFS=/mnt/usb
 KISS=/mnt/kiss
 USER=/mnt/user
 
 SYS_PART_COUNT=4
 
-# if the frame buffer print is not there or needs to be updated
-if [ ! -e /psp/fb_print -o "$FRAME_PRINT" == "1" ]; then
+# if the frame buffer print is not there
+if [ ! -e /psp/fb_print ]; then
     # unpack the frame buffer print character writer
     $EXTRACT_fb_print >/psp/fb_print
     chmod +x /psp/fb_print
 fi
 PRINT="/psp/fb_print --echo"
 
-if [ "$1" == "--version" ]; then
-    echo $VERSION
-    exit 0
-elif [ "$1" == "--type" ]; then
-    echo Upgrade
-    exit 0
-elif [ "$1" == "--upgrade" ]; then
-    if [ $# -gt 1 ]; then
-        UPDATE_TYPE=old
-        INTERNAL_DEVICE=$2
-        echo "Upgrade requested from old filesystem" | $PRINT
-        REPARTITION=1
-        CHUMB=/mnt/tmp
-        # unpack the ext2 filesystem kernel module
-        # so mounting is possible under the old filesystem
-        $EXTRACT_ext2_ko >/tmp/ext2.ko
-        # install the module
-        insmod /tmp/ext2.ko
-    else
-        UPDATE_TYPE=new
-        # setting the internal device need to be searched for properly
-        # this should work for now because the internal drive is found first
-        INTERNAL_DEVICE=sda
-    fi
-else
-    echo "Userhook0 options are: --version --type --upgrade" | $PRINT
-    exit 0
+ARGC=$#
+if [ "$ARGC" == "0" ]; then
+	echo "Userhook0 options are: " | $PRINT
+	echo "--version \n echo the version number" | $PRINT
+	echo "--type \n echo the update type: Firmware or Upgrade" | $PRINT
+	echo "--upgrade \n install a complete new system!\n repartitions internal drive, copies update2 folder, writes KISS filesystem" | $PRINT
+	echo "--fb_print \n installs a new frame buffer char writer" | $PRINT
+	echo "--rfs_update \n installs Root Filesystem update2 folder on internal drive" | $PRINT
+	echo "--kiss_config \n reflashes the KISS config folder contains cbc user configuration files and color tracking settings" | $PRINT
+	echo "--kiss_drivers \n reflashes the KISS drivers folder contains CBOB, microdia, rt73 and other driver modules" | $PRINT
+	echo "--kiss_gui \n reflashes the KISS gui folder contains CBCUI and scripts for running it" | $PRINT
+	echo "--kiss_images \n reflashes the KISS images folder contains splash screen image" | $PRINT
+	echo "--kiss_sounds \n reflashes the KISS sounds folder containing wav and mp3 sound files" | $PRINT
+	echo "--kiss_usercode \n reflashes the KISS usercode folder containing scripts for user compiling, mounting external usb, running and stopping programs" | $PRINT
+	echo "--kiss_qt \n reflashes the QT folder" | $PRINT
+	echo "--kiss_gcc \n reflashes the GCC folder" | $PRINT
+	exit 0
 fi
+
+# loop through all the arguments to determine what update process to make
+i=1
+while [ $i -le $ARGC ];
+do
+	ARG=${!i}
+	if [ "$ARG" == "--version" ]; then
+    	echo $VERSION
+		exit 0
+	elif [ "$ARG" == "--type" ]; then
+    	echo Upgrade
+    	exit 0
+	elif [ "$ARG" == "--upgrade" ]; then
+    	if [ $ARGC -gt 1 ]; then
+        	UPDATE_TYPE=old
+        	INTERNAL_DEVICE=$2
+        	echo "Upgrade requested from old filesystem" | $PRINT
+        	REPARTITION=1
+        	RFS=/mnt/tmp
+        	# unpack the ext2 filesystem kernel module
+        	# so mounting is possible under the old filesystem
+        	$EXTRACT_ext2_ko >/tmp/ext2.ko
+        	# install the module
+        	insmod /tmp/ext2.ko
+    	else
+			#install all updates and do a full repartition
+        	UPDATE_TYPE=new
+        	# setting the internal device need to be searched for properly
+        	# this should work for now because the internal drive is found first
+        	INTERNAL_DEVICE=sda
+			REPARTITION=1
+    	fi
+		break
+	elif [ "$ARG" == "--fb_print" ]; then
+		# unpack the frame buffer print character writer
+		$EXTRACT_fb_print >/psp/fb_print
+		chmod +x /psp/fb_print
+		PRINT="/psp/fb_print --echo"
+	elif [ "$ARG" == "--rfs_update" ]; then
+		# copies rfs update to vfat partition - rfs_boot
+		RFS_UPDATE=1
+	elif [ "$ARG" == "--kiss_config" ]; then
+		# copies Kiss configuration to ext2 partition
+		KISS_CONFIG=1
+	elif [ "$ARG" == "--kiss_drivers" ]; then
+		# copies Kiss driver folder to ext2 partition
+		KISS_DRIVERS=1
+	elif [ "$ARG" == "--kiss_gui" ]; then
+		# copies Kiss gui to ext2 partition	
+		KISS_GUI=1
+	elif [ "$ARG" == "--kiss_images" ]; then
+		# copies Kiss images folder to ext2 partition
+		KISS_IMAGES=1
+	elif [ "$ARG" == "--kiss_sounds" ]; then
+		# copies Kiss sounds folder to ext2 partition	
+		KISS_SOUNDS=1
+	elif [ "$ARG" == "--kiss_usercode" ]; then
+		# copies Kiss usercode scripst folder to ext2 partition	
+		KISS_USERCODE=1
+	elif [ "$ARG" == "--kiss_qt" ]; then
+		# copies qt folder to ext2 partition
+		KISS_QT=1
+	elif [ "$ARG" == "--kiss_gcc" ]; then
+		# copies gcc folder to ext2 partition
+		KISS_GCC=1
+	fi
+	i=$((i+1))
+done
 
 # clear screen and begin the update
 echo -n ""| $PRINT
@@ -75,13 +140,11 @@ echo -n ""| $PRINT
 # Check the partition table...
 PARTITION_COUNT=`cat /proc/partitions | grep ${INTERNAL_DEVICE} | wc -l`
 echo -n "Checking partition table..." | $PRINT
-if [ "$PARTITION_COUNT" != $SYS_PART_COUNT ]
+if [ "$PARTITION_COUNT" != "$SYS_PART_COUNT" -o "$REPARTITION" == "1" ]
     REPARTITION=1
-fi
-if [ "$REPARTITION" != "1" ]; then
-    echo "Good" | $PRINT
-else
     echo "Repartitioning" | $PRINT
+else
+	echo "Good" | $PRINT
 fi
 
 # make sure the user has placed the update2 folder
@@ -91,31 +154,29 @@ fi
 # after the userhook0 has installed the new partitions.
 # The user will be prompted to reboot the CBC while touching
 # the screen until the special options menu appears
-if [ "$CHUMB_UPDATE" == "1" -o "$REPARTITION" == "1" ]; then
+if [ "$RFS_UPDATE" == "1" -o "$REPARTITION" == "1" ]; then
     if [ ! "$(ls -A $EXTUSB/update2)" ]; then
         echo "No files in update2 directory!" | $PRINT
         echo " " | $PRINT
-        echo "Retry with update2 folder is in the same location as Userhook0!" | $PRINT
+        echo "Retry with update2 folder in the same location as Userhook0!" | $PRINT
         exit 1
     fi
 fi
 sleep 10
 
-# the internal USB flash stick has 3 partitions eg. sda1,sda2,sda3 not including device eg. sda,sdb
-# the first is for updating the chumby and must be vfat to boot     ~ 30M
-# the second contains all KISS system files                         ~ 100M
-# the third is for the users code                                   ~ 800M
-if [ "$REPARTITION" == "1" ]; then
-
-    ###############################################
+# save the user data if the internal drive is being repartitioned or
+# if the kiss config folder is going to be reflashed
+if [ "$REPARTITION" == "1" -o "$KISS_CONFIG" == "1" ]; then
+	###############################################
     # save user data
     echo -n "Backing up user data..." | $PRINT
     mkdir -p $EXTUSB/cbc_backup/
-    if [ "$UPDATE_TYPE" == "old" ]; then
+	if [ "$UPDATE_TYPE" == "old" ]; then
         USER_DEV=/dev/${INTERNAL_DEVICE}3
         mkdir -p $USER
         mount $USER_DEV $USER -t ext2
-        cp -a -f $USER/* $EXTUSB/cbc_backup/
+		cp -a -f $USER/code $EXTUSB/cbc_backup
+        cp -a -f $USER/vision/track_colors $EXTUSB/cbc_backup/track_colors
         sync
         sync
         umount $USER
@@ -124,14 +185,25 @@ if [ "$REPARTITION" == "1" ]; then
         cp -a -f $USER/* $EXTUSB/cbc_backup/
         sync
         sync
+	fi
+	echo "done." | $PRINT
+fi
+
+###############################################################################
+# the internal USB flash stick has 3 partitions eg. sda1,sda2,sda3 not including device eg. sda,sdb
+# the first is for updating the rfs and must be vfat to boot     ~ 30M
+# the second contains all KISS system files                         ~ 100M
+# the third is for the users code                                   ~ 800M
+if [ "$REPARTITION" == "1" ]; then
+
+	# if repartitioning a new filesystem unmount the internal drives
+	if [ "$UPDATE_TYPE" == "new" ]; then
         umount $USER
         umount $KISS
-        umount $CHUMB
+        umount $RFS
     fi
-    echo "done." | $PRINT
 
     echo -n "Partitioning..." | $PRINT
-
     # use the partition table until fdisk can be installed
     $EXTRACT_ptable_bin >/tmp/ptable.bin
     $EXTRACT_block_probe >/tmp/block_probe
@@ -160,7 +232,7 @@ if [ "$REPARTITION" == "1" ]; then
     $EXTRACT_mkdosfs >/tmp/mkdosfs
     chmod +x /tmp/mkdosfs
     echo -n "Creating vfat partition on $VFAT_DEV..." | $PRINT
-    /tmp/mkdosfs -n chumb_boot $VFAT_DEV
+    /tmp/mkdosfs -n rfs_boot $VFAT_DEV
     if [ "$?" != "0" ]; then
         echo "failed!" | $PRINT
         exit 1
@@ -185,74 +257,151 @@ if [ "$REPARTITION" == "1" ]; then
         exit 1
     fi
     echo "done." | $PRINT
+
+	# make the mounting directories and mount them
+	mkdir -p $RFS
+    mount $VFAT_DEV $RFS -t vfat
+
+	mkdir -p $KISS
+	mount $KISS_DEV $KISS -t ext2
+	
+	mkdir -p $USER
+	mount $USER_DEV $USER -t ext2
+	# add the code directory to the user filesystem
+	mkdir -p $USER/code
+	
+	# remove the old cbc rcS file to keep from confusing at startup
+	if [ -d /psp/rfs1 ]; then
+	    rm -r /psp/rfs1
+	fi
+fi	
+
+
+###############################################################################
+# extract the kiss ext2 filesystem folders and copy it to the internal drive
+# configuration folder
+if [ "$REPARTITION" == "1" -o "$KISS_CONFIG" == "1" ]; then
+	rm -rf $KISS/config
+	# add the files to the kiss filesystem
+	$EXTRACT_config_tgz | tar -xvzf - -C $KISS | $PRINT
+	sync
+	sync
 fi
 
-###############################################
-# add Chumby update2 files to the vfat filesystem
-if [ "$CHUMB_UPDATE" == "1" -o "$REPARTITION" == "1" ]; then
-    echo -n "Copying Update2 folder to $VFAT_DEV..." | $PRINT
-    mkdir -p $CHUMB
-    mount $VFAT_DEV $CHUMB -t vfat
-    # remove the folder if it exists
-    rm -rf $CHUMB/upgrade2
-    # copy the upgrade2 folder
-    cp -r $EXTUSB/upgrade2 $CHUMB
-    sync
-    sync
-    umount $CHUMB
-    echo "done." | $PRINT
+# drivers folder
+if [ "$REPARTITION" == "1" -o "$KISS_DRIVERS" == "1" ]; then
+	rm -rf $KISS/drivers
+	# add the files to the kiss filesystem
+	$EXTRACT_drivers_tgz | tar -xvzf - -C $KISS | $PRINT
+	sync
+	sync
 fi
 
-# add the files to the new kiss filesystem
-mkdir -p $KISS
-mount $KISS_DEV $KISS -t ext2
-$EXTRACT_ext2_tgz | tar -xvzf - -C $KISS | $PRINT
-sync
-sync
+# gui folder
+if [ "$REPARTITION" == "1" -o "$KISS_GUI" == "1" ]; then
+	rm -rf $KISS/gui
+	# add the files to the kiss filesystem
+	$EXTRACT_gui_tgz | tar -xvzf - -C $KISS | $PRINT
+	sync
+	sync
+fi
 
-# add the code directory to the user filesystem
-USER=/mnt/user
-# make the users code directory
-mkdir -p $USER
-mount $USER_DEV $USER -t ext2 
-mkdir -p $USER/code
+# images folder
+if [ "$REPARTITION" == "1" -o "$KISS_IMAGES" == "1" ]; then
+	rm -rf $KISS/images
+	# add the files to the kiss filesystem
+	$EXTRACT_images_tgz | tar -xvzf - -C $KISS | $PRINT
+	sync
+	sync
+fi
 
-df $CHUMB $KISS_DEV $USER_DEV | $PRINT
+# sounds folder
+if [ "$REPARTITION" == "1" -o "$KISS_SOUNDS" == "1" ]; then
+	rm -rf $KISS/sounds
+	# add the files to the kiss filesystem
+	$EXTRACT_sounds_tgz | tar -xvzf - -C $KISS | $PRINT
+	sync
+	sync
+fi
+
+# usercode folder
+if [ "$REPARTITION" == "1" -o "$KISS_USERCODE" == "1" ]; then
+	rm -rf $KISS/usercode
+	# add the files to the kiss filesystem
+	$EXTRACT_usercode_tgz | tar -xvzf - -C $KISS | $PRINT
+	sync
+	sync
+fi
+
+# qt folder
+if [ "$REPARTITION" == "1" -o "$KISS_QT" == "1" ]; then
+	rm -rf $KISS/qt
+	# add the files to the kiss filesystem
+	$EXTRACT_qt_tgz | tar -xvzf - -C $KISS | $PRINT
+	sync
+	sync
+fi
+
+# gcc folder
+if [ "$REPARTITION" == "1" -o "$KISS_GCC" == "1" ]; then
+	rm -rf $KISS/gcc
+	# add the files to the kiss filesystem
+	$EXTRACT_gcc_tgz | tar -xvzf - -C $KISS | $PRINT
+	sync
+	sync
+fi
+
+# unpack the cbc_boot script
+$EXTRACT_cbc_boot >$KISS/cbc_boot
+chmod +x $KISS/cbc_boot
+# create the firmware version number
+echo $VERSION >$KISS/FIRMWARE_VERSION
 
 ################################################
 # Restore user data
-echo -n "Restoring user data..." | $PRINT
-cp -a -f $EXTUSB/cbc_backup/code/* $USER/code
-cp $EXTUSB/cbc_backup/vision/track_colors $KISS/config/track_colors
-rm -rf $EXTUSB/cbc_backup
-echo "done." | $PRINT
+if [ "$REPARTITION" == "1" -o "$KISS_CONFIG" == "1" ]; then
+	echo -n "Restoring user data..." | $PRINT
+	cp -a -f $EXTUSB/cbc_backup/code/* $USER/code
+	cp -f $EXTUSB/cbc_backup/track_colors $KISS/config/track_colors
+	rm -rf $EXTUSB/cbc_backup
+	sync
+	sync
+	echo "done." | $PRINT
+fi
 
-echo "Sync'ing drives..." | $PRINT
-sync
-sync
+df $RFS $KISS_DEV $USER_DEV | $PRINT
 
-umount $KISS
-umount $USER
-
-# remove the old cbc rcS file to keep from confusing at startup
-if [ -e /psp/rfs1 ]; then
-    rm -r /psp/rfs1
+###############################################
+# add rfs update2 files to the vfat filesystem
+if [ "$RFS_UPDATE" == "1" -o "$REPARTITION" == "1" ]; then
+    echo -n "Copying Update2 folder to $VFAT_DEV..." | $PRINT
+    # remove the folder if it exists
+    rm -rf $RFS/upgrade2
+    # copy the upgrade2 folder
+    cp -r $EXTUSB/upgrade2 $RFS
+    sync
+    sync
+    echo "done." | $PRINT
 fi
 
 ################################################
-# a new userhook has been installed from the gui
-if [ "$CHUMB_UPDATE" == "1" -o "$REPARTITION" == "1" ]; then
 # Updating finished, clear the screen and tell the user to power cycle the CBC
     PRINT="/psp/fb_print --echo"
     echo -n "" | $PRINT
     echo " " | $PRINT
     echo "Updating CBC firmware complete!" | $PRINT
+
+if [ "$RFS_UPDATE" == "1" -a "$SELF" == "/mnt/extusb/userhook0" ]; then
+	echo " " | $PRINT
+	echo "Please turn off the CBC and unplug the USB stick." | $PRINT
+    echo "Touch screen during boot until Special Options is visible." | $PRINT
+    echo "Select install Chumby Update from USB!" | $PRINT
+	exit 0
+elif [ "$SELF" == "/mnt/extusb/userhook0" ];then
     echo " " | $PRINT
     echo "Please turn off the CBC and unplug the USB stick." | $PRINT
-
-    echo "Touch screen during boot until Special Options is visible." | $PRINT
-    echo "Then install Chumby Update!" | $PRINT
-else
+	exit 0
+elif
     echo "Rebooting!" | $PRINT
     sleep 1
     reboot
