@@ -50,6 +50,7 @@ filesystem: gcc qt
 	mkdir -p $(DEST)/drivers
 	mkdir -p $(DEST)/gui
 	mkdir -p $(DEST)/config
+	mkdir -p $(DEST)/gcc
 
 	(cd files; rsync -a usercode/* $(DEST)/usercode)
 	(cd files; rsync -a sounds/* $(DEST)/sounds)
@@ -57,10 +58,10 @@ filesystem: gcc qt
 	(cd files; rsync -a drivers/* $(DEST)/drivers)
 	(cd files; rsync -a gui/* $(DEST)/gui)
 	(cd files; rsync -a config/* $(DEST)/config)
-	(cd gcc; rsync -a * $(DEST))
+	(cd gcc; rsync -a * $(DEST)/gcc)
 	(cd qt; rsync -a * $(DEST))
-	(cd files; rsync -a gdb $(DEST)/bin)
-	(cd files; rsync -a userhook0 $(DEST))
+#	(cd files; rsync -a gdb $(DEST)/bin)
+	(cd files; rsync -a cbc_boot $(DEST))
 	(cd files; rsync -a FIRMWARE_VERSION $(DEST))
 
 	# kernel CBOB and camera modules

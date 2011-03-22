@@ -5,7 +5,7 @@ my $offset = 8192;
 
 open HOOK, ">userhook0";
 
-print HOOK "#!/bin/sh\n";
+print HOOK "#!/bin/bash\n";
 print HOOK "### THIS IS A CHUMBY BOTBALL CONTROLLER FIRMWARE UPDATE ###\n";
 my $version=`cat FIRMWARE_VERSION`;
 chomp $version;

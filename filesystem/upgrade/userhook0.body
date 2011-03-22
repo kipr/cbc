@@ -37,7 +37,7 @@ fi
 PRINT="/psp/fb_print --echo"
 
 ARGC=$#
-if [ "$ARGC" == "0" ]; then
+if [ $ARGC -eq 0 ]; then
 	echo "Userhook0 options are: " | $PRINT
 	echo "--version \n echo the version number" | $PRINT
 	echo "--type \n echo the update type: Firmware or Upgrade" | $PRINT
@@ -61,13 +61,13 @@ while [ $i -le $ARGC ];
 do
 	ARG=${!i}
 	if [ "$ARG" == "--version" ]; then
-    	echo $VERSION
+                echo $VERSION
 		exit 0
 	elif [ "$ARG" == "--type" ]; then
-    	echo Upgrade
-    	exit 0
+                echo Upgrade
+                exit 0
 	elif [ "$ARG" == "--upgrade" ]; then
-    	if [ $ARGC -gt 1 ]; then
+            if [ $ARGC -gt 1 ]; then
         	UPDATE_TYPE=old
         	INTERNAL_DEVICE=$2
         	echo "Upgrade requested from old filesystem" | $PRINT
@@ -78,14 +78,14 @@ do
         	$EXTRACT_ext2_ko >/tmp/ext2.ko
         	# install the module
         	insmod /tmp/ext2.ko
-    	else
-			#install all updates and do a full repartition
+            else
+                #install all updates and do a full repartition
         	UPDATE_TYPE=new
         	# setting the internal device need to be searched for properly
         	# this should work for now because the internal drive is found first
         	INTERNAL_DEVICE=sda
-			REPARTITION=1
-    	fi
+                REPARTITION=1
+            fi
 		break
 	elif [ "$ARG" == "--fb_print" ]; then
 		# unpack the frame buffer print character writer
@@ -171,11 +171,11 @@ if [ "$REPARTITION" == "1" -o "$KISS_CONFIG" == "1" ]; then
     # save user data
     echo -n "Backing up user data..." | $PRINT
     mkdir -p $EXTUSB/cbc_backup/
-	if [ "$UPDATE_TYPE" == "old" ]; then
+    if [ "$UPDATE_TYPE" == "old" ]; then
         USER_DEV=/dev/${INTERNAL_DEVICE}3
         mkdir -p $USER
         mount $USER_DEV $USER -t ext2
-		cp -a -f $USER/code $EXTUSB/cbc_backup
+        cp -a -f $USER/code $EXTUSB/cbc_backup
         cp -a -f $USER/vision/track_colors $EXTUSB/cbc_backup/track_colors
         sync
         sync
@@ -185,19 +185,19 @@ if [ "$REPARTITION" == "1" -o "$KISS_CONFIG" == "1" ]; then
         cp -a -f $USER/* $EXTUSB/cbc_backup/
         sync
         sync
-	fi
-	echo "done." | $PRINT
+    fi
+    echo "done." | $PRINT
 fi
 
 ###############################################################################
 # the internal USB flash stick has 3 partitions eg. sda1,sda2,sda3 not including device eg. sda,sdb
-# the first is for updating the rfs and must be vfat to boot     ~ 30M
+# the first is for updating the rfs and must be vfat to boot        ~ 30M
 # the second contains all KISS system files                         ~ 100M
-# the third is for the users code                                   ~ 800M
+# the third is for the users CODE                                   ~ 800M
 if [ "$REPARTITION" == "1" ]; then
 
-	# if repartitioning a new filesystem unmount the internal drives
-	if [ "$UPDATE_TYPE" == "new" ]; then
+    # if repartitioning a new filesystem unmount the internal drives
+    if [ "$UPDATE_TYPE" == "new" ]; then
         umount $USER
         umount $KISS
         umount $RFS
@@ -260,7 +260,7 @@ if [ "$REPARTITION" == "1" ]; then
 
 	# make the mounting directories and mount them
 	mkdir -p $RFS
-    mount $VFAT_DEV $RFS -t vfat
+        mount $VFAT_DEV $RFS -t vfat
 
 	mkdir -p $KISS
 	mount $KISS_DEV $KISS -t ext2
@@ -361,7 +361,7 @@ echo $VERSION >$KISS/FIRMWARE_VERSION
 # Restore user data
 if [ "$REPARTITION" == "1" -o "$KISS_CONFIG" == "1" ]; then
 	echo -n "Restoring user data..." | $PRINT
-	cp -a -f $EXTUSB/cbc_backup/code/* $USER/code
+        cp -a -f $EXTUSB/cbc_backup/code/* $USER/code/
 	cp -f $EXTUSB/cbc_backup/track_colors $KISS/config/track_colors
 	rm -rf $EXTUSB/cbc_backup
 	sync
@@ -378,24 +378,27 @@ if [ "$RFS_UPDATE" == "1" -o "$REPARTITION" == "1" ]; then
     # remove the folder if it exists
     rm -rf $RFS/upgrade2
     # copy the upgrade2 folder
-    cp -r $EXTUSB/upgrade2 $RFS
+    cp -a -f $EXTUSB/upgrade2 $RFS
     sync
     sync
     echo "done." | $PRINT
 fi
+
+# remove the upgrade location file
+rm -rf /psp/upgrade
 
 ################################################
 # Updating finished, clear the screen and tell the user to power cycle the CBC
     PRINT="/psp/fb_print --echo"
     echo -n "" | $PRINT
     echo " " | $PRINT
-    echo "Updating CBC firmware complete!" | $PRINT
+    echo "Updating CBC software complete!" | $PRINT
 
-if [ "$RFS_UPDATE" == "1" -a "$SELF" == "/mnt/extusb/userhook0" ]; then
+if [ "$RFS_UPDATE" == "1" ]; then
 	echo " " | $PRINT
 	echo "Please turn off the CBC and unplug the USB stick." | $PRINT
-    echo "Touch screen during boot until Special Options is visible." | $PRINT
-    echo "Select install Chumby Update from USB!" | $PRINT
+        echo "Touch screen during bootup until Special Options is visible." | $PRINT
+        echo "Select install Chumby Update from USB!" | $PRINT
 	exit 0
 elif [ "$SELF" == "/mnt/extusb/userhook0" ];then
     echo " " | $PRINT

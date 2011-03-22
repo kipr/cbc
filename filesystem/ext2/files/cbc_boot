@@ -2,8 +2,10 @@
 
 export LD_LIBRARY_PATH=/lib
 CBC_DEBUG=1
-ROOT=/mnt/kiss
-VERSION=`cat $ROOT/FIRMWARE_VERSION`
+KISS=/mnt/kiss
+USER=/mnt/user
+EXTUSB=/mnt/extusb
+VERSION=`cat $KISS/FIRMWARE_VERSION`
 
 if [ "$1" == "--version" ]; then
   echo $VERSION
@@ -16,20 +18,20 @@ if [ -e /psp/upgrade ]; then
 fi
 
 # make sure a full reflash is possible with the userhook on the root of a usb drive
+# and check for browser upgrades on the external usb filesystem
 for dev in sdb sdc sdd;
 do
 	# mount the external usb stick and look for a Userhook0 file on it's root
-	mount /dev/${dev}1 /mnt/extusb -t vfat -o ro
-	if [ -e /mnt/extusb/userhook0 ]; then
-    	/mnt/extusb/userhook0 --upgrade &
+        mount /dev/${dev}1 $EXTUSB -t vfat -o ro
+        if [ -e $EXTUSB/userhook0 ]; then
+                $EXTUSB/userhook0 --upgrade &
 		exit 0
-		# Make sure the string is not null and get the first word in the string ${string%% *}
+        # Make sure the string is not null and get the first word in the string ${string%% *}
 	elif [ -n $BROWSER_UPGRADE -a -e ${BROWSER_UPGRADE%% *} ]; then
-		exec $BROWSER_UPGRADE
-		rm -rf /psp/upgrade
+                ${BROWSER_UPGRADE} &
 		exit 0
 	fi
-	umount /mnt/extusb
+        umount $EXTUSB
 done
 
 if [ ${CBC_DEBUG} -ge 1 ]; then
@@ -37,7 +39,7 @@ if [ ${CBC_DEBUG} -ge 1 ]; then
 	echo "CBC Firmware Version $VERSION" | $PRINT --echo
 else
     PRINT=echo
-	dd if=$ROOT/images/splash_screen.bin of=/dev/fb0
+        dd if=$KISS/images/splash_screen.bin of=/dev/fb0
 fi
 
 #######################################
@@ -58,10 +60,10 @@ udhcpc eth0
 #########################
 echo "Starting wireless network driver" | $PRINT
 #insmod /drivers/rt73.ko
-insmod $ROOT/drivers/rt73.ko
-if [ -e $ROOT/config/network_config ]; then
+insmod $KISS/drivers/rt73.ko
+if [ -e $KISS/config/network_config ]; then
 	echo "Copying network config" | $PRINT
-    cp $ROOT/config/network_config /psp
+    cp $KISS/config/network_config /psp
 	/usr/chumby/scripts/start_network &
 else
 	if [ -e /psp/network_config ]; then
@@ -128,19 +130,16 @@ echo "Clearing paranoid boot flag" | $PRINT
 nandwrite /dev/mtd7 /usr/chumby/msp_00_64k_no_oob.bin 0x70000
 
 echo "Loading CBOB SPI module" | $PRINT
-insmod $ROOT/drivers/cbob.ko
-sh $ROOT/drivers/mkdev.sh
+insmod $KISS/drivers/cbob.ko
+sh $KISS/drivers/mkdev.sh
 
 restore_time
-
-KISS=/mnt/kiss
-USER=/mnt/user
 
 KISS_DEV=/dev/disk/by-label/kissys
 USER_DEV=/dev/disk/by-label/userpart
 
 #echo -n "Checking internal filesystems..." | $PRINT
-#$ROOT/drivers/fsck.ext2 -y ${USER_DEV} | $PRINT
+#$KISS/drivers/fsck.ext2 -y ${USER_DEV} | $PRINT
 #echo "done." | $PRINT
 
 mkdir -p /mnt/browser/code
@@ -160,9 +159,9 @@ echo "Startup btplay daemon" | $PRINT
 btplayd </dev/null >/dev/null 2>&1 &
 sleep 2
 chmod a+w /tmp/.btplay-cmdin
-btplay /mnt/kiss/sounds/mellow.wav
+btplay $KISS/sounds/mellow.wav
 sleep 2
-btplay /mnt/kiss/sounds/sysInit.wav
+btplay $KISS/sounds/sysInit.wav
 
 save_time
 
@@ -174,6 +173,6 @@ if [ ${CBC_DEBUG} -gt 1 ]; then
 	/usr/chumby/scripts/start_control_panel
 fi
 if [ ${CBC_DEBUG} -eq 0 ]; then
-    /mnt/kiss/gui/startup.sh &
+    $KISS/gui/startup.sh &
 fi
 exit
