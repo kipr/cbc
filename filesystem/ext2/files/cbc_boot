@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 export LD_LIBRARY_PATH=/lib
 CBC_DEBUG=1
@@ -7,7 +7,7 @@ USER=/mnt/user
 EXTUSB=/mnt/extusb
 VERSION=`cat $KISS/FIRMWARE_VERSION`
 
-if [ "$1" == "--version" ]; then
+if [ "$1" = "--version" ]; then
   echo $VERSION
   exit 0
 fi
@@ -17,16 +17,18 @@ if [ -e /psp/upgrade ]; then
 	BROWSER_UPGRADE=`cat /psp/upgrade`
 fi
 
-# make sure a full reflash is possible with the userhook on the root of a usb drive
-# and check for browser upgrades on the external usb filesystem
+# make sure a full reflash is possible with the userhook on the root
+# of a usb drive and check for browser upgrades on the external usb
 for dev in sdb sdc sdd;
 do
-	# mount the external usb stick and look for a Userhook0 file on it's root
+	# mount and look for a Userhook0 file on it's root
         mount /dev/${dev}1 $EXTUSB -t vfat -o ro
         if [ -e $EXTUSB/userhook0 ]; then
                 $EXTUSB/userhook0 --upgrade &
 		exit 0
-        # Make sure the string is not null and get the first word in the string ${string%% *}
+	# Check of an update from the cbc file browser
+        # if the string is not null and the upgrade exists
+	# first word in the string ${string%% *} which is the location
 	elif [ -n $BROWSER_UPGRADE -a -e ${BROWSER_UPGRADE%% *} ]; then
                 ${BROWSER_UPGRADE} &
 		exit 0
@@ -93,7 +95,7 @@ echo "Starting sshd" | $PRINT
 # Touch screen and sensors
 hwversion=`/usr/chumby/scripts/chumby_version -h`
 echo "Chumby hardware version $hwversion" | $PRINT --echo
-if [ "$hwversion" == "3.8" ]; then
+if [ "$hwversion" = "3.8" ]; then
     # touch screen
     insmod /drivers/chumby-tsc2100.ko version038=1
 
