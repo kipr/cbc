@@ -9,7 +9,7 @@ RFS_UPDATE=0
 # copies Kiss filesystem to ext2 partition - kissys
 KISS_CONFIG=0
 KISS_DRIVERS=0
-KISS_GUI=0
+KISS_GUI=1
 KISS_IMAGES=0
 KISS_SOUNDS=0
 KISS_USERCODE=0
@@ -20,7 +20,7 @@ KISS_GCC=0
 #set -x
 
 SELF=$0
-EXTUSB=${SELF%/userhook0}
+EXTUSB=${SELF%/CBC_interface}
 cd $EXTUSB
 
 RFS=/mnt/usb
@@ -44,7 +44,7 @@ fi
 
 ARGC=$#
 if [ $ARGC -eq 0 ]; then
-	echo "Userhook0 options are: " | $PRINT
+	echo "CBC interface options are: " | $PRINT
 	echo "--version = echo the version number" | $PRINT
 	echo "--type = echo the update type: Firmware or Upgrade" | $PRINT
 	echo "--upgrade = install a complete new system!" | $PRINT
@@ -74,6 +74,18 @@ do
         elif [ "$ARG" = "--type" ]; then
                 echo Upgrade
                 exit 0
+	elif [ "$ARG" = "--features" ]; then
+	    [ $RFS_UPDATE -eq 0 ] || echo -n " --rfs_update"
+	    [ $KISS_CONFIG -eq 0 ] || echo -n " --kiss_config"
+	    [ $KISS_DRIVERS -eq 0 ] || echo -n " --kiss_drivers"
+	    [ $KISS_GUI -eq 0 ] || echo -n " --kiss_gui"
+	    [ $KISS_IMAGES -eq 0 ] || echo -n " --kiss_images"
+	    [ $KISS_SOUNDS -eq 0 ] || echo -n " --kiss_sounds"
+	    [ $KISS_USERCODE -eq 0 ] || echo -n " --kiss_usercode"
+	    [ $KISS_QT -eq 0 ] || echo -n " --kiss_qt"
+	    [ $KISS_GCC -eq 0 ] || echo -n " --kiss_gcc"
+	    echo " "
+	    exit 0
         elif [ "$ARG" = "--upgrade" ]; then
             if [ `expr substr $2 "/dev/sd*"` ]; then
         	UPDATE_TYPE=old
@@ -160,14 +172,14 @@ fi
 # which contains the new kernel file: k1.bin.zip
 # and the new root file system, cramfs: rfs1.bin.zip
 # which will be uploaded through the special options menu
-# after the userhook0 has installed the new partitions.
+# after the CBC interface has installed the new partitions.
 # The user will be prompted to reboot the CBC while touching
 # the screen until the special options menu appears
 if [ "$RFS_UPDATE" = "1" -o "$REPARTITION" = "1" ]; then
     if [ ! "$(ls -A $EXTUSB/update2)" ]; then
         echo "No files in update2 directory!" | $PRINT
         echo " " | $PRINT
-        echo "Retry with update2 folder in the same location as Userhook0!" | $PRINT
+        echo "Retry with update2 folder in the same location as CBC_interface!" | $PRINT
         exit 1
     fi
 fi
@@ -298,7 +310,7 @@ if [ "$REPARTITION" = "1" -o "$KISS_CONFIG" = "1" ]; then
 	rm -rf $KISS/config
 	# add the files to the kiss filesystem
         echo -n "Extracting configuration files..." | $PRINT
-        $EXTRACT_config_tgz | tar -xvzf - -C $KISS
+        $EXTRACT_config_tgz | tar -xzf - -C $KISS
         echo -n "sync'ing..." | $PRINT
 	sync
 	sync
@@ -310,7 +322,7 @@ if [ "$REPARTITION" = "1" -o "$KISS_DRIVERS" = "1" ]; then
 	rm -rf $KISS/drivers
 	# add the files to the kiss filesystem
         echo -n "Extracting driver files..." | $PRINT
-        $EXTRACT_drivers_tgz | tar -xvzf - -C $KISS
+        $EXTRACT_drivers_tgz | tar -xzf - -C $KISS
         echo -n "sync'ing..." | $PRINT
 	sync
 	sync
@@ -322,7 +334,7 @@ if [ "$REPARTITION" = "1" -o "$KISS_GUI" = "1" ]; then
 	rm -rf $KISS/gui
 	# add the files to the kiss filesystem
         echo -n "Extracting GUI files..." | $PRINT
-        $EXTRACT_gui_tgz | tar -xvzf - -C $KISS
+        $EXTRACT_gui_tgz | tar -xzf - -C $KISS
         echo -n "sync'ing..." | $PRINT
 	sync
 	sync
@@ -334,7 +346,7 @@ if [ "$REPARTITION" = "1" -o "$KISS_IMAGES" = "1" ]; then
 	rm -rf $KISS/images
 	# add the files to the kiss filesystem
         echo -n "Extracting image files..." | $PRINT
-        $EXTRACT_images_tgz | tar -xvzf - -C $KISS
+        $EXTRACT_images_tgz | tar -xzf - -C $KISS
         echo -n "sync'ing..." | $PRINT
 	sync
 	sync
@@ -346,7 +358,7 @@ if [ "$REPARTITION" = "1" -o "$KISS_SOUNDS" = "1" ]; then
 	rm -rf $KISS/sounds
 	# add the files to the kiss filesystem
         echo -n "Extracting sound files..." | $PRINT
-        $EXTRACT_sounds_tgz | tar -xvzf - -C $KISS
+        $EXTRACT_sounds_tgz | tar -xzf - -C $KISS
         echo -n "sync'ing..." | $PRINT
 	sync
 	sync
@@ -358,7 +370,7 @@ if [ "$REPARTITION" = "1" -o "$KISS_USERCODE" = "1" ]; then
 	rm -rf $KISS/usercode
 	# add the files to the kiss filesystem
         echo -n "Extracting usercode support files..." | $PRINT
-        $EXTRACT_usercode_tgz | tar -xvzf - -C $KISS
+        $EXTRACT_usercode_tgz | tar -xzf - -C $KISS
         echo -n "sync'ing..." | $PRINT
 	sync
 	sync
@@ -370,7 +382,7 @@ if [ "$REPARTITION" = "1" -o "$KISS_QT" = "1" ]; then
 	rm -rf $KISS/qt
 	# add the files to the kiss filesystem
         echo -n "Extracting Qt..." | $PRINT
-        $EXTRACT_qt_tgz | tar -xvzf - -C $KISS
+        $EXTRACT_qt_tgz | tar -xzf - -C $KISS
         echo -n "sync'ing..." | $PRINT
 	sync
 	sync
@@ -382,7 +394,7 @@ if [ "$REPARTITION" = "1" -o "$KISS_GCC" = "1" ]; then
 	rm -rf $KISS/gcc
 	# add the files to the kiss filesystem
         echo -n "Extracting GCC..." | $PRINT
-        $EXTRACT_gcc_tgz | tar -xvzf - -C $KISS
+        $EXTRACT_gcc_tgz | tar -xzf - -C $KISS
         echo -n "sync'ing..." | $PRINT
 	sync
 	sync
@@ -429,7 +441,7 @@ if [ "$RFS_UPDATE" = "1" -o "$REPARTITION" = "1" ]; then
 fi
 
 # remove the upgrade location file
-rm -rf /psp/upgrade
+rm -rf /psp/kiss_upgrade
 
 ################################################
 # Updating finished, clear the screen and tell the user to power cycle the CBC
@@ -448,7 +460,7 @@ if [ "$RFS_UPDATE" = "1" ]; then
         echo " " | $PRINT
         echo "Select: Install from USB flash drive" | $PRINT
 	exit 0
-elif [ "$SELF" = "/mnt/extusb/userhook0" ]; then
+elif [ "$SELF" = "/mnt/extusb/CBC_interface" ]; then
     echo " " | $PRINT
     echo "Please turn off the CBC and unplug the USB stick." | $PRINT
 	exit 0

@@ -29,7 +29,7 @@ class Keypad : public QDialog, private Ui::Keypad
         Q_OBJECT
 
 public:
-    Keypad(QWidget *parent = 0,int min=0, int max=100);
+    Keypad(QWidget *parent = 0,int min=0, int max=100, int type=0);
     ~Keypad();
 
 public slots:
@@ -48,11 +48,14 @@ public slots:
     void on_ui_clearButton_clicked(bool checked = false);
     void show();
     int  getValue();
+    QString getString();
     void setRange(int min,int max);
 
 private:
+    int keypadType;
     void refreshView();
     int  userValue;
+    QString userString;
     int minVal;
     int maxVal;
 };

@@ -37,7 +37,7 @@ Brightness::Brightness(QWidget *parent) :
 {
     setupUi(this);
 
-    m_dimAfter = m_settings.value(DIM_AFTER_KEY, 1).toInt();        // set dim delay value
+    m_dimAfter = m_settings.value(DIM_AFTER_KEY, 3).toInt();        // set dim delay value
     m_brightness = m_settings.value(BRIGHTNESS_KEY, 500).toInt();   // brightness values range from 0-512
     m_dimOff = m_settings.value(DIM_OFF_KEY,false).toBool();            // when screen goes dim it is turned off
     m_settings.sync();

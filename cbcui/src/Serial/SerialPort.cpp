@@ -21,7 +21,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
-#include <termios.h>
 #include <sys/time.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
@@ -34,12 +33,11 @@ SerialPort::SerialPort(QString filename, QObject *parent) : QIODevice(parent), m
 }
 
 SerialPort::~SerialPort()
-{   
+{
 }
 
 bool SerialPort::open(OpenMode mode)
 {
-    //qWarning"SerialPort::open");
    if(isOpen())
       return true;
    else if(mode == QIODevice::ReadWrite) {
@@ -58,6 +56,104 @@ bool SerialPort::open(OpenMode mode)
    return false;
 }
 
+void SerialPort::configure()
+{
+    if(isOpen()){
+        struct ::termios portdata;
+        tcgetattr(m_fd, &portdata);
+
+        portdata.c_oflag = 0;               // no output options
+        portdata.c_lflag = 0;               // no local options
+        portdata.c_iflag = IGNBRK | IGNPAR; // ignore break cond. and parity errors
+        // portdata.c_cflag &= ~CRTSCTS;       // disable flow control
+        portdata.c_cflag &= ~PARENB;        // disable parity
+        portdata.c_cflag &= ~CSTOPB;        // 1 stop bit
+        portdata.c_cflag &= ~CSIZE;         // no mask
+        portdata.c_cflag |= CS8;            // 8 data bits
+        portdata.c_cflag |= CREAD;
+        portdata.c_cflag |= CLOCAL;
+        portdata.c_cc[VMIN] = 1;            // minimum # of chars to read
+        portdata.c_cc[VTIME] = 0;           // time to wait in tenths
+
+        cfsetispeed(&portdata, m_baudRate);
+        cfsetospeed(&portdata, m_baudRate);
+        tcsetattr(m_fd, TCSANOW, &portdata);
+    }
+    else
+        qWarning("Port not opened");
+}
+
+void SerialPort::setBaudRate(int baud)
+{
+    switch(baud){
+    case 1200:
+        m_baudRate = B1200;
+        break;
+    case 1800:
+        m_baudRate = B1800;
+        break;
+    case 2400:
+        m_baudRate = B2400;
+        break;
+    case 4800:
+        m_baudRate = B4800;
+        break;
+    case 9600:
+        m_baudRate = B9600;
+        break;
+    case 19200:
+        m_baudRate = B19200;
+        break;
+    case 38400:
+        m_baudRate = B38400;
+        break;
+    case 57600:
+        m_baudRate = B57600;
+        break;
+    case 115200:
+        m_baudRate = B115200;
+        break;
+    default:
+        m_baudRate = B57600;
+    }
+    this->configure();
+}
+
+int SerialPort::getBaudRate()
+{
+    if(isOpen()){
+        struct ::termios portdata;
+        tcgetattr(m_fd, &portdata);
+        speed_t baud = cfgetospeed(&portdata);
+
+        switch(baud){
+        case B1200:
+            return 1200;
+        case B1800:
+            return 1800;
+        case B2400:
+            return 2400;
+        case B4800:
+            return 4800;
+        case B9600:
+            return 9600;
+        case B19200:
+            return 19200;
+        case B38400:
+            return 38400;
+        case B57600:
+            return 57600;
+        case B115200:
+            return 115200;
+        default:
+            return 0;
+        }
+    }
+    else{
+        qWarning("Port not open");
+    }
+}
+
 void SerialPort::close()
 {
     if(isOpen()) {
@@ -69,7 +165,6 @@ void SerialPort::close()
 
 qint64 SerialPort::bytesAvailable() const
 {
-   //qWarning"SerialPort::bytesAvailable");
     if(isOpen()) {
         int byteCount = 0;
         if(ioctl(m_fd, FIONREAD, &byteCount) == 0)
@@ -82,7 +177,6 @@ qint64 SerialPort::bytesAvailable() const
 
 bool SerialPort::waitForReadyRead(int msecs)
 {
-    //qWarning"SerialPort::waitForReadyRead");
     if(isOpen()) {
         if(bytesAvailable()) return true;
         return select(msecs);
@@ -92,7 +186,6 @@ bool SerialPort::waitForReadyRead(int msecs)
 
 bool SerialPort::select(int msecs) const
 {
-    //qWarning"SerialPort::select m_fd = %d", m_fd);
     fd_set fds;
     struct timeval timeout;
     
@@ -102,25 +195,19 @@ bool SerialPort::select(int msecs) const
     timeout.tv_sec  = (msecs / 1000);
     timeout.tv_usec = (msecs % 1000) * 1000;
     
-    //qWarning"::select");
     int n = ::select(m_fd + 1, &fds, 0, 0, &timeout);
-    
-    //qWarning"SerialPort::select return");
+
     if(n == 1) return true;
     return false;
 }
 
 qint64 SerialPort::readData(char *data, qint64 maxSize)
 {
-    //qWarning"SerialPort::readData");
-    if(isOpen()) {
-        //if(select(250)){
-            //qWarning"::read");
-            int ret = ::read(m_fd, data, maxSize);
-            //qWarning"return");
-            if(ret >= 0) return ret;
-        //}
-        //qWarning"return 0");
+    if(isOpen())
+    {
+        int ret = ::read(m_fd, data, maxSize);
+        if(ret >= 0)
+            return ret;
         return 0;
     }
     return -1;
@@ -128,10 +215,10 @@ qint64 SerialPort::readData(char *data, qint64 maxSize)
 
 qint64 SerialPort::writeData(const char *data, qint64 maxSize)
 {
-    //qWarning"SerialPort::writeData");
     if(isOpen()) {
         int ret = ::write(m_fd, data, maxSize);
-        if(ret >= 0) return ret;
+        if(ret >= 0)
+            return ret;
     }
     return -1;
 }

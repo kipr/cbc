@@ -74,6 +74,7 @@ private:
    Compiler             m_compiler;
     QFileSystemModel    m_dir;
     QModelIndex         m_index;
+    //QStringList         m_usbMounts;
 };
 
 #endif

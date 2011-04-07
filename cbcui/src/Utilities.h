@@ -25,6 +25,7 @@
 #include "Page.h"
 
 #include "CreateStatus.h"
+#include "Serial/SerialPage.h"
 
 class Utilities : public Page, private Ui::Utilities
 {
@@ -36,6 +37,7 @@ public:
 
 private:
     CreateStatus m_createStatus;
+    SerialPage  m_serialPage;
 };
 
 #endif

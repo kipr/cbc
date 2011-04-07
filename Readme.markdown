@@ -42,5 +42,5 @@ Building the software is simple:
     cd cbc
     make
 
-You should now have a userhook0 file in filesystem/upgrade.  Happy Hacking!
+You should now have a CBC_interface file in filesystem/upgrade.  Happy Hacking!
 

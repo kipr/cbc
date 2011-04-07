@@ -23,7 +23,7 @@
 
 #include "ui_Compiler.h"
 #include "Page.h"
-#include "SerialServer.h"
+#include "Serial/SerialServer.h"
 
 #include <QProcess>
 

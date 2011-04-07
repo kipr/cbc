@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>Utilities</class>
- <widget class="QWidget" name="Utilities" >
-  <property name="geometry" >
+ <widget class="QWidget" name="Utilities">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,35 +10,41 @@
     <height>213</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <widget class="QPushButton" name="ui_createButton" >
-     <property name="enabled" >
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize" >
-      <size>
-       <width>95</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>95</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="styleSheet" >
-      <string>QPushButton{
+  <widget class="QPushButton" name="ui_createButton">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>44</x>
+     <y>61</y>
+     <width>95</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>95</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>95</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
 border:0px;
 background-image:url(:/actions/rivet95x30L.png);
 color:black;
@@ -49,13 +56,128 @@ background-image:url(:/actions/rivet95x30D.png);
 color:white;
 font-size:12pt;
 }</string>
-     </property>
-     <property name="text" >
-      <string>iRobot Create</string>
-     </property>
-    </widget>
-   </item>
-  </layout>
+   </property>
+   <property name="text">
+    <string>iRobot Create</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="ui_serialButton">
+   <property name="geometry">
+    <rect>
+     <x>181</x>
+     <y>61</y>
+     <width>95</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>95</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>95</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+border:0px;
+background-image:url(:/actions/rivet95x30L.png);
+color:black;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet95x30D.png);
+color:white;
+font-size:12pt;
+}</string>
+   </property>
+   <property name="text">
+    <string>Serial Ports</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="ui_terminalButton">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>130</y>
+     <width>95</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>95</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>95</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+border:0px;
+background-image:url(:/actions/rivet95x30L.png);
+color:black;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet95x30D.png);
+color:white;
+font-size:12pt;
+}</string>
+   </property>
+   <property name="text">
+    <string>Terminal</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="ui_wifiButton">
+   <property name="geometry">
+    <rect>
+     <x>45</x>
+     <y>130</y>
+     <width>95</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>95</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>95</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+border:0px;
+background-image:url(:/actions/rivet95x30L.png);
+color:black;
+font-size:12pt;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet95x30D.png);
+color:white;
+font-size:12pt;
+}</string>
+   </property>
+   <property name="text">
+    <string>WiFi</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

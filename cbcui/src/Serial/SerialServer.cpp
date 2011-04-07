@@ -48,7 +48,8 @@ void SerialServer::run()
     QByteArray header;
     while (!m_quit) {
         header.clear();
-        if(readPacket(&header)) {
+        if(readPacket(&header))
+        {
             processTransfer(header);
         }
     }
@@ -58,7 +59,7 @@ void SerialServer::run()
 
 void SerialServer::stop()
 {
-    m_quit = 1;
+    m_quit = true;
     while(isRunning());
 }
 
@@ -74,8 +75,6 @@ void SerialServer::processTransfer(QByteArray& header)
     
     if(startWord != SERIAL_START)
         return;
-    //qWarning("Got start...");
-    //qWarning("packetcount=%d", packetCount);
     
     QByteArray compressedData;
     QProcess::startDetached("aplay /mnt/kiss/sounds/downloading.wav");

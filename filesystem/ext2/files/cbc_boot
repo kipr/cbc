@@ -13,28 +13,30 @@ if [ "$1" = "--version" ]; then
 fi
 
 BROWSER_UPGRADE=""
-if [ -e /psp/upgrade ]; then
-	BROWSER_UPGRADE=`cat /psp/upgrade`
+if [ -e /psp/kiss_upgrade ]; then
+	BROWSER_UPGRADE=`cat /psp/kiss_upgrade`
 fi
 
-# make sure a full reflash is possible with the userhook on the root
+mkdir -p $EXTUSB
+# make sure a full reflash is possible with the CBC_interface on the root
 # of a usb drive and check for browser upgrades on the external usb
 for dev in sdb sdc sdd;
 do
-	# mount and look for a Userhook0 file on it's root
+	# mount and look for a CBC_interface file on it's root
         mount /dev/${dev}1 $EXTUSB -t vfat -o ro
-        if [ -e $EXTUSB/userhook0 ]; then
-                $EXTUSB/userhook0 --upgrade &
+        if [ -e $EXTUSB/CBC_interface ]; then
+                $EXTUSB/CBC_interface --upgrade &
 		exit 0
 	# Check of an update from the cbc file browser
         # if the string is not null and the upgrade exists
 	# first word in the string ${string%% *} which is the location
-	elif [ -n $BROWSER_UPGRADE -a -e ${BROWSER_UPGRADE%% *} ]; then
+	elif [ -n "$BROWSER_UPGRADE" -a -e ${BROWSER_UPGRADE%% *} ]; then
                 ${BROWSER_UPGRADE} &
 		exit 0
 	fi
         umount $EXTUSB
 done
+rmdir $EXTUSB
 
 if [ ${CBC_DEBUG} -ge 1 ]; then
     PRINT=/psp/fb_print    # causes printing to the screen
@@ -52,7 +54,6 @@ ifconfig lo 127.0.0.1
 
 # Set up wired network
 ######################
-echo "Checking for network" | $PRINT
 echo "Starting wired network driver"
 insmod /drivers/pegasus.ko
 echo "Starting DHCP on eth0"
@@ -64,25 +65,25 @@ echo "Starting wireless network driver" | $PRINT
 #insmod /drivers/rt73.ko
 insmod $KISS/drivers/rt73.ko
 if [ -e $KISS/config/network_config ]; then
-	echo "Copying network config" | $PRINT
+    echo "Copying network config" | $PRINT
     cp $KISS/config/network_config /psp
-	/usr/chumby/scripts/start_network &
-else
-	if [ -e /psp/network_config ]; then
-            echo "Starting network" | $PRINT
-            /usr/chumby/scripts/start_network &
-	else
-            echo "Raising usb network" | $PRINT
-            ifconfig rausb0 up
-	fi
 fi
 
-# Display network interfaces
-############################
-echo "ifconfig in 5" | $PRINT
-sleep 5
-#ifconfig | $PRINT
-ifconfig | grep inet | grep -v 127.0.0.1 | sed 's/Bcast.*//' | $PRINT
+WIFI=`cat /proc/net/wireless | sed -n 3p`
+WIFI=${WIFI%%:*}
+if [ -n "${WIFI}" ]; then
+    if [ -e /psp/network_config ]; then
+	echo "Starting network" | $PRINT
+	# start the network based on the parameters in the config file
+	/usr/chumby/scripts/start_network
+	# print out the ip address it connects to
+	echo `ifconfig rausb0 | grep inet | sed 's/Bcast.*//'` | $PRINT
+	sleep 5
+    else
+	echo "Raising usb network" | $PRINT
+	ifconfig $WIFI up
+    fi
+fi
 
 # sshd
 ######
@@ -127,9 +128,14 @@ mknod /dev/switch c `cat /proc/devices |awk '/switch/ {print $1}'` 0
 mknod /dev/udma c `cat /proc/devices |awk '/udma/ {print $1}'` 1
 
 # set paranoid boot flag/semaphore
-echo "Clearing paranoid boot flag" | $PRINT
+echo "Clearing paranoid boot flag"
 /bin/eraseall /dev/mtd7
 nandwrite /dev/mtd7 /usr/chumby/msp_00_64k_no_oob.bin 0x70000
+
+# load usb to serial drivers
+insmod /drivers/usbserial.ko
+insmod /drivers/pl2303.ko
+insmod /drivers/ftdi_sio.ko
 
 echo "Loading CBOB SPI module" | $PRINT
 insmod $KISS/drivers/cbob.ko
@@ -140,10 +146,10 @@ restore_time
 KISS_DEV=/dev/disk/by-label/kissys
 USER_DEV=/dev/disk/by-label/userpart
 
-#echo -n "Checking internal filesystems..." | $PRINT
-#$KISS/drivers/fsck.ext2 -y ${USER_DEV} | $PRINT
-#echo "done." | $PRINT
-
+umount /mnt/user
+echo "Checking USER filesystems..." | $PRINT
+$KISS/drivers/fsck.ext2 -y ${USER_DEV} | $PRINT
+mount /mnt/user
 mkdir -p /mnt/browser/code
 mount --bind /mnt/user/code /mnt/browser/code
 

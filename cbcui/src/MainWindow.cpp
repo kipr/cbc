@@ -24,17 +24,23 @@
 #include "UserProgram.h"
 #include "CbobData.h"
 #include <QMessageBox>
+#include <QWSServer>
 #include <QProcess>
 
-MainWindow::MainWindow(QWidget *parent) : QDialog(parent), m_mainMenu(0)
+MainWindow::MainWindow(QWidget *parent) :
+    QDialog(parent),
+    m_mainMenu(0)
 {
     setupUi(this);
 
     setWindowState(windowState() | Qt::WindowFullScreen);
 
     m_mainMenu = new MainMenu(ui_widget);
-
     m_mainMenu->raisePage();
+
+    QWSServer *qserver = QWSServer::instance();
+
+   //qserver->closeKeyboard();
 
     QObject::connect(ui_runstopButton, SIGNAL(clicked()), UserProgram::instance(), SLOT(toggleState()));
     QObject::connect(CbobData::instance(), SIGNAL(refresh()), this, SLOT(updateBatteryDisplay()));
@@ -143,3 +149,4 @@ void MainWindow::hideEStop()
     //|| motorTest is running || motorTune is running || servo is running)
     else ui_estopButton->hide();
 }
+

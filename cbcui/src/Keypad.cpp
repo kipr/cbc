@@ -21,8 +21,8 @@
 #include <QMessageBox>
 #include <QProcess>
 
-Keypad::Keypad(QWidget *parent, int min, int max)
-    : QDialog(parent),minVal(min),maxVal(max)
+Keypad::Keypad(QWidget *parent, int min, int max, int type)
+    : QDialog(parent),keypadType(type),minVal(min),maxVal(max)
 {
     setupUi(this);
     this->move(100,25);
@@ -33,6 +33,11 @@ Keypad::Keypad(QWidget *parent, int min, int max)
     setWindowModality(Qt::ApplicationModal);
 #endif
     userValue = 0;
+
+    if(keypadType)
+    {
+        ui_negateButton->setText("Sp");
+    }
 
 }
 
@@ -84,15 +89,19 @@ void Keypad::on_ui_nineButton_clicked(bool)
 }
 void Keypad::on_ui_zeroButton_clicked(bool)
 {
-    if(ui_outputLine->text() == "" || ui_outputLine->text().toInt() == 0) return;
+    if((ui_outputLine->text() == "" || ui_outputLine->text().toInt() == 0) && keypadType == 0) return;
     ui_outputLine->insert(QString::number(0));
 }
 void Keypad::on_ui_negateButton_clicked(bool)
 {
-    QString value = ui_outputLine->text();
-    userValue = value.toInt();
-    userValue = -userValue;
-    this->refreshView();
+    if(keypadType == 0){
+        QString value = ui_outputLine->text();
+        userValue = value.toInt();
+        userValue = -userValue;
+        this->refreshView();
+    }
+    else
+        ui_outputLine->insert(" ");
 }
 void Keypad::on_ui_clearButton_clicked(bool)
 {
@@ -101,9 +110,9 @@ void Keypad::on_ui_clearButton_clicked(bool)
 }
 void Keypad::on_ui_enterButton_clicked(bool)
 {
-    QString value = ui_outputLine->text();
-    userValue = value.toInt();
-    if(userValue < minVal || userValue > maxVal){
+    userString = ui_outputLine->text();
+    userValue = userString.toInt();
+    if(keypadType == 0 && (userValue < minVal || userValue > maxVal)){
         QProcess::startDetached("aplay /mnt/kiss/sounds/quack.wav");
         QMessageBox::warning(this,
                              "Input Error",
@@ -122,6 +131,10 @@ void Keypad::refreshView()
 int Keypad::getValue()
 {
     return userValue;
+}
+QString Keypad::getString()
+{
+    return userString;
 }
 
 void Keypad::setRange(int min, int max)

@@ -1,8 +1,8 @@
 QTEMBEDDED_QMAKE=/mnt/kiss/qt/bin/qmake
 
-all: userhook0
+all: cbc_interface
 
-clean: userhook0_clean
+clean: cbc_interface_clean
 
 fb_print:
 	make -C utils/fb_print
@@ -42,10 +42,10 @@ cbcui: userlib
 cbcui_clean:
 	(if test -e cbcui/Makefile; then make -C cbcui distclean; fi)
 
-userhook0: cbcui userlib fb_print
+cbc_interface: cbcui userlib fb_print
 	make -C filesystem/upgrade
 
-userhook0_clean: cbcui_clean userlib_clean fb_print_clean
+cbc_interface_clean: cbcui_clean userlib_clean fb_print_clean
 	make -C filesystem/upgrade clean
 
-.PHONY: userhook0 cbcui userlib libcbc tracklib shared_mem fb_print
+.PHONY: cbc_interface cbcui userlib libcbc tracklib shared_mem fb_print

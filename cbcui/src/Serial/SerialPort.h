@@ -22,7 +22,7 @@
 #define __SERIAL_PORT_H__
 
 /* Currenty hard-wired for ReadWrite at 38400 */
-
+#include <termios.h>
 #include <QIODevice>
 #include <QString>
 
@@ -35,6 +35,9 @@ public:
     
     bool open(OpenMode mode = 0);
     void close();
+    void setBaudRate(int baud);
+    int getBaudRate();
+    QString getPortName() { return m_name; }
 
     qint64 bytesAvailable() const;
     bool   waitForReadyRead(int msecs);
@@ -47,8 +50,11 @@ protected:
     
 private:
     QString m_name;
+    QString m_linkName;
     int m_fd;
+    speed_t m_baudRate;
     
+    void configure();
     bool select(int msecs) const;
 };
 

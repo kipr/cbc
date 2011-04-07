@@ -1,9 +1,21 @@
 #!/bin/sh
-sleep 1
-umount /mnt/browser/usb >/dev/null 2>&1
-rmdir /mnt/browser/usb >/dev/null 2>&1
 
-if [ -e /mnt/browser/usb ]; then
+# if no arguments are passed to the script there is an error
+if [ $# -eq 0 ]; then
+    exit 1
+fi
+
+# the first argument is the full path of the dir to unmount
+USBFOLDER=$1
+sleep 1
+
+# unmount the drive
+umount $USBFOLDER >/dev/null 2>&1
+# remove the directory
+rmdir $USBFOLDER >/dev/null 2>&1
+
+# if the directory still exists there must be an error
+if [ -e $USBFOLDER ]; then
     exit 1
 else
     exit 0
