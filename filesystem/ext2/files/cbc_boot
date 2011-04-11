@@ -133,9 +133,11 @@ echo "Clearing paranoid boot flag"
 nandwrite /dev/mtd7 /usr/chumby/msp_00_64k_no_oob.bin 0x70000
 
 # load usb to serial drivers
+echo "Loading USB-SERIAL modules" | $PRINT
 insmod /drivers/usbserial.ko
 insmod /drivers/pl2303.ko
 insmod /drivers/ftdi_sio.ko
+insmod $KISS/drivers/keyspan.ko
 
 echo "Loading CBOB SPI module" | $PRINT
 insmod $KISS/drivers/cbob.ko

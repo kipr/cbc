@@ -31,6 +31,7 @@ Keypad::Keypad(QWidget *parent, int min, int max, int type)
     setWindowState(windowState() | Qt::WindowActive);
     setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
     setWindowModality(Qt::ApplicationModal);
+    setStyleSheet("QDialog{border: 3px solid red; border-radius: 3px}");
 #endif
     userValue = 0;
 

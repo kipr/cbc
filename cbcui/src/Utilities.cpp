@@ -20,12 +20,13 @@
 
 #include "Utilities.h"
 
-Utilities::Utilities(QWidget *parent) : Page(parent), m_createStatus(parent), m_serialPage(parent)
+Utilities::Utilities(QWidget *parent) : Page(parent), m_createStatus(parent), m_serialPage(parent), m_wireless(parent)
 {
     setupUi(this);
     
     QObject::connect(ui_createButton, SIGNAL(clicked()), &m_createStatus, SLOT(raisePage()));
     QObject::connect(ui_serialButton, SIGNAL(clicked()), &m_serialPage, SLOT(raisePage()));
+    QObject::connect(ui_wifiButton, SIGNAL(clicked()), &m_wireless, SLOT(raisePage()));
 }
 
 Utilities::~Utilities()

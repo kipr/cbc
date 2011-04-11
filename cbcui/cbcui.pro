@@ -48,9 +48,11 @@ HEADERS += src/MainWindow.h \
     src/MotorTest.h \
     src/Brightness.h \
     src/Volume.h \
+    src/Wireless.h \
     src//Serial/SerialPort.h \
     src/Serial/SerialServer.h \
-    src/Serial/SerialPage.h
+    src/Serial/SerialPage.h \
+    src/Keyboard/QwertyKeypad.h
 FORMS += ui/MainWindow.ui \
     ui/MainMenu.ui \
     ui/Programs.ui \
@@ -75,7 +77,9 @@ FORMS += ui/MainWindow.ui \
     ui/MotorTest.ui \
     ui/Brightness.ui \
     ui/Volume.ui \
-    ui/Serial.ui
+    ui/Serial.ui \
+    ui/Wireless.ui \
+    ui/QwertyKeypad.ui
 SOURCES += src/main.cpp \
     src/MainWindow.cpp \
     src/MainMenu.cpp \
@@ -105,9 +109,11 @@ SOURCES += src/main.cpp \
     src/MotorTest.cpp \
     src/Brightness.cpp \
     src/Volume.cpp \
+    src/Wireless.cpp \
     src/Serial/SerialPort.cpp \
     src/Serial/SerialServer.cpp \
-    src/Serial/SerialPage.cpp
+    src/Serial/SerialPage.cpp \
+    src/Keyboard/QwertyKeypad.cpp
 
 # Vision
 SOURCES += src/vision/Blob.cpp

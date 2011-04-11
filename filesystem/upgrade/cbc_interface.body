@@ -9,7 +9,7 @@ RFS_UPDATE=0
 # copies Kiss filesystem to ext2 partition - kissys
 KISS_CONFIG=0
 KISS_DRIVERS=0
-KISS_GUI=1
+KISS_GUI=0
 KISS_IMAGES=0
 KISS_SOUNDS=0
 KISS_USERCODE=0
@@ -20,7 +20,8 @@ KISS_GCC=0
 #set -x
 
 SELF=$0
-EXTUSB=${SELF%/CBC_interface}
+SELFNAME=${SELF##*/}
+EXTUSB=${SELF%/*}
 cd $EXTUSB
 
 RFS=/mnt/usb
@@ -179,7 +180,7 @@ if [ "$RFS_UPDATE" = "1" -o "$REPARTITION" = "1" ]; then
     if [ ! "$(ls -A $EXTUSB/update2)" ]; then
         echo "No files in update2 directory!" | $PRINT
         echo " " | $PRINT
-        echo "Retry with update2 folder in the same location as CBC_interface!" | $PRINT
+        echo "Retry with update2 folder in the same location as $SELFNAME!" | $PRINT
         exit 1
     fi
 fi
@@ -461,6 +462,7 @@ if [ "$RFS_UPDATE" = "1" ]; then
         echo "Select: Install from USB flash drive" | $PRINT
 	exit 0
 elif [ "$SELF" = "/mnt/extusb/CBC_interface" ]; then
+	# if the upgrade is on the root of the USB stick have the user unplug it
     echo " " | $PRINT
     echo "Please turn off the CBC and unplug the USB stick." | $PRINT
 	exit 0
