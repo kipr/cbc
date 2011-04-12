@@ -7,8 +7,6 @@
 #include <QThread>
 #include <QMutex>
 
-#include "../Keypad.h"
-
 class SerialThread : public QThread
 {
     Q_OBJECT

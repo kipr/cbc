@@ -20,7 +20,7 @@
 
 #include "Graph.h"
 
-#include "Keypad.h"
+#include "Keyboard/Keypad.h"
 #include <QPoint>
 #include <QPainter>
 #include <QRect>
@@ -73,11 +73,14 @@ void Graph::hide()
 void Graph::on_ui_delTimeLine_selectionChanged()
 {
     int ms;
-    Keypad user_keypad(this,100,60000);
-    ui_delTimeLine->setStyleSheet("QLineEdit#ui_delTimeLine{background-color:red}");
-    user_keypad.exec();
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(100,60000);
+    user_keypad->setType(0);
 
-    ms = user_keypad.getValue();
+    ui_delTimeLine->setStyleSheet("QLineEdit#ui_delTimeLine{background-color:red}");
+    user_keypad->exec();
+
+    ms = user_keypad->getValue();
 
     ui_delTimeLine->setStyleSheet("QLineEdit#ui_delTimeLine{background-color:white}");
     ui_delTimeLine->setText(QString::number(ms));

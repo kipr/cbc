@@ -42,7 +42,10 @@ if [ -d /psp ]; then
 else
     PRINT=echo
 fi
-
+echo "Print is working" | $PRINT
+sleep 5
+echo $SELF | $PRINT
+sleep 5
 ARGC=$#
 if [ $ARGC -eq 0 ]; then
 	echo "CBC interface options are: " | $PRINT
@@ -88,7 +91,8 @@ do
 	    echo " "
 	    exit 0
         elif [ "$ARG" = "--upgrade" ]; then
-            if [ `expr substr $2 "/dev/sd*"` ]; then
+            if [ -n "$2" -a -z "${2##sd*}" ]; then
+		echo "old upgrade" | $PRINT
         	UPDATE_TYPE=old
         	INTERNAL_DEVICE=$2
         	echo "Upgrade requested from old filesystem" | $PRINT
@@ -101,6 +105,7 @@ do
         	# install the module
         	insmod /tmp/ext2.ko
             else
+		echo "new upgrade" | $PRINT
                 #install all updates and do a full repartition
         	UPDATE_TYPE=new
         	# setting the internal device need to be searched for properly

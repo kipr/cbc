@@ -43,7 +43,6 @@ HEADERS += src/MainWindow.h \
     src/UserProgram.h \
     src/Compiler.h \
     src/GraphWidget.h \
-    src/Keypad.h \
     src/MotorTuning.h \
     src/MotorTest.h \
     src/Brightness.h \
@@ -52,7 +51,8 @@ HEADERS += src/MainWindow.h \
     src//Serial/SerialPort.h \
     src/Serial/SerialServer.h \
     src/Serial/SerialPage.h \
-    src/Keyboard/QwertyKeypad.h
+    src/Keyboard/QwertyKeypad.h \
+    src/Keyboard/Keypad.h
 FORMS += ui/MainWindow.ui \
     ui/MainMenu.ui \
     ui/Programs.ui \
@@ -104,7 +104,6 @@ SOURCES += src/main.cpp \
     src/UserProgram.cpp \
     src/Compiler.cpp \
     src/GraphWidget.cpp \
-    src/Keypad.cpp \
     src/MotorTuning.cpp \
     src/MotorTest.cpp \
     src/Brightness.cpp \
@@ -113,7 +112,8 @@ SOURCES += src/main.cpp \
     src/Serial/SerialPort.cpp \
     src/Serial/SerialServer.cpp \
     src/Serial/SerialPage.cpp \
-    src/Keyboard/QwertyKeypad.cpp
+    src/Keyboard/QwertyKeypad.cpp \
+    src/Keyboard/Keypad.cpp
 
 # Vision
 SOURCES += src/vision/Blob.cpp

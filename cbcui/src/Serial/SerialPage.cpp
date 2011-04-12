@@ -1,6 +1,7 @@
 #include "SerialPage.h"
 #include <QFile>
-
+#include "../Keyboard/Keypad.h"
+#include "../Keyboard/QwertyKeypad.h"
 
 #define MAXPORTCOUNT 6
 
@@ -211,11 +212,21 @@ void SerialPage::setBaudRate(int index)
 
 void SerialPage::on_ui_commandLineEdit_selectionChanged()
 {
-    Keypad user_keypad(this,0,2048,1);
-
     ui_commandLineEdit->setStyleSheet("QLineEdit#ui_commandLineEdit{background-color:red}");
-    user_keypad.exec();
-    QString value = user_keypad.getString();
+    QString value;
+
+    if(ui_byteCodeCheckBox->isChecked()){
+        Keypad *user_keypad = Keypad::instance();
+        user_keypad->setRange(-1,-1);
+        user_keypad->setType(1);
+        user_keypad->exec();
+        value = user_keypad->getString();
+    }
+    else{
+        QwertyKeypad *user_keypad = QwertyKeypad::instance(ui_commandLineEdit->text());
+        user_keypad->exec();
+        value = user_keypad->getString();
+    }
 
     ui_commandLineEdit->setText(value);
     ui_commandLineEdit->setStyleSheet("QLineEdit#ui_commandLineEdit{background-color:white}");

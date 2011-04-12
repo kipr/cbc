@@ -28,9 +28,26 @@ class Keypad : public QDialog, private Ui::Keypad
 {
         Q_OBJECT
 
-public:
-    Keypad(QWidget *parent = 0,int min=0, int max=100, int type=0);
+protected:
+    Keypad(QWidget *parent = 0);
+    static Keypad *m_numKeypad;
     ~Keypad();
+
+public:
+    static Keypad *initialize(QWidget *parent = 0){
+        if(!m_numKeypad)
+            m_numKeypad = new Keypad(parent);
+        return m_numKeypad;
+    }
+
+    static Keypad *instance(){
+        return m_numKeypad;
+    }
+    static Keypad *destroy() {
+        delete m_numKeypad;
+        m_numKeypad = 0;
+        return 0;
+    }
 
 public slots:
     void on_ui_oneButton_clicked(bool checked = false);
@@ -50,6 +67,7 @@ public slots:
     int  getValue();
     QString getString();
     void setRange(int min,int max);
+    void setType(int typ);
 
 private:
     int keypadType;

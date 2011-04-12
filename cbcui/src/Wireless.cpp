@@ -38,6 +38,7 @@ void Wireless::ssidScan()
     if(m_ssidScan->state() == QProcess::NotRunning){
         ui_connectButton->setEnabled(false);
         ui_ssidListWidget->clear();
+
         QListWidgetItem *scanning = new QListWidgetItem("Scanning for Networks!!!");
         // format the list item
         QSize s = scanning->sizeHint();
@@ -49,6 +50,7 @@ void Wireless::ssidScan()
         scanning->setFont(f);
         scanning->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         scanning->setTextColor(Qt::red);
+
         ui_ssidListWidget->addItem(scanning);
         m_ssidScan->start("/mnt/kiss/wifi/wifi_scan.sh", QIODevice::ReadOnly);
     }
@@ -253,11 +255,10 @@ void wifiDialog::acceptData()
 
 void wifiDialog::keyInput()
 {
-        QwertyKeypad user_keypad(this);
-
+        QwertyKeypad *user_keypad = QwertyKeypad::instance("");
         keyLineEdit->setStyleSheet("QLineEdit#ui_ServoPositionLine{background-color:red}");
-        user_keypad.exec();
-        port->key = user_keypad.getString();
+        user_keypad->exec();
+        port->key = user_keypad->getString();
 
         keyLineEdit->setText(port->key);
         keyLineEdit->setStyleSheet("QLineEdit#ui_ServoPositionLine{background-color:white}");

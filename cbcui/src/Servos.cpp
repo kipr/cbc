@@ -19,7 +19,7 @@
  **************************************************************************/
 
 #include "Servos.h"
-
+#include "Keyboard/Keypad.h"
 Servos::Servos(QWidget *parent) : Page(parent)
 {
     int i;
@@ -93,11 +93,13 @@ void Servos::on_ui_ServoIncButton_clicked(bool)
 void Servos::on_ui_ServoPositionLine_selectionChanged()
 {
     int value;
-    Keypad user_keypad(this,0,2048);
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(0,2048);
+    user_keypad->setType(0);
 
     ui_ServoPositionLine->setStyleSheet("QLineEdit#ui_ServoPositionLine{background-color:red}");
-    user_keypad.exec();
-    value = user_keypad.getValue();
+    user_keypad->exec();
+    value = user_keypad->getValue();
 
     m_servoPosition[m_servoNumber] = value;
 

@@ -19,7 +19,7 @@
  **************************************************************************/
 
 #include "VisionSettings.h"
-#include "Keypad.h"
+#include "Keyboard/Keypad.h"
 
 VisionSettings::VisionSettings(QWidget *parent, Camera *camera, RawView *rview) : Page(parent), m_camera(camera), m_rawview(rview)
 {
@@ -115,11 +115,13 @@ void VisionSettings::on_ui_autoWhiteBalCheckBox_stateChanged(int state)
 }
 void VisionSettings::on_ui_redBalLineEdit_selectionChanged()
 {
-    Keypad user_keypad(this,0,127);
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(0,127);
+    user_keypad->setType(0);
 
     ui_redBalLineEdit->setStyleSheet("QLineEdit#ui_redBalLineEdit{background-color:red}");
-    user_keypad.exec();
-    int value = user_keypad.getValue();
+    user_keypad->exec();
+    int value = user_keypad->getValue();
 
     m_camera->setParameter(RED_BALANCE,value);
     ui_redBalLineEdit->setStyleSheet("QLineEdit#ui_redBalLineEdit{background-color:white}");
@@ -128,11 +130,12 @@ void VisionSettings::on_ui_redBalLineEdit_selectionChanged()
 }
 void VisionSettings::on_ui_blueBalLineEdit_selectionChanged()
 {
-    Keypad user_keypad(this,0,127);
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(0,127);
 
     ui_blueBalLineEdit->setStyleSheet("QLineEdit#ui_blueBalLineEdit{background-color:red}");
-    user_keypad.exec();
-    int value = user_keypad.getValue();
+    user_keypad->exec();
+    int value = user_keypad->getValue();
 
     m_camera->setParameter(BLUE_BALANCE,value);
     ui_blueBalLineEdit->setStyleSheet("QLineEdit#ui_blueBalLineEdit{background-color:white");
@@ -152,11 +155,13 @@ void VisionSettings::on_ui_blueBalSlider_valueChanged(int value)
 
 void VisionSettings::on_ui_gammaLineEdit_selectionChanged()
 {
-    Keypad user_keypad(this,0,255);
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(0,255);
+    user_keypad->setType(0);
 
     ui_gammaLineEdit->setStyleSheet("QLineEdit#ui_gammaLineEdit{background-color:red}");
-    user_keypad.exec();
-    int value = user_keypad.getValue();
+    user_keypad->exec();
+    int value = user_keypad->getValue();
 
     m_camera->setParameter(GAMMA,value*256);
     ui_gammaLineEdit->setStyleSheet("QLineEdit#ui_gammaLineEdit{background-color:white}");
@@ -171,11 +176,13 @@ void VisionSettings::on_ui_gammaSlider_valueChanged(int value)
 
 void VisionSettings::on_ui_exposureLineEdit_selectionChanged()
 {
-    Keypad user_keypad(this,0,255);
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(0,255);
+    user_keypad->setType(0);
 
     ui_exposureLineEdit->setStyleSheet("QLineEdit#ui_exposureLineEdit{background-color:red}");
-    user_keypad.exec();
-    int value = user_keypad.getValue();
+    user_keypad->exec();
+    int value = user_keypad->getValue();
 
     m_camera->setParameter(EXPOSURE,value*256);
     ui_exposureLineEdit->setStyleSheet("QLineEdit#ui_exposureLineEdit{background-color:white}");
@@ -197,11 +204,13 @@ void VisionSettings::on_ui_autoExposureCheckBox_stateChanged(int state)
 
 void VisionSettings::on_ui_brightnessLineEdit_selectionChanged()
 {
-    Keypad user_keypad(this,0,255);
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(0,255);
+    user_keypad->setType(0);
 
     ui_brightnessLineEdit->setStyleSheet("QLineEdit#ui_brightnessLineEdit{background-color:red}");
-    user_keypad.exec();
-    int value = user_keypad.getValue();
+    user_keypad->exec();
+    int value = user_keypad->getValue();
 
     m_camera->setParameter(BRIGHTNESS,value*256);
     ui_brightnessLineEdit->setStyleSheet("QLineEdit#ui_brightnessLineEdit{background-color:white}");
@@ -215,11 +224,13 @@ void VisionSettings::on_ui_brightnessSlider_valueChanged(int value)
 }
 void VisionSettings::on_ui_contrastLineEdit_selectionChanged()
 {
-    Keypad user_keypad(this,0,255);
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(0,255);
+    user_keypad->setType(0);
 
     ui_contrastLineEdit->setStyleSheet("QLineEdit#ui_contrastLineEdit{background-color:red}");
-    user_keypad.exec();
-    int value = user_keypad.getValue();
+    user_keypad->exec();
+    int value = user_keypad->getValue();
 
     m_camera->setParameter(CONTRAST,value*256);
     ui_contrastLineEdit->setStyleSheet("QLineEdit#ui_contrastLineEdit{background-color:white}");
@@ -234,11 +245,13 @@ void VisionSettings::on_ui_contrastSlider_valueChanged(int value)
 
 void VisionSettings::on_ui_sharpnessLineEdit_selectionChanged()
 {
-    Keypad user_keypad(this,0,63);
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(0,63);
+    user_keypad->setType(0);
 
     ui_sharpnessLineEdit->setStyleSheet("QLineEdit#ui_sharpnessLineEdit{background-color:red}");
-    user_keypad.exec();
-    int value = user_keypad.getValue();
+    user_keypad->exec();
+    int value = user_keypad->getValue();
 
     m_camera->setParameter(SHARPNESS,value);
     ui_sharpnessLineEdit->setStyleSheet("QLineEdit#ui_sharpnessLineEdit{background-color:white}");

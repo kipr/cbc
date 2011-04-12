@@ -4,8 +4,8 @@ use strict;
 #my $offset = 8192;
 my $offset = (-s "cbc_interface.body") + 2048;
 my $ptr_offset = $offset;
-
-open HOOK, ">CBC_interface";
+my $hookfile = shift(@ARGV);
+open(HOOK, '>', $hookfile);
 
 print HOOK "#!/bin/sh\n";
 print HOOK "### THIS IS A CHUMBY BOTBALL CONTROLLER INTERFACE UPDATE ###\n";
@@ -28,7 +28,7 @@ sub write_extract_command
     my $size = (-s $file);
     my $name=$file;
     $name =~ s/\./_/g;
-    print HOOK "EXTRACT_$name='/tmp/extract.pl CBC_interface $ptr_offset $size'\n";
+    print HOOK "EXTRACT_$name='/tmp/extract.pl $hookfile $ptr_offset $size'\n";
     $ptr_offset += $size;
 }
 
@@ -39,17 +39,17 @@ foreach my $file (@ARGV) {
 print HOOK `cat cbc_interface.body`, "\n";
 truncate(HOOK, $offset);
 close HOOK;
-if ((-s "CBC_interface") != $offset) {
-    die "CBC_interface length != $offset"
+if ((-s "$hookfile") != $offset) {
+    die "$hookfile length != $offset"
     }
 
 foreach my $file (@ARGV) {
     # append each file in the arg list to the end of the cbc interface
-    system "cat $file >> CBC_interface";
+    system "cat $file >> $hookfile";
 }
 
-if ((-s "CBC_interface") != $ptr_offset) {
-    die "CBC_interface length != $ptr_offset";
+if ((-s "$hookfile") != $ptr_offset) {
+    die "$hookfile length != $ptr_offset";
 }
 
 

@@ -19,7 +19,7 @@
  **************************************************************************/
 
 #include "MotorTuning.h"
-#include "Keypad.h"
+#include "Keyboard/Keypad.h"
 #include <QSettings>
 
 MotorTuning::MotorTuning(QWidget *parent) : Page(parent)
@@ -155,22 +155,27 @@ void MotorTuning::on_ui_DivSlider_valueChanged(int value)
 
 void MotorTuning::on_ui_TargetSpeedLine_selectionChanged()
 {
-    Keypad user_keypad(this,-1000,1000);
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(-1000,1000);
+    user_keypad->setType(0);
 
     ui_TargetSpeedLine->setStyleSheet("QLineEdit#ui_TargetSpeedLine{background-color:red}");
-    user_keypad.exec();
-    m_targetSpeed = user_keypad.getValue();
+    user_keypad->exec();
+    m_targetSpeed = user_keypad->getValue();
 
     ui_TargetSpeedLine->setStyleSheet("QLineEdit#ui_TargetSpeedLine{background-color:white}");
     ui_TargetSpeedLine->setText(QString::number(m_targetSpeed));
 }
 void MotorTuning::on_ui_TargetPositionLine_selectionChanged()
 {
-    Keypad user_keypad(this,-2000000000,2000000000);
-    ui_TargetPositionLine->setStyleSheet("QLineEdit#ui_TargetPositionLine{background-color:red}");
-    user_keypad.exec();
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(-2000000000,2000000000);
+    user_keypad->setType(0);
 
-    m_targetPosition = user_keypad.getValue();
+    ui_TargetPositionLine->setStyleSheet("QLineEdit#ui_TargetPositionLine{background-color:red}");
+    user_keypad->exec();
+
+    m_targetPosition = user_keypad->getValue();
     ui_TargetPositionLine->setStyleSheet("QLineEdit#ui_TargetPositionLine{background-color:white}");
     ui_TargetPositionLine->setText(QString::number(m_targetPosition));
 }

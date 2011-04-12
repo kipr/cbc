@@ -19,6 +19,7 @@
  **************************************************************************/
 
 #include "MotorTest.h"
+#include "Keyboard/Keypad.h"
 
 MotorTest::MotorTest(QWidget *parent) : Page(parent)
 {
@@ -159,15 +160,17 @@ void MotorTest::on_ui_PowerRadio_clicked()
 void MotorTest::on_ui_TargetSpeedPowerLine_selectionChanged()
 {
     int value;
-    Keypad user_keypad(this,-1000,1000);
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(-1000,1000);
+    user_keypad->setType(0);
 
     if(m_controlState[m_motorNumber] == 0)
-        user_keypad.setRange(-100,100);
+        user_keypad->setRange(-100,100);
 
 
     ui_TargetSpeedPowerLine->setStyleSheet("QLineEdit#ui_TargetSpeedPowerLine0{background-color:red}");
-    user_keypad.exec();
-    value = user_keypad.getValue();
+    user_keypad->exec();
+    value = user_keypad->getValue();
 
    if(m_controlState[m_motorNumber] == 0){
         m_targetPower[m_motorNumber] = value;
@@ -181,14 +184,16 @@ void MotorTest::on_ui_TargetSpeedPowerLine_selectionChanged()
 }
 void MotorTest::on_ui_TargetPositionLine_selectionChanged()
 {
-    Keypad user_keypad(this,-2000000000,2000000000);
+    Keypad *user_keypad = Keypad::instance();
+    user_keypad->setRange(-2000000000,2000000000);
+    user_keypad->setType(0);
 
     ui_TargetPositionLine->setStyleSheet("QLineEdit#ui_TargetPositionLine0{background-color:red}");
-    user_keypad.exec();
+    user_keypad->exec();
 
-    m_targetPosition[m_motorNumber] = user_keypad.getValue();
+    m_targetPosition[m_motorNumber] = user_keypad->getValue();
     ui_TargetPositionLine->setStyleSheet("QLineEdit#ui_TargetPositionLine0{background-color:white}");
-    ui_TargetPositionLine->setText(QString::number(user_keypad.getValue()));
+    ui_TargetPositionLine->setText(QString::number(user_keypad->getValue()));
 }
 
 void MotorTest::on_ui_PlayButton_toggled(bool state)

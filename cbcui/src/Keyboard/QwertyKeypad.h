@@ -7,11 +7,29 @@
 class QwertyKeypad : public QDialog, private Ui::QwertyKeypad
 {
     Q_OBJECT
-
-public:
+protected:
     QwertyKeypad(QWidget *parent = 0);
+    static QwertyKeypad *m_alphaKeypad;
     ~QwertyKeypad();
 
+public:
+    static QwertyKeypad *initialize(QWidget *parent = 0){
+        if(!m_alphaKeypad)
+            m_alphaKeypad = new QwertyKeypad(parent);
+        return m_alphaKeypad;
+    }
+
+    static QwertyKeypad *instance(QString txt){
+        m_alphaKeypad->setString(txt);
+        return m_alphaKeypad;
+    }
+    static QwertyKeypad *destroy() {
+        delete m_alphaKeypad;
+        m_alphaKeypad = 0;
+        return 0;
+    }
+
+    //QwertyKeypad(QWidget *parent = 0);
     QString getString();
 
 public slots:
@@ -64,6 +82,7 @@ public slots:
 
 private:
     QString userString;
+    void setString(QString txt);
 };
 
 #endif // __QWERTYKEYPAD_H__

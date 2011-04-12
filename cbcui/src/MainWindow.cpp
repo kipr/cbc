@@ -23,6 +23,8 @@
 #include "Page.h"
 #include "UserProgram.h"
 #include "CbobData.h"
+#include "Keyboard/QwertyKeypad.h"
+#include "Keyboard/Keypad.h"
 #include <QMessageBox>
 #include <QWSServer>
 #include <QProcess>
@@ -52,11 +54,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     CbobData::instance()->resetPullups();
 
+    QwertyKeypad::initialize(parent);
+    Keypad::initialize(parent);
+
     userProgramStateChange(0);
 }
 
 MainWindow::~MainWindow()
 {
+    QwertyKeypad::destroy();
     delete m_mainMenu;
 }
 

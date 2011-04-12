@@ -21,8 +21,10 @@
 #include <QMessageBox>
 #include <QProcess>
 
-Keypad::Keypad(QWidget *parent, int min, int max, int type)
-    : QDialog(parent),keypadType(type),minVal(min),maxVal(max)
+Keypad *Keypad::m_numKeypad=0;
+
+Keypad::Keypad(QWidget *parent)
+    : QDialog(parent),minVal(-1),maxVal(-1)
 {
     setupUi(this);
     this->move(100,25);
@@ -34,12 +36,7 @@ Keypad::Keypad(QWidget *parent, int min, int max, int type)
     setStyleSheet("QDialog{border: 3px solid red; border-radius: 3px}");
 #endif
     userValue = 0;
-
-    if(keypadType)
-    {
-        ui_negateButton->setText("Sp");
-    }
-
+    this->setType(0);
 }
 
 Keypad::~Keypad()
@@ -50,6 +47,7 @@ void Keypad::show()
 {
     ui_outputLine->clear();
     userValue = 0;
+    userString.clear();
     this->raise();
 }
 void Keypad::on_ui_oneButton_clicked(bool)
@@ -108,21 +106,27 @@ void Keypad::on_ui_clearButton_clicked(bool)
 {
     ui_outputLine->clear();
     userValue = 0;
+    userString.clear();
 }
 void Keypad::on_ui_enterButton_clicked(bool)
 {
     userString = ui_outputLine->text();
     userValue = userString.toInt();
-    if(keypadType == 0 && (userValue < minVal || userValue > maxVal)){
-        QProcess::startDetached("aplay /mnt/kiss/sounds/quack.wav");
-        QMessageBox::warning(this,
-                             "Input Error",
-                             QString("Value must be between %1 and %2\n").arg(minVal).arg(maxVal),
-                             QMessageBox::Ok,
-                             QMessageBox::NoButton);
-        ui_outputLine->setText("");
+    ui_outputLine->clear();
+
+    if(keypadType == 1 || minVal == maxVal)
+        this->close();
+    else if(userValue < minVal || userValue > maxVal){
+            QProcess::startDetached("aplay /mnt/kiss/sounds/quack.wav");
+            QMessageBox::warning(this,
+                                 "Input Error",
+                                 QString("Value must be between %1 and %2\n").arg(minVal).arg(maxVal),
+                                 QMessageBox::Ok,
+                                 QMessageBox::NoButton);  
     }
-    else this->close();
+    else
+        this->close();
+
 }
 void Keypad::refreshView()
 {
@@ -142,4 +146,13 @@ void Keypad::setRange(int min, int max)
 {
     minVal = min;
     maxVal = max;
+}
+
+void Keypad::setType(int typ)
+{
+    keypadType = typ;
+    if(keypadType)
+        ui_negateButton->setText("Sp");
+    else
+        ui_negateButton->setText("+/-");
 }

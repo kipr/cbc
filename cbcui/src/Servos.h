@@ -27,8 +27,6 @@
 #include <QDialog>
 #include <QPainter>
 
-#include "Keypad.h"
-
 class Servos : public Page, private Ui::Servos
 {
     Q_OBJECT

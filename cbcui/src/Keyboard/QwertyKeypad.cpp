@@ -1,5 +1,7 @@
 #include "QwertyKeypad.h"
 
+QwertyKeypad *QwertyKeypad::m_alphaKeypad=0;
+
 QwertyKeypad::QwertyKeypad(QWidget *parent)
     : QDialog(parent)
 {
@@ -349,4 +351,9 @@ void QwertyKeypad::on_ui_symbolButton_toggled(bool checked)
 QString QwertyKeypad::getString()
 {
     return userString;
+}
+
+void QwertyKeypad::setString(QString txt)
+{
+    ui_outputLine->setText(txt);
 }
