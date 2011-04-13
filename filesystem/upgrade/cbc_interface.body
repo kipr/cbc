@@ -9,6 +9,7 @@ RFS_UPDATE=0
 # copies Kiss filesystem to ext2 partition - kissys
 KISS_CONFIG=0
 KISS_DRIVERS=0
+KISS_WIFI=0
 KISS_GUI=0
 KISS_IMAGES=0
 KISS_SOUNDS=0
@@ -42,10 +43,7 @@ if [ -d /psp ]; then
 else
     PRINT=echo
 fi
-echo "Print is working" | $PRINT
-sleep 5
-echo $SELF | $PRINT
-sleep 5
+
 ARGC=$#
 if [ $ARGC -eq 0 ]; then
 	echo "CBC interface options are: " | $PRINT
@@ -58,6 +56,7 @@ if [ $ARGC -eq 0 ]; then
 	echo "--kiss_config = config folder w/ user configuration" | $PRINT
 	echo "       files and color tracking settings" | $PRINT
 	echo "--kiss_drivers = CBOB, microdia, rt73 and others" | $PRINT
+	echo "--kiss_wifi = wifi connection scripts" | $PRINT
 	echo "--kiss_gui = gui folder with CBCUI and startup" | $PRINT
 	echo "--kiss_images = images folder w/ splash screen image" | $PRINT
 	echo "--kiss_sounds = sounds folder w/ wav and mp3 files" | $PRINT
@@ -76,12 +75,13 @@ do
                 echo $VERSION
 		exit 0
         elif [ "$ARG" = "--type" ]; then
-                echo Upgrade
+                echo "Upgrade"
                 exit 0
 	elif [ "$ARG" = "--features" ]; then
 	    [ $RFS_UPDATE -eq 0 ] || echo -n " --rfs_update"
 	    [ $KISS_CONFIG -eq 0 ] || echo -n " --kiss_config"
 	    [ $KISS_DRIVERS -eq 0 ] || echo -n " --kiss_drivers"
+	    [ $KISS_WIFI -eq 0 ] || echo -n "--kiss_wifi"
 	    [ $KISS_GUI -eq 0 ] || echo -n " --kiss_gui"
 	    [ $KISS_IMAGES -eq 0 ] || echo -n " --kiss_images"
 	    [ $KISS_SOUNDS -eq 0 ] || echo -n " --kiss_sounds"
@@ -91,8 +91,7 @@ do
 	    echo " "
 	    exit 0
         elif [ "$ARG" = "--upgrade" ]; then
-            if [ -n "$2" -a -z "${2##sd*}" ]; then
-		echo "old upgrade" | $PRINT
+	    if [ -n "$2" -a -z "${2##sd*}" ]; then
         	UPDATE_TYPE=old
         	INTERNAL_DEVICE=$2
         	echo "Upgrade requested from old filesystem" | $PRINT
@@ -129,6 +128,9 @@ do
         elif [ "$ARG" = "--kiss_drivers" ]; then
 		# copies Kiss driver folder to ext2 partition
 		KISS_DRIVERS=1
+	elif [ "$ARG" = "--kiss_wifi" ]; then
+	        # copies Kiss Wifi scripts folder to ext2 partition
+	        KISS_WIFI=1
         elif [ "$ARG" = "--kiss_gui" ]; then
 		# copies Kiss gui to ext2 partition	
 		KISS_GUI=1
@@ -333,6 +335,18 @@ if [ "$REPARTITION" = "1" -o "$KISS_DRIVERS" = "1" ]; then
 	sync
 	sync
         echo "done" | $PRINT
+fi
+
+# wifi folder
+if [ "REPARTITION" = "1" -o "$KISS_WIFI" = "1" ]; then
+        rm -rf $KISS/wifi
+	# add the files to the kiss filesystem
+	echo -n "Extracting wifi files..." | $PRINT
+	$EXTRACT_wifi_tgz | tar -xzf - -C $KISS
+	echo -n "sync'ing..." | $PRINT
+	sync
+	sync
+	echo "done" | $PRINT
 fi
 
 # gui folder

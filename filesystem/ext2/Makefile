@@ -42,12 +42,14 @@ filesystem: gcc qt
 
 	(cd files/gui; chmod a+x startup.sh shutdown.sh)
 	(cd files/usercode; chmod a+x gcc-usercode run stop compile compile-usb)
+	(cd files/wifi; chmod a+x wifi_scan.sh)
 
 	mkdir -p $(DEST)/usercode/include
 	mkdir -p $(DEST)/usercode/lib
 	mkdir -p $(DEST)/sounds
 	mkdir -p $(DEST)/images
 	mkdir -p $(DEST)/drivers
+	mkdir -p $(DEST)/wifi
 	mkdir -p $(DEST)/gui
 	mkdir -p $(DEST)/config
 	mkdir -p $(DEST)/gcc
@@ -56,6 +58,7 @@ filesystem: gcc qt
 	(cd files; rsync -a sounds/* $(DEST)/sounds)
 	(cd files; rsync -a images/* $(DEST)/images)
 	(cd files; rsync -a drivers/* $(DEST)/drivers)
+	(cd files; rsync -a wifi/* $(DEST)/wifi)
 	(cd files; rsync -a gui/* $(DEST)/gui)
 	(cd files; rsync -a config/* $(DEST)/config)
 	(cd gcc; rsync -a * $(DEST)/gcc)

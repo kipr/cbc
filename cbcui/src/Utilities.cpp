@@ -23,8 +23,9 @@
 Utilities::Utilities(QWidget *parent) : Page(parent), m_createStatus(parent), m_serialPage(parent), m_wireless(parent)
 {
     setupUi(this);
-    ui_wifiButton->setEnabled(false);
+    //ui_wifiButton->setEnabled(false);
     ui_terminalButton->setEnabled(false);
+    ui_createButton->setEnabled(false);
 
     QObject::connect(ui_createButton, SIGNAL(clicked()), &m_createStatus, SLOT(raisePage()));
     QObject::connect(ui_serialButton, SIGNAL(clicked()), &m_serialPage, SLOT(raisePage()));
@@ -34,6 +35,3 @@ Utilities::Utilities(QWidget *parent) : Page(parent), m_createStatus(parent), m_
 Utilities::~Utilities()
 {
 }
-
-
-

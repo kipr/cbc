@@ -13,10 +13,13 @@ struct WifiPort{
     QString     key;
     QString     allocation;
     QString     authentication;
-    bool        asciiEncoding;
+    QString     encoding;
     QString     encryption;
     int         txRate;
     QString     ip;
+    QString     hwaddr;
+    QString     gateway;
+    QString     netmask;
 };
 
 class wifiDialog;
@@ -33,7 +36,7 @@ public slots:
     void hide();
 
     void ssidScan();
-    void listRefresh();
+    void listRefresh(int exitCode);
     void on_ui_connectButton_clicked();
     void on_ui_refreshButton_clicked();
 
@@ -43,6 +46,7 @@ private:
     //QTimer      *m_refreshTimer;
 
     void addSsidToList(QString net);
+    void netConnect();
 };
 
 class wifiDialog : public QDialog
