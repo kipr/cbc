@@ -2,20 +2,24 @@
 
 #include <QFile>
 
-Wireless::Wireless(QWidget *parent) : Page(parent)
+Wireless::Wireless(QWidget *parent) : Page(parent),m_cbcSSID(""),m_cbcIP("")
 {
-  setupUi(this);
+    setupUi(this);
+    connect(ui_refreshButton, SIGNAL(clicked()), this, SLOT(ssidScan()));
+
     m_ssidScan = new QProcess(this);
     connect(m_ssidScan, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(listRefresh(int)));
+    m_netStart = new QProcess(this);
+    connect(m_netStart, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(getIPaddress(int)));
 
     //m_refreshTimer = new QTimer(this);
     //connect(m_refreshTimer, SIGNAL(timeout()), this, SLOT(ssidScan()));
-
 }
 
 void Wireless::show()
 {
     this->ssidScan();
+    this->getIPaddress();
     //m_refreshTimer->start(6000);
     Page::show();
 }
@@ -30,6 +34,41 @@ Wireless::~Wireless()
 {
     m_ssidScan->kill();
     delete m_ssidScan;
+}
+
+void Wireless::getIPaddress(int exitCode)
+{
+    ui_connectButton->setEnabled(true);
+    if(exitCode != 0){
+        ui_ipLabel->setText("Network\nerror");
+        return;
+    }
+
+    QProcess iconfig;
+    iconfig.start("ifconfig rausb0");
+    iconfig.waitForFinished();
+    QString ip(iconfig.readAllStandardOutput());
+    // get the IP address
+    int q = ip.indexOf("inet");
+    if(q != -1){
+        q = ip.indexOf(':',q) + 1;
+        int eq = ip.indexOf(' ',q);
+        m_cbcIP = ip.mid(q,eq-q);
+    }
+    else
+        m_cbcIP = "";
+
+    if(m_cbcIP !=  ""){
+        iconfig.start("iwconfig rausb0");
+        iconfig.waitForFinished();
+        QString ssidName(iconfig.readAllStandardOutput());
+        m_cbcSSID = ssidName.section('"',1,1);
+    }
+    else
+        m_cbcSSID = "";
+
+    ui_ipLabel->setText(m_cbcSSID + "\n" + m_cbcIP);
+    this->listRefresh();
 }
 
 void Wireless::ssidScan()
@@ -91,6 +130,8 @@ void Wireless::listRefresh(int exitCode)
             ui_ssidListWidget->item(0)->setText("No Networks Available");
         else if(exitCode == 2)
             ui_ssidListWidget->item(0)->setText("No WiFi card detected");
+
+        ui_ipLabel->setText("");
     }
 }
 
@@ -98,6 +139,7 @@ void Wireless::addSsidToList(QString net)
 {
     // get the SSID name
     QString ssidName = net.section('"',1,1);
+    QString hwaddr = net.section(' ',3,3);
 
     // get the link quality
     int q = net.indexOf("Quality");
@@ -106,6 +148,7 @@ void Wireless::addSsidToList(QString net)
     int quality = net.mid(q,eq-q).toInt();
 
     QListWidgetItem *ssid = new QListWidgetItem(ssidName);
+    ssid->setData(Qt::UserRole,hwaddr);
     // format the list item
     QSize s = ssid->sizeHint();
     s.setHeight(35);
@@ -115,56 +158,62 @@ void Wireless::addSsidToList(QString net)
     f.setBold(true);
     ssid->setFont(f);
 
-    ui_ssidListWidget->addItem(ssid);
-}
+    if(ssidName == m_cbcSSID){
+        ssid->setBackgroundColor(Qt::green);
+    }
 
-void Wireless::on_ui_refreshButton_clicked()
-{
-    this->ssidScan();
+    ui_ssidListWidget->addItem(ssid);
 }
 
 void Wireless::on_ui_connectButton_clicked()
 {
+    if(ui_ssidListWidget->currentRow() < 0)
+        return;
     m_connectedWifi.ssid = ui_ssidListWidget->currentItem()->text();
+    m_connectedWifi.hwaddr = ui_ssidListWidget->currentItem()->data(Qt::UserRole).toString();
 
     wifiDialog wDialog(&m_connectedWifi,this);
     if(wDialog.exec() == QDialog::Accepted)
-        this->netConnect();
-}
+    {
+        QFile netFile("/psp/network_config");
 
-void Wireless::netConnect()
-{
-    QFile netFile("/psp/network_config");
+        if(netFile.exists()){
+            QFile::remove("/psp/old_network_config");
+            netFile.copy("/psp/old_network_config");
+        }
 
-    if(!netFile.open(QIODevice::ReadWrite | QIODevice::Text)){
-        return;
+        netFile.remove();
+
+        if(!netFile.open(QIODevice::ReadWrite | QIODevice::Text)){
+            qWarning("Open error on network_config file");
+            return;
+        }
+
+        QTextStream netConfig(&netFile);
+        netConfig << "<configuration ";
+        netConfig << "gateway=\"" << m_connectedWifi.gateway << "\" ";
+        netConfig << "ip=\"\" ";
+        netConfig << "nameserver1=\"\" ";
+        netConfig << "encryption=\"" << m_connectedWifi.encryption << "\" ";
+        netConfig << "key=\"" << m_connectedWifi.key << "\" ";
+        netConfig << "hwaddr=\"" << m_connectedWifi.hwaddr << "\" ";
+        netConfig << "nameserver2=\"\" ";
+        netConfig << "auth=\"" << m_connectedWifi.authentication << "\" ";
+        netConfig << "netmask=\"" << m_connectedWifi.netmask << "\" ";
+        netConfig << "type=\"wlan\" ";
+        netConfig << "ssid=\"" << m_connectedWifi.ssid << "\" ";
+        netConfig << "allocation=\"" << m_connectedWifi.allocation << "\" ";
+        netConfig << "encoding=\"" << m_connectedWifi.encoding << "\" ";
+        netConfig << "/>";
+
+        netFile.close();
+
+        if(m_netStart->state() == QProcess::NotRunning){
+            m_netStart->start("/usr/chumby/scripts/start_network");
+            ui_connectButton->setEnabled(false);
+        }
     }
-    if(netFile.size() > 0){
-        QFile::remove("/psp/old_network_config");
-        netFile.copy("/psp/old_network_config");
-        netFile.resize(10);
-    }
-    QTextStream netConfig(&netFile);
-    qWarning("writing data");
-    netConfig << "<configuration ";
-    netConfig << "gateway=\"" << m_connectedWifi.gateway << "\" ";
-    netConfig << "ip=\"\" ";
-    netConfig << "nameserver1=\"\" ";
-    netConfig << "encryption=\"" << m_connectedWifi.encryption << "\" ";
-    netConfig << "key=\"" << m_connectedWifi.key << "\" ";
-    netConfig << "hwaddr=\"" << m_connectedWifi.hwaddr << "\" ";
-    netConfig << "nameserver2=\"\" ";
-    netConfig << "auth=\"" << m_connectedWifi.authentication << "\" ";
-    netConfig << "netmask=\"" << m_connectedWifi.netmask << "\" ";
-    netConfig << "type=\"\" ";
-    netConfig << "ssid=\"" << m_connectedWifi.ssid << "\" ";
-    netConfig << "allocation=\"" << m_connectedWifi.allocation << "\" ";
-    netConfig << "encoding=\"" << m_connectedWifi.encoding << "\" ";
-    netConfig << "/>";
-
-    netFile.close();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // Wifi Network Config Dialog
@@ -186,14 +235,22 @@ wifiDialog::wifiDialog(WifiPort *wp, QWidget *parent)
     ssidBox->addWidget(ssidName);
     mainLayout->addLayout(ssidBox);
 
+// HWADDR
+    QHBoxLayout *hwaddrBox = new QHBoxLayout;
+    hwaddr.setText("Hwaddr:");
+    hwaddrBox->addWidget(&hwaddr);
+    QLabel *hwaddrName = new QLabel(port->hwaddr);
+    hwaddrBox->addWidget(hwaddrName);
+    mainLayout->addLayout(hwaddrBox);
+
 // Allocation
     QHBoxLayout *allocBox = new QHBoxLayout;
     alloc.setText("Allocation:");
     allocBox->addWidget(&alloc);
     allocCombo = new QComboBox(this);
     allocCombo->setMinimumSize(QSize(100,20));
-    allocCombo->addItem("Dynamic");
-    allocCombo->addItem("Static");
+    allocCombo->addItem("dhcp");
+    allocCombo->addItem("static");
     if(port->allocation.isNull())
         allocCombo->setCurrentIndex(0);
     else
@@ -239,18 +296,19 @@ wifiDialog::wifiDialog(WifiPort *wp, QWidget *parent)
     mainLayout->addLayout(encrypBox);
 
 // Ascii and Hex check boxes
+    m_encoding = port->encoding;
     QHBoxLayout *encodeBox = new QHBoxLayout;
     encodeBox->addStretch();
     AsciiCheck = new QCheckBox("Ascii");
-    if(port->encoding == "ascii" || port->encoding.isNull()){
+    if(m_encoding == "ascii" || m_encoding.isNull()){
         AsciiCheck->setChecked(true);
-        port->encoding = "ascii";
+        m_encoding = "ascii";
     }
     else
         AsciiCheck->setChecked(false);
     encodeBox->addWidget(AsciiCheck);
     HexCheck = new QCheckBox("Hex");
-    if(port->encoding == "hex")
+    if(m_encoding == "hex")
         HexCheck->setChecked(true);
     else
         HexCheck->setChecked(false);
@@ -287,18 +345,20 @@ wifiDialog::wifiDialog(WifiPort *wp, QWidget *parent)
     connect(HexCheck, SIGNAL(clicked()), this, SLOT(encodingChanged()));
     connect(connectButton, SIGNAL(clicked()), this, SLOT(acceptData()));
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+
+    move(50,0);
 }
 
 void wifiDialog::encodingChanged()
 {
-    if(port->encoding == "ascii"){
+    if(m_encoding == "ascii"){
         AsciiCheck->setChecked(false);
         HexCheck->setChecked(true);
-        port->encoding = "hex";
+        m_encoding = "hex";
     }else{
         AsciiCheck->setChecked(true);
         HexCheck->setChecked(false);
-        port->encoding = "ascii";
+        m_encoding = "ascii";
     }
 }
 
@@ -307,6 +367,7 @@ void wifiDialog::acceptData()
     port->allocation = allocCombo->currentText();
     port->authentication = authCombo->currentText();
     port->encryption = encrypCombo->currentText();
+    port->encoding = m_encoding;
     port->key = keyLineEdit->text();
     port->txRate = 6;
     this->accept();
@@ -317,8 +378,7 @@ void wifiDialog::keyInput()
         QwertyKeypad *user_keypad = QwertyKeypad::instance("");
         keyLineEdit->setStyleSheet("QLineEdit#ui_ServoPositionLine{background-color:red}");
         user_keypad->exec();
-        port->key = user_keypad->getString();
 
-        keyLineEdit->setText(port->key);
+        keyLineEdit->setText(user_keypad->getString());
         keyLineEdit->setStyleSheet("QLineEdit#ui_ServoPositionLine{background-color:white}");
 }

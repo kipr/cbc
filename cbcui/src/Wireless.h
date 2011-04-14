@@ -36,17 +36,19 @@ public slots:
     void hide();
 
     void ssidScan();
-    void listRefresh(int exitCode);
+    void getIPaddress(int exitCode = 0);
+    void listRefresh(int exitCode = 0);
     void on_ui_connectButton_clicked();
-    void on_ui_refreshButton_clicked();
 
 private:
+    QString         m_cbcSSID;
+    QString         m_cbcIP;
     QProcess        *m_ssidScan;
+    QProcess        *m_netStart;
     struct WifiPort m_connectedWifi;
     //QTimer      *m_refreshTimer;
 
     void addSsidToList(QString net);
-    void netConnect();
 };
 
 class wifiDialog : public QDialog
@@ -68,7 +70,9 @@ class wifiDialog : public QDialog
 
     private:
         struct WifiPort *port;
+        QString         m_encoding;
         QLabel          ssid;
+        QLabel          hwaddr;
         QLabel          alloc;
         QLabel          auth;
         QLabel          encryp;
