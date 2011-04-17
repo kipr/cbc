@@ -175,11 +175,11 @@ void Wireless::on_ui_connectButton_clicked()
     wifiDialog wDialog(&m_connectedWifi,this);
     if(wDialog.exec() == QDialog::Accepted)
     {
-        QFile netFile("/psp/network_config");
+        QFile netFile("/psp/cbc_net_config");
 
         if(netFile.exists()){
-            QFile::remove("/psp/old_network_config");
-            netFile.copy("/psp/old_network_config");
+            QFile::remove("/psp/old_cbc_net_config");
+            netFile.copy("/psp/old_cbc_net_config");
         }
 
         netFile.remove();
@@ -190,26 +190,25 @@ void Wireless::on_ui_connectButton_clicked()
         }
 
         QTextStream netConfig(&netFile);
-        netConfig << "<configuration ";
-        netConfig << "gateway=\"" << m_connectedWifi.gateway << "\" ";
-        netConfig << "ip=\"\" ";
-        netConfig << "nameserver1=\"\" ";
-        netConfig << "encryption=\"" << m_connectedWifi.encryption << "\" ";
-        netConfig << "key=\"" << m_connectedWifi.key << "\" ";
-        netConfig << "hwaddr=\"" << m_connectedWifi.hwaddr << "\" ";
-        netConfig << "nameserver2=\"\" ";
-        netConfig << "auth=\"" << m_connectedWifi.authentication << "\" ";
-        netConfig << "netmask=\"" << m_connectedWifi.netmask << "\" ";
-        netConfig << "type=\"wlan\" ";
-        netConfig << "ssid=\"" << m_connectedWifi.ssid << "\" ";
-        netConfig << "allocation=\"" << m_connectedWifi.allocation << "\" ";
-        netConfig << "encoding=\"" << m_connectedWifi.encoding << "\" ";
-        netConfig << "/>";
+        netConfig << "type=wlan\n";
+        netConfig << "ssid=" << m_connectedWifi.ssid << "\n";
+        netConfig << "hwaddr=" << m_connectedWifi.hwaddr << "\n";
+        netConfig << "key=" << m_connectedWifi.key << "\n";
+        netConfig << "encryption=" << m_connectedWifi.encryption << "\n";
+        netConfig << "auth=" << m_connectedWifi.authentication << "\n";
+        netConfig << "allocation=" << m_connectedWifi.allocation << "\n";
+        netConfig << "encoding=" << m_connectedWifi.encoding << "\n";
+        netConfig << "gateway=" << m_connectedWifi.gateway << "\n";
+        netConfig << "netmask=" << m_connectedWifi.netmask << "\n";
+        netConfig << "ip=" << m_connectedWifi.ip << "\n";
+        netConfig << "nameserver1=" << m_connectedWifi.nameserver1 << "\n";
+        netConfig << "nameserver2=" << m_connectedWifi.nameserver2 << "\n";
+        netConfig << "txrate=" << m_connectedWifi.txRate << "\n";
 
         netFile.close();
 
         if(m_netStart->state() == QProcess::NotRunning){
-            m_netStart->start("/usr/chumby/scripts/start_network");
+            m_netStart->start("/mnt/kiss/wifi/wifi_start.pl");
             ui_connectButton->setEnabled(false);
         }
     }

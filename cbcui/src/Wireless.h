@@ -10,16 +10,18 @@
 
 struct WifiPort{
     QString     ssid;
-    QString     key;
-    QString     allocation;
-    QString     authentication;
-    QString     encoding;
-    QString     encryption;
-    int         txRate;
-    QString     ip;
     QString     hwaddr;
+    QString     key;
+    QString     encryption;
+    QString     authentication;
+    QString     allocation;
+    QString     encoding;
     QString     gateway;
     QString     netmask;
+    QString     ip;
+    QString     nameserver1;
+    QString     nameserver2;
+    int         txRate;
 };
 
 class wifiDialog;

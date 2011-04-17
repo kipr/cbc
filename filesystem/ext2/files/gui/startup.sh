@@ -9,5 +9,5 @@ if [ ! -e ${TSLIB_CALIBFILE} ]; then
 	sync
 fi
 
-./gui/cbcui -qws
+./gui/cbcui -qws &
 

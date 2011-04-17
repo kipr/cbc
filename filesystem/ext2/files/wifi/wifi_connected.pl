@@ -49,7 +49,7 @@ if( $SSID eq 0 )
 	exit 1;
 }
 	
-print $SSID,"\n";
+print $SSID;
 exit 0;
 
 sub getItemValue
