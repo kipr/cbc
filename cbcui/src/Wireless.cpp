@@ -1,5 +1,5 @@
 #include "Wireless.h"
-
+#include "MainWindow.h"
 #include <QFile>
 
 Wireless::Wireless(QWidget *parent) : Page(parent),m_cbcSSID(""),m_cbcIP("")
@@ -16,7 +16,9 @@ Wireless::Wireless(QWidget *parent) : Page(parent),m_cbcSSID(""),m_cbcIP("")
     m_commAnima->setInterval(150);
     connect(m_commAnima, SIGNAL(timeout()), this, SLOT(blinky()));
 
-    this->getWifiConfig();
+    // have to wait for the system to load before calling getWifiConfig()
+    QTimer::singleShot(5000,this, SLOT(getWifiConfig()));
+
     //m_refreshTimer = new QTimer(this);
     //connect(m_refreshTimer, SIGNAL(timeout()), this, SLOT(ssidScan()));
 }
@@ -111,6 +113,9 @@ void Wireless::getWifiConfig(int exitCode)
 
     ui_ipLabel->setText(m_cbcSSID + "\n" + m_cbcIP);
     this->listRefresh();
+
+    if(!m_cbcIP.isEmpty())
+        MainWindow::instance()->checkWifiSignal();
 }
 
 void Wireless::ssidScan()
@@ -178,6 +183,8 @@ void Wireless::listRefresh(int exitCode)
             ui_ssidListWidget->item(0)->setText("No WiFi card detected");
 
         ui_ipLabel->setText("");
+        MainWindow::instance()->stopWifiCheck();
+        //emit wifiError();
     }
 }
 
@@ -203,6 +210,17 @@ void Wireless::addSsidToList(QString net)
     f.setPointSize(14);
     f.setBold(true);
     ssid->setFont(f);
+
+    QIcon wifiIcon;
+    if(quality > 75)
+        wifiIcon.addFile(":/actions/wifiRed3.png");
+    else if(quality > 50)
+        wifiIcon.addFile(":/actions/wifiRed2.png");
+    else if(quality > 25)
+        wifiIcon.addFile(":/actions/wifiRed1.png");
+    else
+        wifiIcon.addFile(":/actions/wifiRed0.png");
+    ssid->setIcon(wifiIcon);
 
     if(ssidName == m_cbcSSID){
         ssid->setBackgroundColor(Qt::green);

@@ -32,5 +32,17 @@
         <file>close-60L.png</file>
         <file>back-60D.png</file>
         <file>back-60L.png</file>
+        <file>back-60Dw0.png</file>
+        <file>back-60Dw1.png</file>
+        <file>back-60Dw2.png</file>
+        <file>back-60Dw3.png</file>
+        <file>back-60Lw0.png</file>
+        <file>back-60Lw1.png</file>
+        <file>back-60Lw2.png</file>
+        <file>back-60Lw3.png</file>
+        <file>wifiRed0.png</file>
+        <file>wifiRed1.png</file>
+        <file>wifiRed2.png</file>
+        <file>wifiRed3.png</file>
     </qresource>
 </RCC>

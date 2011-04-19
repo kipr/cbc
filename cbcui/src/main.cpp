@@ -27,13 +27,14 @@ int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
 
-    MainWindow dialog;
+    MainWindow::initialize(0);
+    MainWindow *dialog = MainWindow::instance();
 
 #ifdef QT_ARCH_ARM
     QApplication::setOverrideCursor(QCursor(Qt::BlankCursor));
 #endif
 
-    dialog.show();
+    dialog->show();
 
     return app.exec();
 }

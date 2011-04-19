@@ -32,9 +32,26 @@ class MainWindow : public QDialog, private Ui::MainWindow
 {
     Q_OBJECT
 
-public:
+protected:
     MainWindow(QWidget *parent = 0);
+    static MainWindow *m_mainWin;
     ~MainWindow();
+
+public:
+    static MainWindow *initialize(QWidget *parent = 0){
+        if(!m_mainWin)
+            m_mainWin = new MainWindow(parent);
+        return m_mainWin;
+    }
+
+    static MainWindow *instance(){
+        return m_mainWin;
+    }
+    static MainWindow *destroy() {
+        delete m_mainWin;
+        m_mainWin = 0;
+        return 0;
+    }
 
 public slots:
    void on_ui_backButton_clicked(bool checked = false);
@@ -43,9 +60,12 @@ public slots:
    void updateBatteryDisplay();
    void userProgramStateChange(int state);
    void batteryWarning(float volts);
+   void checkWifiSignal();
+   void stopWifiCheck();
 
 private:
    MainMenu *m_mainMenu;
+   QTimer   *m_wifiSig;
    void hideEStop();
 };
 

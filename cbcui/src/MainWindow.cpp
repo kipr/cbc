@@ -29,6 +29,8 @@
 #include <QWSServer>
 #include <QProcess>
 
+MainWindow *MainWindow::m_mainWin=0;
+
 MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent),
     m_mainMenu(0)
@@ -44,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
    //qserver->closeKeyboard();
 
+    m_wifiSig = new QTimer(this);
+    m_wifiSig->setInterval(5000);
+
+    QObject::connect(m_wifiSig, SIGNAL(timeout()), this, SLOT(checkWifiSignal()));
     QObject::connect(ui_runstopButton, SIGNAL(clicked()), UserProgram::instance(), SLOT(toggleState()));
     QObject::connect(CbobData::instance(), SIGNAL(refresh()), this, SLOT(updateBatteryDisplay()));
     QObject::connect(CbobData::instance(), SIGNAL(lowBattery(float)), this, SLOT(batteryWarning(float)));
@@ -64,6 +70,9 @@ MainWindow::~MainWindow()
 {
     QwertyKeypad::destroy();
     delete m_mainMenu;
+    if(m_wifiSig->isActive())
+        m_wifiSig->stop();
+    delete m_wifiSig;
 }
 
 
@@ -99,6 +108,46 @@ void MainWindow::batteryWarning(float volts)
                              QMessageBox::Ok,
                              QMessageBox::NoButton);
     }
+}
+
+void MainWindow::checkWifiSignal()
+{
+    if(!m_wifiSig->isActive())
+        m_wifiSig->start();
+
+    QProcess sigStats(this);
+    sigStats.start("/mnt/kiss/wifi/wifi_signal.pl quality");
+    sigStats.waitForFinished(100);
+    int quality = QString(sigStats.readAllStandardOutput()).toInt();
+
+    QString style;
+    if(sigStats.exitCode()){
+        style += "QPushButton{border:0px; background-image:url(:/actions/back-60L.png); color:black; font-size:11pt; text-align:left;}";
+        style += "QPushButton:pressed{background-image:url(:/actions/back-60D.png); color:black; font-size:11pt; text-align:left;}";
+    }else if(quality > 75){
+        style += "QPushButton{border:0px; background-image:url(:/actions/back-60Lw3.png); color:black; font-size:11pt; text-align:left;}";
+        style += "QPushButton:pressed{background-image:url(:/actions/back-60Dw3.png); color:black; font-size:11pt; text-align:left;}";
+    }else if(quality > 50){
+        style += "QPushButton{border:0px; background-image:url(:/actions/back-60Lw2.png); color:black; font-size:11pt; text-align:left;}";
+        style += "QPushButton:pressed{background-image:url(:/actions/back-60Dw2.png); color:black; font-size:11pt; text-align:left;}";
+    }else if(quality > 25){
+        style += "QPushButton{border:0px; background-image:url(:/actions/back-60Lw1.png); color:black; font-size:11pt; text-align:left;}";
+        style += "QPushButton:pressed{background-image:url(:/actions/back-60Dw1.png); color:black; font-size:11pt; text-align:left;}";
+    }else{
+        style += "QPushButton{border:0px; background-image:url(:/actions/back-60Lw0.png); color:black; font-size:11pt; text-align:left;}";
+        style += "QPushButton:pressed{background-image:url(:/actions/back-60Dw0.png); color:black; font-size:11pt; text-align:left;}";
+    }
+    ui_backButton->setStyleSheet(style);
+}
+
+void MainWindow::stopWifiCheck()
+{
+    if(m_wifiSig->isActive())
+        m_wifiSig->stop();
+    QString style;
+    style += "QPushButton{border:0px; background-image:url(:/actions/back-60L.png); color:black; font-size:11pt; text-align:left;}";
+    style += "QPushButton:pressed{background-image:url(:/actions/back-60D.png); color:black; font-size:11pt; text-align:left;}";
+    ui_backButton->setStyleSheet(style);
 }
 
 void MainWindow::on_ui_backButton_clicked(bool)
