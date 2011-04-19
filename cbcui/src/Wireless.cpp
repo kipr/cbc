@@ -40,6 +40,8 @@ Wireless::~Wireless()
     delete m_netStart;
     m_ssidScan->kill();
     delete m_ssidScan;
+    if(m_commAnima->isActive())
+        m_commAnima->stop();
     delete m_commAnima;
 }
 
