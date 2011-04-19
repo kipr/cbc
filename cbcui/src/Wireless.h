@@ -4,7 +4,7 @@
 #include "ui_Wireless.h"
 #include "Page.h"
 #include <QProcess>
-//#include <QTimer>
+#include <QTimer>
 #include <QtGui>
 #include "Keyboard/QwertyKeypad.h"
 
@@ -38,9 +38,10 @@ public slots:
     void hide();
 
     void ssidScan();
-    void getIPaddress(int exitCode = 0);
+    void getWifiConfig(int exitCode = 0);
     void listRefresh(int exitCode = 0);
     void on_ui_connectButton_clicked();
+    void blinky();
 
 private:
     QString         m_cbcSSID;
@@ -48,6 +49,7 @@ private:
     QProcess        *m_ssidScan;
     QProcess        *m_netStart;
     struct WifiPort m_connectedWifi;
+    QTimer          *m_commAnima;
     //QTimer      *m_refreshTimer;
 
     void addSsidToList(QString net);

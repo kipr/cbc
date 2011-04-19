@@ -10,8 +10,13 @@ Wireless::Wireless(QWidget *parent) : Page(parent),m_cbcSSID(""),m_cbcIP("")
     m_ssidScan = new QProcess(this);
     connect(m_ssidScan, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(listRefresh(int)));
     m_netStart = new QProcess(this);
-    connect(m_netStart, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(getIPaddress(int)));
+    connect(m_netStart, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(getWifiConfig(int)));
 
+    m_commAnima = new QTimer(this);
+    m_commAnima->setInterval(150);
+    connect(m_commAnima, SIGNAL(timeout()), this, SLOT(blinky()));
+
+    this->getWifiConfig();
     //m_refreshTimer = new QTimer(this);
     //connect(m_refreshTimer, SIGNAL(timeout()), this, SLOT(ssidScan()));
 }
@@ -19,7 +24,6 @@ Wireless::Wireless(QWidget *parent) : Page(parent),m_cbcSSID(""),m_cbcIP("")
 void Wireless::show()
 {
     this->ssidScan();
-    this->getIPaddress();
     //m_refreshTimer->start(6000);
     Page::show();
 }
@@ -32,40 +36,76 @@ void Wireless::hide()
 
 Wireless::~Wireless()
 {
+    m_netStart->kill();
+    delete m_netStart;
     m_ssidScan->kill();
     delete m_ssidScan;
+    delete m_commAnima;
 }
 
-void Wireless::getIPaddress(int exitCode)
+void Wireless::getWifiConfig(int exitCode)
 {
+    if(m_commAnima->isActive())
+        m_commAnima->stop();
     ui_connectButton->setEnabled(true);
+    ui_connectButton->setText("Connect");
     if(exitCode != 0){
+        m_cbcIP = "";
+        m_cbcSSID = "";
         ui_ipLabel->setText("Network\nerror");
+        this->listRefresh();
         return;
     }
 
-    QProcess iconfig;
-    iconfig.start("ifconfig rausb0");
-    iconfig.waitForFinished();
-    QString ip(iconfig.readAllStandardOutput());
-    // get the IP address
-    int q = ip.indexOf("inet");
-    if(q != -1){
-        q = ip.indexOf(':',q) + 1;
-        int eq = ip.indexOf(' ',q);
-        m_cbcIP = ip.mid(q,eq-q);
-    }
-    else
-        m_cbcIP = "";
+    QFile netFile("/psp/cbc_net_config");
 
-    if(m_cbcIP !=  ""){
-        iconfig.start("iwconfig rausb0");
-        iconfig.waitForFinished();
-        QString ssidName(iconfig.readAllStandardOutput());
-        m_cbcSSID = ssidName.section('"',1,1);
+    if(!netFile.exists())
+        return;
+
+    if(!netFile.open(QIODevice::ReadOnly | QIODevice::Text)){
+        qWarning("Open error on network_config file");
+        return;
     }
-    else
-        m_cbcSSID = "";
+
+    QString data(netFile.readAll());
+    QStringList netConfigList = data.split('\n');
+    netFile.close();
+
+    for(int i=0; i<netConfigList.size(); i++)
+    {
+        QString x = netConfigList.at(i);
+
+        if(x.isEmpty())
+            continue;
+        else if(x.contains("ssid"))
+            m_connectedWifi.ssid = x.section('=',1,1);
+        else if(x.contains("hwaddr"))
+            m_connectedWifi.hwaddr = x.section('=',1,1);
+        else if(x.contains("key"))
+            m_connectedWifi.key = x.section('=',1,1);
+        else if(x.contains("encryption"))
+            m_connectedWifi.encryption = x.section('=',1,1);
+        else if(x.contains("auth"))
+            m_connectedWifi.authentication = x.section('=',1,1);
+        else if(x.contains("allocation"))
+            m_connectedWifi.allocation = x.section('=',1,1);
+        else if(x.contains("encoding"))
+            m_connectedWifi.encoding = x.section('=',1,1);
+        else if(x.contains("gateway"))
+            m_connectedWifi.gateway = x.section('=',1,1);
+        else if(x.contains("netmask"))
+            m_connectedWifi.netmask = x.section('=',1,1);
+        else if(x.contains("ip"))
+            m_connectedWifi.ip = x.section('=',1,1);
+        else if(x.contains("nameserver1"))
+            m_connectedWifi.nameserver1 = x.section('=',1,1);
+        else if(x.contains("nameserver2"))
+            m_connectedWifi.nameserver2 = x.section('=',1,1);
+        else if(x.contains("txrate"))
+            m_connectedWifi.txRate = x.section('=',1,1).toInt();
+    }
+    m_cbcIP = m_connectedWifi.ip;
+    m_cbcSSID = m_connectedWifi.ssid;
 
     ui_ipLabel->setText(m_cbcSSID + "\n" + m_cbcIP);
     this->listRefresh();
@@ -74,6 +114,7 @@ void Wireless::getIPaddress(int exitCode)
 void Wireless::ssidScan()
 {
     if(m_ssidScan->state() == QProcess::NotRunning){
+        m_commAnima->start();
         ui_connectButton->setEnabled(false);
         ui_ssidListWidget->clear();
 
@@ -116,7 +157,10 @@ void Wireless::listRefresh(int exitCode)
     QFile fn("/mnt/kiss/wifi/ssids");
 
     if(exitCode == 0 && fn.exists()){
+        if(m_commAnima->isActive())
+            m_commAnima->stop();
         ui_connectButton->setEnabled(true);
+        ui_connectButton->setText("Connect");
         ui_ssidListWidget->clear();
         fn.open(QIODevice::ReadOnly);
         while(!fn.atEnd()){
@@ -210,8 +254,37 @@ void Wireless::on_ui_connectButton_clicked()
         if(m_netStart->state() == QProcess::NotRunning){
             m_netStart->start("/mnt/kiss/wifi/wifi_start.pl");
             ui_connectButton->setEnabled(false);
+            m_commAnima->start();
         }
     }
+}
+
+void Wireless::blinky()
+{
+    static int i=0;
+
+    switch(i){
+    case 0:
+        ui_connectButton->setText("|");
+        break;
+    case 1:
+        ui_connectButton->setText("( | )");
+        break;
+    case 2:
+        ui_connectButton->setText("(( | ))");
+        break;
+    case 3:
+        ui_connectButton->setText("((( | )))");
+        break;
+    case 4:
+        ui_connectButton->setText("((  |  ))");
+        break;
+    case 5:
+        ui_connectButton->setText("(   |   )");
+        break;
+    }
+    i++;
+    if(i>5) i=0;
 }
 
 //////////////////////////////////////////////////////////////////////////

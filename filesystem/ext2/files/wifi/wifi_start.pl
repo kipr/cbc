@@ -11,7 +11,7 @@ if( ! -e $cbcNetConfig )
 { print "Network config file not found\n"; exit 1; }
 
 # check for a connected device
-if( ! defined($iface) )
+if( $iface eq "" )
 { print "Network device not connected\n"; exit 1; }
 
 # read in the network configuration file
@@ -20,12 +20,17 @@ if( ! defined($iface) )
 #foreach my $var (keys %netConfig)
 #{ print "$var: $netConfig{$var}"; }
 
+if( $netConfig{'ssid'} eq `/mnt/kiss/wifi/wifi_connected.pl` )
+{ print "Already connected to:$netConfig{'ssid'}"; exit 0; }
+
 if( ! defined( $netConfig{'type'} ) )
 { $netConfig{'type'} = "wlan"; }
 
 # bring up the network device
 system( "ifconfig $iface up" );
-sleep( 4 );
+
+# kill the ssh daemon
+system( "killall ssh 2>&1" );
 
 if( $netConfig{'allocation'} eq "dhcp" )
 {
@@ -35,12 +40,13 @@ if( $netConfig{'allocation'} eq "dhcp" )
 	if( $netConfig{'type'} ne "wlan" )
 	{
 		system( "udhcpc -t 5 -n -p /var/run/udhcpc.$iface.pid -i $iface" );
+		system( "/sbin/sshd" );
 		exit 0;
 	}
 }
 else
 {
-#	print "setup Static network\n";
+	#print "setup Static network\n";
 	# setup static allocation
 	if( ! defined( $netConfig{'ip'} ) )
 	{ print "Static IP not set\n"; exit 1; }
@@ -66,7 +72,10 @@ else
 	close( F );
 	
 	if( $netConfig{'type'} ne "wlan" )
-	{ exit 0; }
+	{
+		system( "/sbin/sshd" );
+		exit 0;
+	}
 }
 
 if( ! defined( $netConfig{'txrate'} ) )
@@ -110,15 +119,14 @@ ENCRYP:
 			exit 1;
 		}
 	}
-print "got connection\n";	
 }
 elsif( $netConfig{'encryption'} eq "WEP" )
 {
 	#print "auth is WEP\n";
 	system( "iwpriv $iface set EncrypType=$netConfig{'encryption'}" );
 	system( "iwpriv $iface set SSID=$netConfig{'ssid'}" );
-#	if( $netConfig{'encoding'} eq "ascii" )
-#	{ #determine wep key }
+	if( $netConfig{'encoding'} eq "ascii" )
+	{ determineWepKey( ); }
 	system( "iwpriv $iface set Key1=$netConfig{'key'}" );
 	system( "iwpriv $iface set SSID=$netConfig{'ssid'}" );
 }
@@ -126,7 +134,18 @@ elsif( $netConfig{'encryption'} eq "WEP" )
 if( $netConfig{'ssid'} eq `/mnt/kiss/wifi/wifi_connected.pl` )
 {
 	if( $netConfig{'allocation'} eq "dhcp" )
-	{ system( "udhcpc -t 5 -n -p /var/run/udhcpc.$iface.pid -i $iface" ); }
+	{ 
+		system( "udhcpc -t 5 -n -p /var/run/udhcpc.$iface.pid -i $iface" ); 
+		my $IP = `ifconfig $iface | sed -n 2p`;
+		my $colon = index($IP,':') + 1;	
+		$IP = substr $IP, $colon, 15;
+		if( $IP eq "" ) { print "IP not allocated"; exit 1; }
+		$netConfig{'ip'} = $IP;
+	}
+	# start the ssh daemon
+	system( "/sbin/sshd" );
+	
+	writeConfigFile( );
 	print "Connected!\n";
 	exit 0;
 }
@@ -134,4 +153,52 @@ if( $netConfig{'ssid'} eq `/mnt/kiss/wifi/wifi_connected.pl` )
 print "Not connected\n";
 exit 1;
 
+sub writeConfigFile
+{
+	open( F, ">$cbcNetConfig" );
+
+	foreach my $key (keys %netConfig )
+	{
+		print F "$key=$netConfig{$key}\n";
+	}
+	close( F );
+}
+
+sub determineWepKey
+{
+	my $asciiPasskey = $netConfig{'key'};
+	my @wepKeys = `CHUMBY_BINS=/usr/bin perl /usr/chumby/scripts/weppasswd.pl $asciiPasskey`;
+	chomp( @wepKeys );
+
+	# if the password entered is exactly 10 or 26 HEX chars, add them to the front of the list
+	if( $netConfig{'key'}=~ m/[0-9A-F]{10}|[0-9A-F]{26}/i )
+	{ unshift( @wepKeys, $netConfig{'key'} ); }
+
+	my $i = 0;
+	my $total = @wepKeys;
+	foreach my $key ( @wepKeys )
+	{
+		++$i;
+		print "<status key=\"$key\" index=\"$i\" total=\"$total\"/>\n";
+	
+		system( "iwpriv $iface set AuthMode=$netConfig{'auth'}" );
+		system( "iwpriv $iface set SSID=$netConfig{'ssid'}" );
+		system( "iwpriv $iface set Key1=" . $key );
+		system( "iwpriv $iface set SSID=$netConfig{'ssid'}" );
+		
+		if( $netConfig{'ssid'} eq `/mnt/kiss/wifi/wifi_connected.pl` )
+		{
+			if( $netConfig{'allocation'} eq "dhcp" )
+			{ system( "udhcpc -t 5 -n -p /var/run/udhcpc.$iface.pid -i $iface" ); }
+			
+			my $netStatus = `/usr/chumby/scripts/network_status.sh`;
+			if( ! ( $netStatus =~ /error/ ) )
+			{
+				$netConfig{'key'} = $key;
+				$netConfig{'encoding'} = "hex";
+				return;
+			}
+		}
+	} 
+}
 

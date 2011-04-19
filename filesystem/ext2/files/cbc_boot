@@ -64,18 +64,19 @@ udhcpc eth0
 echo "Starting wireless network driver" | $PRINT
 #insmod /drivers/rt73.ko
 insmod $KISS/drivers/rt73.ko
-if [ -e $KISS/config/network_config ]; then
+if [ -e $KISS/config/cbc_net_config ]; then
     echo "Copying network config" | $PRINT
-    cp $KISS/config/network_config /psp
+    cp $KISS/config/cbc_net_config /psp
 fi
 
 WIFI=`cat /proc/net/wireless | sed -n 3p`
 WIFI=${WIFI%%:*}
 if [ -n "${WIFI}" ]; then
-    if [ -e /psp/network_config ]; then
+    if [ -e /psp/cbc_net_config ]; then
 	echo "Starting network" | $PRINT
 	# start the network based on the parameters in the config file
-	/usr/chumby/scripts/start_network
+	#/usr/chumby/scripts/start_network
+	/mnt/kiss/wifi/wifi_start.pl	
 	# print out the ip address it connects to
 	echo `ifconfig rausb0 | grep inet | sed 's/Bcast.*//'` | $PRINT
 	sleep 5
@@ -87,8 +88,8 @@ fi
 
 # sshd
 ######
-echo "Starting sshd" | $PRINT
-/sbin/sshd
+#echo "Starting sshd" | $PRINT
+#/sbin/sshd
 
 ##############################
 # Chumby Hardware driver setup

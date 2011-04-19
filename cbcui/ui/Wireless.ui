@@ -74,7 +74,7 @@
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">color:lightGreen</string>
+        <string notr="true">color:white</string>
        </property>
        <property name="text">
         <string>KIPR
