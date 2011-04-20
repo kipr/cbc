@@ -33,10 +33,6 @@ public:
     Wireless(QWidget *parent = 0);
     ~Wireless();
 
-signals:
-    void wifiError();
-    void wifiNew();
-
 public slots:
     void show();
     void hide();

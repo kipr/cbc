@@ -57,6 +57,7 @@ void Wireless::getWifiConfig(int exitCode)
         m_cbcIP = "";
         m_cbcSSID = "";
         ui_ipLabel->setText("Network\nerror");
+        MainWindow::instance()->stopWifiCheck();
         this->listRefresh();
         return;
     }
@@ -138,7 +139,7 @@ void Wireless::ssidScan()
         scanning->setTextColor(Qt::red);
 
         ui_ssidListWidget->addItem(scanning);
-        m_ssidScan->start("/mnt/kiss/wifi/wifi_scan.sh");
+        m_ssidScan->start("/mnt/kiss/wifi/wifi_scan.pl");
     }else
     {
         ui_ssidListWidget->clear();
@@ -162,10 +163,25 @@ void Wireless::ssidScan()
 void Wireless::listRefresh(int exitCode)
 {
     QFile fn("/mnt/kiss/wifi/ssids");
+    if(m_commAnima->isActive())
+        m_commAnima->stop();
 
     if(exitCode == 0 && fn.exists()){
-        if(m_commAnima->isActive())
-            m_commAnima->stop();
+        QProcess check;
+        check.start("/mnt/kiss/wifi/wifi_connected.pl");
+        check.waitForFinished(100);
+        if(check.exitCode())
+            m_cbcSSID = "";
+        else
+            m_cbcSSID = QString(check.readAllStandardOutput());
+
+        check.start("/mnt/kiss/wifi/wifi_ip.pl rausb0");
+        check.waitForFinished(100);
+        if(check.exitCode())
+            m_cbcIP = "";
+        else
+            m_cbcIP = QString(check.readAllStandardOutput());
+
         ui_connectButton->setEnabled(true);
         ui_connectButton->setText("Connect");
         ui_ssidListWidget->clear();
@@ -175,7 +191,7 @@ void Wireless::listRefresh(int exitCode)
             this->addSsidToList(net);
         }
         fn.close();
-    }
+    }   
     else{
         if(exitCode == 1)
             ui_ssidListWidget->item(0)->setText("No Networks Available");
@@ -184,7 +200,6 @@ void Wireless::listRefresh(int exitCode)
 
         ui_ipLabel->setText("");
         MainWindow::instance()->stopWifiCheck();
-        //emit wifiError();
     }
 }
 

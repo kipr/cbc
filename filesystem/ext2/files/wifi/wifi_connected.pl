@@ -1,7 +1,10 @@
 #!/usr/bin/perl
 
-$iface = $ARGV[0] || "rausb0";
-$auth = $ARGV[1] || "";
+my $iface = `cat /proc/net/wireless | sed -n 3p`;
+$iface = substr $iface, 0, index($iface,':');
+if( $iface eq "" ){ exit 1; }
+
+my $auth = $ARGV[0] || "";
 
 my $timeout 	= 4;
 my $i		= 0;
@@ -12,9 +15,7 @@ while ( $timeout > $i )
 {
 	my $iwconfig = `iwconfig $iface 2>&1`;
 	if( $iwconfig =~ m/No such device/s )
-	{
-		last;
-	}
+	{ exit 1; }
 	
 	# remove all new lines
 	$iwconfig =~ s/\n//g;
@@ -28,29 +29,17 @@ while ( $timeout > $i )
 	$AccessPt = getItemValue( "Access Point: ",@array );
 	$SSID = getItemValue( "ESSID:",@array);
 	$SSID =~ s/\"//g;
-	if( ( $AccessPt ne 0 ) && ( $SSID ne 0 ) )
+	if( ( $AccessPt ne "" ) && ( $SSID ne "" ) )
 	{
 		my $EncrypKey = getItemValue( "Encryption Key:",@array );
-		if( $auth eq "OPEN" )
-		{
-			last;
-		}
-		elsif ( $EncrypKey ne "off" )
-		{
-			last;	
-		}
+		if( ( $auth eq "OPEN" ) || ( $EncrypKey ne "off" ) )
+		{ print $SSID; exit 0; }
 	}
 	++$i;
 	sleep( 1 );
 }
 
-if( $SSID eq 0 )
-{ 
-	exit 1;
-}
-	
-print $SSID;
-exit 0;
+exit 1;
 
 sub getItemValue
 {

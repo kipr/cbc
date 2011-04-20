@@ -12,7 +12,7 @@ if( ! -e $cbcNetConfig )
 
 # check for a connected device
 if( $iface eq "" )
-{ print "Network device not connected\n"; exit 1; }
+{ print "Network device not connected\n"; $netConfig{'ssid'}=""; errorExit(); }
 
 # read in the network configuration file
 %netConfig = split(/[=\n]/, `cat $cbcNetConfig`);
@@ -49,13 +49,13 @@ else
 	#print "setup Static network\n";
 	# setup static allocation
 	if( ! defined( $netConfig{'ip'} ) )
-	{ print "Static IP not set\n"; exit 1; }
+	{ print "Static IP not set\n"; errorExit(); }
 	
 	if( ! defined( $netConfig{'netmask'} ) )
-	{ print "Static Netmask not set\n"; exit 1; }
+	{ print "Static Netmask not set\n"; errorExit(); }
 	
 	if( ! defined( $netConfig{'gateway'} ) )
-	{ print "Static Gateway not set\n"; exit 1; }
+	{ print "Static Gateway not set\n"; errorExit(); }
 
 	system( "ifconfig $iface $netConfig{'ip'} netmask $netConfig{'netmask'}" );
 	
@@ -116,7 +116,8 @@ ENCRYP:
 			goto ENCRYP;
 		}else{
 			print "Could not determine Encryption\n";
-			exit 1;
+			$netConfig{'ssid'}="";
+			errorExit();
 		}
 	}
 }
@@ -136,10 +137,8 @@ if( $netConfig{'ssid'} eq `/mnt/kiss/wifi/wifi_connected.pl` )
 	if( $netConfig{'allocation'} eq "dhcp" )
 	{ 
 		system( "udhcpc -t 5 -n -p /var/run/udhcpc.$iface.pid -i $iface" ); 
-		my $IP = `ifconfig $iface | sed -n 2p`;
-		my $colon = index($IP,':') + 1;	
-		$IP = substr $IP, $colon, 15;
-		if( $IP eq "" ) { print "IP not allocated"; exit 1; }
+		my $IP = `/mnt/kiss/wifi/wifi_ip.pl $iface`;
+		if( $IP eq "" ) { print "IP not allocated"; $netConfig{'ip'}=""; errorExit(); }
 		$netConfig{'ip'} = $IP;
 	}
 	# start the ssh daemon
@@ -151,7 +150,13 @@ if( $netConfig{'ssid'} eq `/mnt/kiss/wifi/wifi_connected.pl` )
 }
 
 print "Not connected\n";
-exit 1;
+errorExit();
+
+sub errorExit
+{
+	writeConfigFile();
+	exit 1;
+}
 
 sub writeConfigFile
 {
