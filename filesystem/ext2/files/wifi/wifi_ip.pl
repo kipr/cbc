@@ -7,7 +7,8 @@ $iface = substr $iface, 0, index($iface,':');
 if( $iface eq "" ){ exit 1; }
 my $IP = `ifconfig $iface | sed -n 2p`;
 my $colon = index($IP,':') + 1;
-$IP = substr $IP, $colon, 15;
+my $space = index($IP,' ',$colon);
+$IP = substr $IP, $colon, ($space - $colon);
 if( $IP eq "" ){ exit 1; }
 print $IP;
 exit 0;

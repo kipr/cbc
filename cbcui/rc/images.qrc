@@ -40,9 +40,9 @@
         <file>back-60Lw1.png</file>
         <file>back-60Lw2.png</file>
         <file>back-60Lw3.png</file>
-        <file>wifiRed0.png</file>
-        <file>wifiRed1.png</file>
-        <file>wifiRed2.png</file>
-        <file>wifiRed3.png</file>
+        <file>botguy_wifi0.png</file>
+        <file>botguy_wifi1.png</file>
+        <file>botguy_wifi2.png</file>
+        <file>botguy_wifi3.png</file>
     </qresource>
 </RCC>

@@ -14,7 +14,7 @@ if( $iface eq "" ){ unlink $ssidFile; exit 2; }
 `iwlist $iface scan`;
 
 # survey the local net connections
-my $survey = `iwpriv $iface get_site_survey | awk 'FNR>2' | sed 's/   */  /g'`;
+my $survey = `iwpriv $iface get_site_survey | awk 'FNR>2' | sed 's/\t/  /g' | sed 's/   */  /g'`;
 
 # check for available connections
 if( $survey eq ""){ unlink $ssidFile; exit 1; }

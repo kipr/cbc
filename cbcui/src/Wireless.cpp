@@ -165,6 +165,8 @@ void Wireless::listRefresh(int exitCode)
     QFile fn("/mnt/kiss/wifi/ssids");
     if(m_commAnima->isActive())
         m_commAnima->stop();
+    ui_connectButton->setEnabled(true);
+    ui_connectButton->setText("Connect");
 
     if(exitCode == 0 && fn.exists()){
         QProcess check;
@@ -175,15 +177,13 @@ void Wireless::listRefresh(int exitCode)
         else
             m_cbcSSID = QString(check.readAllStandardOutput());
 
-        check.start("/mnt/kiss/wifi/wifi_ip.pl rausb0");
+        check.start("/mnt/kiss/wifi/wifi_ip.pl");
         check.waitForFinished(100);
         if(check.exitCode())
             m_cbcIP = "";
         else
             m_cbcIP = QString(check.readAllStandardOutput());
 
-        ui_connectButton->setEnabled(true);
-        ui_connectButton->setText("Connect");
         ui_ssidListWidget->clear();
         fn.open(QIODevice::ReadOnly);
         while(!fn.atEnd()){
@@ -206,8 +206,9 @@ void Wireless::listRefresh(int exitCode)
 void Wireless::addSsidToList(QString net)
 {
     // get the SSID name
-    QString ssidName = net.section('"',1,1);
-    QString hwaddr = net.section(' ',3,3);
+    QString ssidName = net.section("  ",2,2);
+    QString ssidAuth = net.section("  ",5,5);
+    QString hwaddr = net.section("  ",3,3);
 
     // get the link quality
     int q = net.indexOf("Quality");
@@ -228,13 +229,13 @@ void Wireless::addSsidToList(QString net)
 
     QIcon wifiIcon;
     if(quality > 75)
-        wifiIcon.addFile(":/actions/wifiRed3.png");
+        wifiIcon.addFile(":/actions/botguy_wifi3.png");
     else if(quality > 50)
-        wifiIcon.addFile(":/actions/wifiRed2.png");
+        wifiIcon.addFile(":/actions/botguy_wifi2.png");
     else if(quality > 25)
-        wifiIcon.addFile(":/actions/wifiRed1.png");
+        wifiIcon.addFile(":/actions/botguy_wifi1.png");
     else
-        wifiIcon.addFile(":/actions/wifiRed0.png");
+        wifiIcon.addFile(":/actions/botguy_wifi0.png");
     ssid->setIcon(wifiIcon);
 
     if(ssidName == m_cbcSSID){

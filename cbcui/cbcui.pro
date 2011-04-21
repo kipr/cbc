@@ -79,7 +79,9 @@ FORMS += ui/MainWindow.ui \
     ui/Volume.ui \
     ui/Serial.ui \
     ui/Wireless.ui \
-    ui/QwertyKeypad.ui
+    ui/QwertyKeypad.ui \
+    ui/WifiItem.ui \
+    ui/WifiDialog.ui
 SOURCES += src/main.cpp \
     src/MainWindow.cpp \
     src/MainMenu.cpp \
