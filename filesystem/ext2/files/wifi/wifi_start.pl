@@ -8,11 +8,11 @@ $iface = substr $iface, 0, index($iface,':');
 
 # check for network config file
 if( ! -e $cbcNetConfig )
-{ print "Network config file not found\n"; exit 1; }
+{ print "Network config file not found\n"; exit 3; }
 
 # check for a connected device
 if( $iface eq "" )
-{ print "Network device not connected\n"; $netConfig{'ssid'}=""; errorExit(); }
+{ print "Network device not connected\n"; exit 2; }
 
 # read in the network configuration file
 %netConfig = split(/[=\n]/, `cat $cbcNetConfig`);
@@ -20,17 +20,23 @@ if( $iface eq "" )
 #foreach my $var (keys %netConfig)
 #{ print "$var: $netConfig{$var}"; }
 
-if( $netConfig{'ssid'} eq `/mnt/kiss/wifi/wifi_connected.pl` )
-{ print "Already connected to:$netConfig{'ssid'}"; exit 0; }
+# bring down the wifi
+system( "ifconfig $iface down" );
+
+# kill the ssh daemon
+system( "killall ssh 2>&1" );
 
 if( ! defined( $netConfig{'type'} ) )
 { $netConfig{'type'} = "wlan"; }
 
+sleep( 1 );
+
 # bring up the network device
 system( "ifconfig $iface up" );
 
-# kill the ssh daemon
-system( "killall ssh 2>&1" );
+# be sure to scan for new networks, apparently the wireless system
+# needs to do this before connecting to a new network
+system( "iwlist $iface scan 2>&1" );
 
 if( $netConfig{'allocation'} eq "dhcp" )
 {
@@ -49,13 +55,13 @@ else
 	#print "setup Static network\n";
 	# setup static allocation
 	if( ! defined( $netConfig{'ip'} ) )
-	{ print "Static IP not set\n"; errorExit(); }
+	{ print "Static IP not set\n"; exit 3; }
 	
 	if( ! defined( $netConfig{'netmask'} ) )
-	{ print "Static Netmask not set\n"; errorExit(); }
+	{ print "Static Netmask not set\n"; exit 3; }
 	
 	if( ! defined( $netConfig{'gateway'} ) )
-	{ print "Static Gateway not set\n"; errorExit(); }
+	{ print "Static Gateway not set\n"; exit 3; }
 
 	system( "ifconfig $iface $netConfig{'ip'} netmask $netConfig{'netmask'}" );
 	
@@ -78,12 +84,20 @@ else
 	}
 }
 
-if( ! defined( $netConfig{'txrate'} ) )
-{ $netConfig{'txrate'} = 6; }
+# setup Adhoc or Managed Infra networks
+if( $netConfig{'netType'} eq "Adhoc" )
+{ system( "iwconfig $iface mode Ad-Hoc" ); }
+else
+{ system( "iwconfig $iface mode Managed" ); }
 
-system( "iwpriv $iface set TxRate=$netConfig{'txrate'}" );
+# set the Bit rate transmission speed
+if( $netConfig{'txrate'} eq "" )
+{ $netConfig{'txrate'} = "9Mb/s"; }
+system( "iwconfig $iface rate $netConfig{'txrate'}" );
+
 system( "iwpriv $iface set AuthMode=$netConfig{'auth'}" );
 system( "iwpriv $iface set SSID=$netConfig{'ssid'}" );
+sleep( 1 );
 
 #print "check auth is WPA or WEP\n";
 if( ( $netConfig{'auth'} eq "WPAPSK" ) || ( $netConfig{'auth'} eq "WPA2PSK" ) )
@@ -91,7 +105,8 @@ if( ( $netConfig{'auth'} eq "WPAPSK" ) || ( $netConfig{'auth'} eq "WPA2PSK" ) )
 	#print "auth is WPA\n";
 	system( "iwpriv $iface set WPAPSK=$netConfig{'key'}" );
 	system( "iwpriv $iface set SSID=$netConfig{'ssid'}" );
-
+	sleep( 1 );
+	
 	#print "determine encryption type\n";
 	my $count = 1;
 
@@ -102,7 +117,8 @@ if( ( $netConfig{'auth'} eq "WPAPSK" ) || ( $netConfig{'auth'} eq "WPA2PSK" ) )
 ENCRYP:
 	system( "iwpriv $iface set EncrypType=$netConfig{'encryption'}" );
 	system( "iwpriv $iface set SSID=$netConfig{'ssid'}" );
-
+	sleep( 1 );
+	
 	if( $netConfig{'ssid'} ne `/mnt/kiss/wifi/wifi_connected.pl` )
 	{
 		#print "encryption failed\n";
@@ -116,8 +132,7 @@ ENCRYP:
 			goto ENCRYP;
 		}else{
 			print "Could not determine Encryption\n";
-			$netConfig{'ssid'}="";
-			errorExit();
+			exit 3;
 		}
 	}
 }
@@ -130,6 +145,13 @@ elsif( $netConfig{'encryption'} eq "WEP" )
 	{ determineWepKey( ); }
 	system( "iwpriv $iface set Key1=$netConfig{'key'}" );
 	system( "iwpriv $iface set SSID=$netConfig{'ssid'}" );
+	sleep( 1 );
+}
+else
+{
+	system( "iwpriv $iface set EncrypType=$netConfig{'encryption'}" );
+	system( "iwpriv $iface set SSID=$netConfig{'ssid'}" );
+	sleep( 1 );
 }
 
 if( $netConfig{'ssid'} eq `/mnt/kiss/wifi/wifi_connected.pl` )
@@ -138,7 +160,7 @@ if( $netConfig{'ssid'} eq `/mnt/kiss/wifi/wifi_connected.pl` )
 	{ 
 		system( "udhcpc -t 5 -n -p /var/run/udhcpc.$iface.pid -i $iface" ); 
 		my $IP = `/mnt/kiss/wifi/wifi_ip.pl $iface`;
-		if( $IP eq "" ) { print "IP not allocated"; $netConfig{'ip'}=""; errorExit(); }
+		if( $IP eq "" ) { print "IP not allocated"; exit 3; }
 		$netConfig{'ip'} = $IP;
 	}
 	# start the ssh daemon
@@ -150,13 +172,7 @@ if( $netConfig{'ssid'} eq `/mnt/kiss/wifi/wifi_connected.pl` )
 }
 
 print "Not connected\n";
-errorExit();
-
-sub errorExit
-{
-	writeConfigFile();
-	exit 1;
-}
+exit 3;
 
 sub writeConfigFile
 {

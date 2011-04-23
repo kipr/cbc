@@ -6,7 +6,7 @@ if( $iface eq "" ){ exit 1; }
 
 my $auth = $ARGV[0] || "";
 
-my $timeout 	= 4;
+my $timeout 	= 1;
 my $i		= 0;
 my $AccessPt	= 0;
 my $SSID	= 0;
@@ -36,7 +36,7 @@ while ( $timeout > $i )
 		{ print $SSID; exit 0; }
 	}
 	++$i;
-	sleep( 1 );
+#	sleep( 1 );
 }
 
 exit 1;

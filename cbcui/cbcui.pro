@@ -47,7 +47,9 @@ HEADERS += src/MainWindow.h \
     src/MotorTest.h \
     src/Brightness.h \
     src/Volume.h \
-    src/Wireless.h \
+    src/Wireless/Wireless.h \
+    src/Wireless/WifiDialog.h \
+    src/Wireless/WifiItem.h \
     src//Serial/SerialPort.h \
     src/Serial/SerialServer.h \
     src/Serial/SerialPage.h \
@@ -110,7 +112,9 @@ SOURCES += src/main.cpp \
     src/MotorTest.cpp \
     src/Brightness.cpp \
     src/Volume.cpp \
-    src/Wireless.cpp \
+    src/Wireless/Wireless.cpp \
+    src/Wireless/WifiDialog.cpp \
+    src/Wireless/WifiItem.cpp \
     src/Serial/SerialPort.cpp \
     src/Serial/SerialServer.cpp \
     src/Serial/SerialPage.cpp \

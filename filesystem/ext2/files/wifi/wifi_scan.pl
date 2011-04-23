@@ -11,19 +11,59 @@ if( $iface eq "" ){ unlink $ssidFile; exit 2; }
 `ifconfig $iface up`;
 
 # scan for local nets first
-`iwlist $iface scan`;
+my $scan = `iwlist $iface scan`;
+$scan =~ s/\n//g;
+$scan =~ s/\t/  /g;
+$scan =~ s/   */  /g;
+$scan =~ s/Cell/\n/g;
 
 # survey the local net connections
-my $survey = `iwpriv $iface get_site_survey | awk 'FNR>2' | sed 's/\t/  /g' | sed 's/   */  /g'`;
+my @survey = split( '\n', `iwpriv $iface get_site_survey | awk 'FNR>2' | sed 's/\t/  /g' | sed 's/   */  /g'` );
+# remove the last blank element
+pop @survey;
 
 # check for available connections
-if( $survey eq ""){ unlink $ssidFile; exit 1; }
+if( @survey == 0 ){ unlink $ssidFile; exit 1; }
+
+foreach my $val (@survey)
+{
+	my @data = split /  /, $val;
+	push @data, getQuality( $data[2], $scan );
+	push @data, getTxRates( $data[2], $scan );
+	$val = join("  " ,@data);
+}
 
 # write the list of ssids to a file
-chomp( $survey );
 open( F, ">$ssidFile" );
-print F $survey;
+foreach my $ssid (@survey)
+{
+	print F $ssid,"\n";
+}
 close( F );
 
 exit 0;
 
+
+sub getTxRates
+{
+	my ( $ssid, $scanData ) = @_;
+	
+	my $ssidPos = index($scanData, $ssid);
+	my $rateStartPos = index($scanData,"Rates",$ssidPos) + 6;
+	my $qualityPos = index($scanData,"Quality",$rateStartPos);
+	my $rates = substr $scanData, $rateStartPos, ($qualityPos - $rateStartPos);
+	$rates =~ s/  /; /g;
+	$rates =~ s/ //g;
+	return $rates;
+}
+
+sub getQuality
+{
+	my ( $ssid, $scanData ) = @_;
+	
+	my $ssidPos = index($scanData, $ssid);
+	my $qualityStartPos = index($scanData, "Quality", $ssidPos) + 8;
+	my $slashPos = index($scanData, '/', $qualityStartPos);
+	my $quality = substr $scanData, $qualityStartPos, ($slashPos - $qualityStartPos);
+	return $quality;
+}

@@ -44,5 +44,6 @@
         <file>botguy_wifi1.png</file>
         <file>botguy_wifi2.png</file>
         <file>botguy_wifi3.png</file>
+        <file>lock.png</file>
     </qresource>
 </RCC>

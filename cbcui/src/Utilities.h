@@ -26,7 +26,7 @@
 
 #include "CreateStatus.h"
 #include "Serial/SerialPage.h"
-#include "Wireless.h"
+#include "Wireless/Wireless.h"
 
 class Utilities : public Page, private Ui::Utilities
 {

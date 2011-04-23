@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+
+my $iface = `cat /proc/net/wireless | sed -n 3p`;
+$iface = substr $iface, 0, index($iface,':');
+
+# parses ifconfig to spit out the Mac Address of the device
+my $ifconfig = `ifconfig $iface`;
+my $hwaddr = substr $ifconfig, (index($ifconfig,"HWaddr") + 7), 17;
+if( $hwaddr eq "" )
+{ exit 1; }
+
+print $hwaddr;
+exit 0;
