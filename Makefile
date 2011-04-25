@@ -10,6 +10,12 @@ fb_print:
 fb_print_clean:
 	make -C utils/fb_print clean
 
+block_probe:
+	make -C utils/block_probe
+
+block_probe_clean:
+	make -C utils/block_probe clean
+
 shared_mem:
 	make -C utils/shared_mem
 
@@ -42,10 +48,10 @@ cbcui: userlib
 cbcui_clean:
 	(if test -e cbcui/Makefile; then make -C cbcui distclean; fi)
 
-cbc_interface: cbcui userlib fb_print
+cbc_interface: cbcui userlib fb_print block_probe
 	make -C filesystem/upgrade
 
-cbc_interface_clean: cbcui_clean userlib_clean fb_print_clean
+cbc_interface_clean: cbcui_clean userlib_clean fb_print_clean block_probe_clean
 	make -C filesystem/upgrade clean
 
-.PHONY: cbc_interface cbcui userlib libcbc tracklib shared_mem fb_print
+.PHONY: cbc_interface cbcui userlib libcbc tracklib shared_mem fb_print block_probe

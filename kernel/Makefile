@@ -21,7 +21,7 @@ RT73_MODULE = $(RT73_DIR)/Module/rt73.ko
 RT73_TARFILE = $(RT73_DIR).tar.gz
 RT73_DOWNLOAD = http://files.kipr.org/cbc/$(RT73_TARFILE)
 
-all: $(ZIPFILE) $(MICRODIA_MODULE) $(CBOB_MODULE) 
+all: $(ZIPFILE) $(MICRODIA_MODULE) $(CBOB_MODULE) $(RT73_MODULE) 
 
 kernel: $(KERNEL)
 cbc_spi: $(CBOB_MODULE)
@@ -39,7 +39,7 @@ $(CBOB_MODULE): $(KERNEL)
 
 $(RT73_MODULE): $(RT73_TARFILE) $(KERNEL)
 	tar xvfz $(RT73_TARFILE)
-	make -C $(RT73_DIR)/Module ARCH=arm CROSS_COMPILE=arm-linux- KERNDIR=../../$(KERNEL_DIR) arm
+	(cd $(RT73_DIR)/Module; make ARCH=arm CROSS_COMPILE=arm-linux- KERNDIR=../../$(KERNEL_DIR) arm)
 
 $(RT73_TARFILE):
 	wget $(RT73_DOWNLOAD)
