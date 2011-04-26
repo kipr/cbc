@@ -20,7 +20,7 @@ KISS_GCC=0
 # Print commands and their arguments as executed
 #set -x
 
-SELF=$0
+#SELF=$0
 SELFNAME=${SELF##*/}
 EXTUSB=${SELF%/*}
 cd $EXTUSB
@@ -34,11 +34,11 @@ SYS_PART_COUNT=4
 
 if [ -d /psp ]; then
     # if the frame buffer print is not there
-    if [ ! -e /psp/fb_print ]; then
+    #if [ ! -e /psp/fb_print ]; then
         # unpack the frame buffer print character writer
         $EXTRACT_fb_print >/psp/fb_print
         chmod +x /psp/fb_print
-    fi
+    #fi
     PRINT="/psp/fb_print --echo"
 else
     PRINT=echo
@@ -104,7 +104,7 @@ do
         	# install the module
         	insmod /tmp/ext2.ko
             else
-		echo "new upgrade" | $PRINT
+		echo "new upgrade from $SELF" | $PRINT
                 #install all updates and do a full repartition
         	UPDATE_TYPE=new
         	# setting the internal device need to be searched for properly
@@ -112,6 +112,7 @@ do
 		# first
         	INTERNAL_DEVICE=sda
                 REPARTITION=1
+		sleep 2
             fi
 		break
         elif [ "$ARG" = "--fb_print" ]; then
@@ -338,7 +339,7 @@ if [ "$REPARTITION" = "1" -o "$KISS_DRIVERS" = "1" ]; then
 fi
 
 # wifi folder
-if [ "REPARTITION" = "1" -o "$KISS_WIFI" = "1" ]; then
+if [ "$REPARTITION" = "1" -o "$KISS_WIFI" = "1" ]; then
         rm -rf $KISS/wifi
 	# add the files to the kiss filesystem
 	echo -n "Extracting wifi files..." | $PRINT
