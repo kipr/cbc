@@ -19,8 +19,6 @@ $scan =~ s/Cell/\n/g;
 
 # survey the local net connections
 my @survey = split( '\n', `iwpriv $iface get_site_survey | awk 'FNR>2' | sed 's/\t/  /g' | sed 's/   */  /g'` );
-# remove the last blank element
-pop @survey;
 
 # check for available connections
 if( @survey == 0 ){ unlink $ssidFile; exit 1; }
@@ -37,6 +35,7 @@ foreach my $val (@survey)
 open( F, ">$ssidFile" );
 foreach my $ssid (@survey)
 {
+	if( $ssid eq ""){ next; }
 	print F $ssid,"\n";
 }
 close( F );
