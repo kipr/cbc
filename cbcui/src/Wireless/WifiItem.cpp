@@ -4,6 +4,7 @@ WifiItem::WifiItem(QString text, QWidget *parent) : QWidget(parent)
 {
     setupUi(this);
     ui_ssidLabel->setText(text);
+    ui_accessPointLabel->setHidden(true);
     ui_lockWidget->setVisible(false);
 }
 

@@ -54,7 +54,11 @@ void Wireless::ssidScan()
         m_commAnima->start();
         ui_connectButton->setEnabled(false);
 
-        this->userMessage("Scanning for Networks!!!");
+        QProcess macID;
+        macID.start("/mnt/kiss/wifi/wifi_macAddr");
+        macID.waitForFinished(100);
+
+        this->userMessage(QString("Scanning for Networks!!!\n\nmac address:\n") + QString(macID.readAllStandardOutput()));
         m_ssidScan->start("/mnt/kiss/wifi/wifi_scan.pl");
     }
     else
@@ -134,7 +138,7 @@ void Wireless::addSsidToList(QString net)
 
     WifiItem *ssid = new WifiItem(wp.ssid);
     ssid->setSignalImage(quality);
-    ssid->setAccessPoint(wp.ap);
+
     if(wp.authentication == "OPEN" || wp.authentication == "SHARED")
         ssid->setLockEnabled(false);
     else

@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>316</width>
+    <width>300</width>
     <height>35</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>316</width>
+    <width>300</width>
     <height>35</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>316</width>
+    <width>300</width>
     <height>35</height>
    </size>
   </property>
@@ -30,7 +30,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">
-    <number>3</number>
+    <number>0</number>
    </property>
    <property name="leftMargin">
     <number>3</number>
@@ -75,13 +75,13 @@ background-image:url(:/actions/botguy_wifi3.png);
     <widget class="QLabel" name="ui_ssidLabel">
      <property name="minimumSize">
       <size>
-       <width>130</width>
+       <width>125</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>130</width>
+       <width>200</width>
        <height>16777215</height>
       </size>
      </property>
@@ -97,6 +97,19 @@ background-image:url(:/actions/botguy_wifi3.png);
       <string>SSID</string>
      </property>
     </widget>
+   </item>
+   <item>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
     <widget class="QWidget" name="ui_lockWidget" native="true">
@@ -118,19 +131,6 @@ background-image:url(:/actions/lock.png);
 }</string>
      </property>
     </widget>
-   </item>
-   <item>
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item>
     <widget class="QLabel" name="ui_accessPointLabel">
