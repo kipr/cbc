@@ -24,7 +24,7 @@ if( $iface eq "" )
 system( "ifconfig $iface down" );
 
 # kill the ssh daemon
-system( "killall ssh 2>&1" );
+system( "killall sshd 2>&1" );
 
 if( ! defined( $netConfig{'type'} ) )
 { $netConfig{'type'} = "wlan"; }
