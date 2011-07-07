@@ -41,7 +41,7 @@ filesystem: gcc qt
 	mkdir -p $(DEST)
 
 	(cd files/gui; chmod a+x startup.sh shutdown.sh)
-	(cd files/usercode; chmod a+x gcc-usercode run stop compile compile-usb)
+	(cd files/usercode; chmod a+x gcc-usercode run stop compilers/*)
 	(cd files/wifi; chmod a+x wifi_scan.pl wifi_signal.pl wifi_connected.pl wifi_ip.pl wifi_start.pl)
 
 	mkdir -p $(DEST)/usercode/include
