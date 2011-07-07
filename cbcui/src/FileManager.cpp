@@ -266,7 +266,7 @@ void FileManager::on_ui_actionButton_clicked()
         QFileInfo fileInfo = m_dir.fileInfo(m_index);
         //QString filePath = m_dir.filePath(m_index);
 		
-	const QStringList& validExts = QDir(COMPILERS_PATH).entryList(QDir::Dirs | QDir::NoDotAndDotDot);		
+	const QStringList& validExts = QDir(COMPILERS_PATH).entryList(QDir::Files | QDir::NoDotAndDotDot);		
 		// file is a c program
         if(validExts.contains(fileInfo.completeSuffix())){
 
