@@ -1,0 +1,26 @@
+#!/bin/sh
+
+DIR=/mnt/kiss/usercode/bin
+PROG=$DIR/robot
+NAME=$DIR/robot_name.txt
+
+rm -rf $DIR
+mkdir -p $DIR
+
+echo "Compiling ${1}"
+FOLDER="${1%/*}"
+FILE="${1##*/}"
+
+echo "#!/bin/sh
+cd ${FOLDER}
+/mnt/kiss/jvm/java ${FILE%%.*}" >$PROG 
+chmod +x $PROG
+if [ -e $PROG ]; then
+  echo "Compile succeeded." 
+  echo "${1}" > $NAME
+	exit 0
+else
+  echo "Compile failed."
+	exit 1
+fi
+

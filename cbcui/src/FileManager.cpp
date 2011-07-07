@@ -169,7 +169,7 @@ void FileManager::updateGUI()
         ui_deleteButton->show();
 
 	const QStringList& validExts = QDir(COMPILERS_PATH).entryList(QDir::Files | QDir::NoDotAndDotDot);
-	qWarning() << validExts;
+	// qWarning() << validExts;
 
 	m_compile = false;
         if(validExts.contains(filename.section(".", 1))){
