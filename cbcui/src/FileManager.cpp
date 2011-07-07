@@ -168,7 +168,7 @@ void FileManager::updateGUI()
         // ui_copyButton->show();   // uncomment to allow copy
         ui_deleteButton->show();
 
-	const QStringList& validExts = QDir(COMPILERS_PATH).entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+	const QStringList& validExts = QDir(COMPILERS_PATH).entryList(QDir::Files | QDir::NoDotAndDotDot);
 	qWarning() << validExts;
 
 	m_compile = false;
