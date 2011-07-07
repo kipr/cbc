@@ -22,10 +22,12 @@
 
 #include <QProcess>
 #include <QMessageBox>
+#include <QDebug>
 
 #define DEFAULT_PATH "/mnt/browser"
 #define INTERNAL_USER_PATH "/mnt/browser/code"
 #define USB_USER_PATH "/mnt/browser/usb"
+#define COMPILERS_PATH "/mnt/kiss/usercode/compilers/"
 
 ////////////////////////////////////////
 //  copy dialog setup
@@ -100,7 +102,7 @@ void CopyDialog::copyData()
 ////////////////////////////////////////////////////////////////
 //  File Manager
 ////////////////
-FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent)
+FileManager::FileManager(QWidget *parent) : Page(parent), m_compiler(parent), m_compile(false)
 {
     setupUi(this);
     
@@ -166,12 +168,16 @@ void FileManager::updateGUI()
         // ui_copyButton->show();   // uncomment to allow copy
         ui_deleteButton->show();
 
-        if(filename.endsWith(".c")){
-            ui_actionButton->setText("Compile");
-            ui_actionButton->show();
-            ui_stopButton->hide();
-        }
-        else if(filename.endsWith(".wav",Qt::CaseInsensitive) || filename.endsWith(".mp3",Qt::CaseInsensitive)){
+	const QStringList& validExts = QDir(COMPILERS_PATH).entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+	qWarning() << validExts;
+
+	m_compile = false;
+        if(validExts.contains(filename.section(".", 1))){
+		ui_actionButton->setText("Compile");
+		ui_actionButton->show();
+		ui_stopButton->hide();
+		m_compile = true;
+        } else if(filename.endsWith(".wav",Qt::CaseInsensitive) || filename.endsWith(".mp3",Qt::CaseInsensitive)){
             ui_actionButton->setText("Play");
             ui_actionButton->show();
             ui_stopButton->show();
@@ -260,8 +266,9 @@ void FileManager::on_ui_actionButton_clicked()
         QFileInfo fileInfo = m_dir.fileInfo(m_index);
         //QString filePath = m_dir.filePath(m_index);
 		
+	const QStringList& validExts = QDir(COMPILERS_PATH).entryList(QDir::Dirs | QDir::NoDotAndDotDot);		
 		// file is a c program
-        if(fileInfo.suffix() == "c"){
+        if(validExts.contains(fileInfo.completeSuffix())){
 
             // if the file to compile is on the external usb, copy it to the internal storage
             if(fileInfo.absolutePath().startsWith(USB_USER_PATH)){

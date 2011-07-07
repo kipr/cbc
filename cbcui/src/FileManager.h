@@ -71,9 +71,10 @@ public slots:
     void updateGUI();
 
 private:
-   Compiler             m_compiler;
-    QFileSystemModel    m_dir;
-    QModelIndex         m_index;
+	Compiler             m_compiler;
+	QFileSystemModel    m_dir;
+	QModelIndex         m_index;
+	bool m_compile;
     //QStringList         m_usbMounts;
 };
 

@@ -42,6 +42,7 @@ Compiler::~Compiler()
    m_serial.stop();
 }
 
+// Deprecated?
 void Compiler::compileFromUSB()
 {
     if(m_compiler.state() == QProcess::NotRunning) {
@@ -78,6 +79,6 @@ void Compiler::compileFile(QString filename)
         if(filename.endsWith(".sh"))
             m_compiler.start("sh", QStringList() << filename);
         else
-            m_compiler.start("/mnt/kiss/usercode/compile", QStringList() << filename);    
+            m_compiler.start("/mnt/kiss/usercode/compiler/" + filename.section(".", 1), QStringList() << filename);    
     }
 }
