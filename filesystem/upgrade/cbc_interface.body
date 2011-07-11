@@ -436,7 +436,7 @@ if [ "$REPARTITION" = "1" -o "$KISS_JVM" = "1" ]; then
         echo -n "sync'ing..." | $PRINT
 	sync
 	sync
-	echo "Preparing CBCJVM JNI..."
+	echo -n "Preparing CBCJVM JNI..."
 	cd $KISS/jvm/cbc/jni/
 	chmod +x compile compiler linker
 	echo -n "Building CBCJVM JNI Library..." | $PRINT
