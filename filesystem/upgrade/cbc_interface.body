@@ -439,8 +439,8 @@ if [ "$REPARTITION" = "1" -o "$KISS_JVM" = "1" ]; then
 	echo "Preparing CBCJVM JNI..."
 	cd $KISS/jvm/cbc/jni/
 	chmod +x compile compiler linker
-	echo "Building CBCJVM JNI Library..." | $PRINT
-	sh compile | $PRINT
+	echo -n "Building CBCJVM JNI Library..." | $PRINT
+	sh compile
 	echo -n "Copying CBCJVM JNI Library..." | $PRINT
 	cp CBC.so ..
 	cd -
