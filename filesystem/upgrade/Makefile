@@ -14,8 +14,9 @@ cbc_interface: cbc_interface.body make-cbc_interface.pl filesystems
 	tar -czf usercode.tgz -C ../kiss-ext2/ usercode
 	tar -czf qt.tgz -C ../kiss-ext2/ qt 
 	tar -czf gcc.tgz -C ../kiss-ext2/ gcc
+	tar -czf jvm.tgz -C ../kiss-ext2/ jvm
 
-	./make-cbc_interface.pl $(UPGRADEFILE) block_probe fb_print ext2.ko mkfs.ext2 mkdosfs ptable.bin cbc_boot config.tgz drivers.tgz wifi.tgz gui.tgz images.tgz sounds.tgz usercode.tgz qt.tgz gcc.tgz
+	./make-cbc_interface.pl $(UPGRADEFILE) block_probe fb_print ext2.ko mkfs.ext2 mkdosfs ptable.bin cbc_boot config.tgz drivers.tgz wifi.tgz gui.tgz images.tgz sounds.tgz usercode.tgz qt.tgz gcc.tgz jvm.tgz
 
 	 chmod a+x $(UPGRADEFILE)
 
