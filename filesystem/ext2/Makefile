@@ -4,6 +4,9 @@ CBC_GCC_TARFILE=$(CBC_GCC).tar.bz2
 CBC_QT=CBC_Qt-4.7.1-Mini
 CBC_QT_TARFILE=$(CBC_QT).tar.bz2
 
+CBC_JVM=jvm
+CBC_JVM_TARFILE=$(CBC_JVM).tgz
+
 CBC_GUI_DIR=../../cbcui
 
 TRACK_DIR=../../userlib/tracklib
@@ -30,18 +33,26 @@ qt: $(CBC_QT_TARFILE)
 	mkdir -p qt
 	tar xjf $(CBC_QT_TARFILE) -C qt
 	touch qt
+	
+jvm: $(CBC_JVM_TARFILE)
+	mkdir -p jvm
+	tar xzf $(CBC_JVM_TARFILE) -C jvm
+	touch jvm
 
 $(CBC_GCC_TARFILE):
 	wget http://files.kipr.org/cbc/$(CBC_GCC_TARFILE)
 
 $(CBC_QT_TARFILE):
 	wget http://files.kipr.org/cbc/$(CBC_QT_TARFILE)
+	
+$(CBC_JVM_TARFILE):
+	wget http://files.kipr.org/cbc/$(CBC_JVM_TARFILE)
 
-filesystem: gcc qt
+filesystem: gcc qt jvm
 	mkdir -p $(DEST)
 
 	(cd files/gui; chmod a+x startup.sh shutdown.sh)
-	(cd files/usercode; chmod a+x gcc-usercode run stop compilers/*)
+	(cd files/usercode; chmod a+x g++-usercode gcc-usercode run stop compilers/*)
 	(cd files/wifi; chmod a+x wifi_scan.pl wifi_signal.pl wifi_connected.pl wifi_ip.pl wifi_start.pl)
 
 	mkdir -p $(DEST)/usercode/include
@@ -53,6 +64,7 @@ filesystem: gcc qt
 	mkdir -p $(DEST)/gui
 	mkdir -p $(DEST)/config
 	mkdir -p $(DEST)/gcc
+	mkdir -p $(DEST)/jvm
 
 	(cd files; rsync -a usercode/* $(DEST)/usercode)
 	(cd files; rsync -a sounds/* $(DEST)/sounds)
@@ -63,6 +75,7 @@ filesystem: gcc qt
 	(cd files; rsync -a config/* $(DEST)/config)
 	(cd gcc; rsync -a * $(DEST)/gcc)
 	(cd qt; rsync -a * $(DEST))
+	(cd jvm; rsync -a * $(DEST)/jvm)
 #	(cd files; rsync -a gdb $(DEST)/bin)
 	(cd files; rsync -a cbc_boot $(DEST))
 	(cd files; rsync -a FIRMWARE_VERSION $(DEST))
@@ -91,5 +104,5 @@ clean:
 	rm -rf ../kiss-ext2
 
 distclean: clean
-	rm -rf gcc qt $(CBC_GCC_TARFILE) $(CBC_QT_TARFILE)
+	rm -rf gcc qt jvm $(CBC_GCC_TARFILE) $(CBC_QT_TARFILE) $(CBC_JVM_TARFILE)
 
