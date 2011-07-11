@@ -16,6 +16,7 @@ KISS_SOUNDS=0
 KISS_USERCODE=0
 KISS_QT=0
 KISS_GCC=0
+KISS_JVM=0
 
 # Print commands and their arguments as executed
 #set -x
@@ -64,6 +65,7 @@ if [ $ARGC -eq 0 ]; then
 	echo "       compiling, running, stopping,(un)mounting usb" | $PRINT
 	echo "--kiss_qt = reflashes the QT folder" | $PRINT
 	echo "--kiss_gcc = reflashes the GCC folder" | $PRINT
+	echo "--kiss_jvm = reflashes the JVM folder" | $PRINT
 	exit 0
 fi
 
@@ -150,6 +152,9 @@ do
         elif [ "$ARG" = "--kiss_gcc" ]; then
 		# copies gcc folder to ext2 partition
 		KISS_GCC=1
+	elif [ "$ARG" = "--kiss_jvm" ]; then
+		# copies gcc folder to ext2 partition
+		KISS_JVM=1
 	fi
 done
 
@@ -419,6 +424,24 @@ if [ "$REPARTITION" = "1" -o "$KISS_GCC" = "1" ]; then
         echo -n "sync'ing..." | $PRINT
 	sync
 	sync
+        echo "done" | $PRINT
+fi
+
+# jvm folder
+if [ "$REPARTITION" = "1" -o "$KISS_JVM" = "1" ]; then
+	rm -rf $KISS/jvm
+	# add the files to the kiss filesystem
+        echo -n "Extracting CBCJVM..." | $PRINT
+        $EXTRACT_jvm_tgz | tar -xzf - -C $KISS
+        echo -n "sync'ing..." | $PRINT
+	sync
+	sync
+	echo -n "Building CBCJVM JNI Library..." | $PRINT
+	sh $KISS/jvm/cbc/jni/compile
+	echo -n "Copying CBCJVM JNI Library..." | $PRINT
+	cp $KISS/jvm/cbc/jni/CBC.so $KISS/jvm/cbc/
+	echo -n "Removing CBCJVM JNI Source..." | $PRINT
+	rm -Rf $KISS/jvm/cbc/jni 
         echo "done" | $PRINT
 fi
 
