@@ -431,12 +431,12 @@ fi
 # jvm folder
 if [ "$REPARTITION" = "1" -o "$KISS_JVM" = "1" ]; then
 	rm -rf $KISS/jvm
-	# add the files to the kiss filesystem
         echo -n "Extracting CBCJVM..." | $PRINT
         $EXTRACT_jvm_tgz | tar -xzf - -C $KISS
         echo -n "sync'ing..." | $PRINT
 	sync
 	sync
+	echo "Preparing CBCJVM JNI..."
 	cd $KISS/jvm/cbc/jni/
 	chmod +x compile compiler linker
 	echo "Building CBCJVM JNI Library..." | $PRINT
@@ -445,7 +445,12 @@ if [ "$REPARTITION" = "1" -o "$KISS_JVM" = "1" ]; then
 	cp CBC.so ..
 	cd -
 	echo -n "Removing CBCJVM JNI Source..." | $PRINT
-	rm -Rf $KISS/jvm/cbc/jni 
+	rm -Rf $KISS/jvm/cbc/jni
+	echo -n "Preparing CBCJVM..."
+	chmod +x $KISS/jvm/java $KISS/jvm/jamvm
+	echo -n "sync'ing..." | $PRINT
+	sync
+	sync
         echo "done" | $PRINT
 fi
 
