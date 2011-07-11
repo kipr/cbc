@@ -437,10 +437,12 @@ if [ "$REPARTITION" = "1" -o "$KISS_JVM" = "1" ]; then
         echo -n "sync'ing..." | $PRINT
 	sync
 	sync
+	cd $KISS/jvm/cbc/jni/
 	echo -n "Building CBCJVM JNI Library..." | $PRINT
-	sh $KISS/jvm/cbc/jni/compile | $PRINT
+	sh compile | $PRINT
 	echo -n "Copying CBCJVM JNI Library..." | $PRINT
-	cp $KISS/jvm/cbc/jni/CBC.so $KISS/jvm/cbc/
+	cp CBC.so ..
+	cd -
 	echo -n "Removing CBCJVM JNI Source..." | $PRINT
 	rm -Rf $KISS/jvm/cbc/jni 
         echo "done" | $PRINT
