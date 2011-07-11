@@ -5,7 +5,7 @@ CBC_QT=CBC_Qt-4.7.1-Mini
 CBC_QT_TARFILE=$(CBC_QT).tar.bz2
 
 CBC_JVM=jvm
-CBC_JVM_TARFILE=$(CBC_JVM).tgz
+CBC_JVM_TARFILE=$(CBC_JVM).tar.bz2
 
 CBC_GUI_DIR=../../cbcui
 
@@ -36,7 +36,7 @@ qt: $(CBC_QT_TARFILE)
 	
 jvm: $(CBC_JVM_TARFILE)
 	mkdir -p jvm
-	tar xzf $(CBC_JVM_TARFILE) -C jvm
+	tar xjf $(CBC_JVM_TARFILE) -C jvm
 	touch jvm
 
 $(CBC_GCC_TARFILE):
