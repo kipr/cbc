@@ -90,6 +90,7 @@ do
 	    [ $KISS_USERCODE -eq 0 ] || echo -n " --kiss_usercode"
 	    [ $KISS_QT -eq 0 ] || echo -n " --kiss_qt"
 	    [ $KISS_GCC -eq 0 ] || echo -n " --kiss_gcc"
+	    [ $KISS_JVM -eq 0 ] || echo -n " --kiss_jvm"
 	    echo " "
 	    exit 0
         elif [ "$ARG" = "--upgrade" ]; then
@@ -437,7 +438,7 @@ if [ "$REPARTITION" = "1" -o "$KISS_JVM" = "1" ]; then
 	sync
 	sync
 	echo -n "Building CBCJVM JNI Library..." | $PRINT
-	sh $KISS/jvm/cbc/jni/compile
+	sh $KISS/jvm/cbc/jni/compile | $PRINT
 	echo -n "Copying CBCJVM JNI Library..." | $PRINT
 	cp $KISS/jvm/cbc/jni/CBC.so $KISS/jvm/cbc/
 	echo -n "Removing CBCJVM JNI Source..." | $PRINT
