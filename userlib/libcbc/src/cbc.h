@@ -30,6 +30,10 @@
 #ifndef __CBC_H__
 #define __CBC_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include "compat.h"
 
@@ -113,5 +117,8 @@ void set_each_analog_state(int a0, int a1, int a2, int a3, int a4, int a5, int a
 #define BIGARENA2 6
 #define BB09WORLD 7
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

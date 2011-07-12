@@ -21,6 +21,10 @@
 #ifndef __BOTBALL_H__
 #define __BOTBALL_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 
 #include "compat.h"
@@ -30,5 +34,9 @@ void shut_down_in(float delay);
 void run_for(float howLong, void (*funky));
 void _shut_down_task();
 int target_cha_in_chb(int a, int b, int *x, int *y);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

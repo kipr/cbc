@@ -24,6 +24,10 @@
 #ifndef __IROBOT_CREATE_H__
 #define __IROBOT_CREATE_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include "compat.h"
 //#include "cbcserial.h"
@@ -173,5 +177,9 @@ void create_play_song(int num);
 int create_read_block(char *data, int count);
 void create_write_byte(char byte);
 void create_clear_serial_buffer();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

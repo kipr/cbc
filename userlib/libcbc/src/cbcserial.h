@@ -21,6 +21,10 @@
 #ifndef __CBCSERIAL_H__
 #define __CBCSERIAL_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define CREATE_UART "/dev/uart1"
 
 void serial_init();
@@ -35,5 +39,9 @@ void serial_wryte_byte(char byte);
 void serial_flush_output();
 void serial_flush_input();
 void serial_flush();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

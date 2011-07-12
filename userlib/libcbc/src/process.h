@@ -21,6 +21,10 @@
 #ifndef __PROCESS_H__
 #define __PROCESS_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <pthread.h>
 
 #define MAX_PROCESSES 16
@@ -37,5 +41,9 @@ struct __ptable_entry {
 	pthread_t thread;
 	int in_use;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

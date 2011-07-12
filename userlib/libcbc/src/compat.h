@@ -21,6 +21,10 @@
 #ifndef __COMPAT_H__
 #define __COMPAT_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "process.h"
 #include <unistd.h>
 
@@ -32,6 +36,10 @@ void msleep(long mtime);
 float seconds();
 
 #define sleep(x) fsleep(x)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

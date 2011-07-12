@@ -21,6 +21,10 @@
 #ifndef __CBC_DATA_H__
 #define __CBC_DATA_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct __cbc_data{
 	// sensors
 	// From Bob to Chumby
@@ -60,5 +64,9 @@ typedef struct __cbc_data{
 	float fmcounters[4];
 	float ptime;//previous wall time
 } cbc_data;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
