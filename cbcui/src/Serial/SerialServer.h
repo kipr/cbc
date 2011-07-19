@@ -69,7 +69,7 @@ private:
 	void processData2(QByteArray& data);
 	void writeFile(QString fileName, QByteArray& fileData);
 	void sendOk();
-	bool readPacket(QByteArray* packetData);
+	bool writePacket(QByteArray& data);
 	bool checkOk();
 
 	QString createProject(QString projectName);
