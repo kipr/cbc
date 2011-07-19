@@ -205,12 +205,12 @@ void SerialServer::kissStopCommand(const QByteArray& data)
 
 void SerialServer::kissExecuteCommand(const QByteArray& data)
 {
-	system(data.toString());
+	system(data.data());
 }
 
 void SerialServer::kissCreateProjectCommand(const QByteArray& data)
 {
-	QString projectPath = "/mnt/user/code/" + data.toString();
+	QString projectPath = QString("/mnt/user/code/") + data.data();
 	system(("rm -rf \""   + projectPath + "\"").toLocal8Bit());
 	system(("mkdir -p \"" + projectPath + "\"").toLocal8Bit());
 }
