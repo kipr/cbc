@@ -176,11 +176,13 @@ bool SerialServer::writePacket(QByteArray& data)
 
 void SerialServer::kissSendFileCommand(const QByteArray& data)
 {
+	qWarning() << "KISS_SEND_FILE_COMMAND";
 	QString dest;
 	QByteArray fileData;
 	QDataStream stream(data);
 	stream >> dest;
 	stream >> fileData;
+	qWarning() << dest;
 	writeFile(dest, fileData);
 }
 
@@ -194,6 +196,7 @@ void SerialServer::kissLsCommand(const QByteArray& data)
 
 void SerialServer::kissRunCommand(const QByteArray& data)
 {
+	qWarning() << "KISS_RUN_COMMAND";
 	UserProgram::instance()->start();	
 }
 
