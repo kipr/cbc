@@ -68,7 +68,7 @@ private:
 
 	void processTransfer(QByteArray& header);
 	void processData(QByteArray& data);
-	void processData2(QByteArray& data);
+	void processData2(quint16 command, QByteArray& data);
 	void writeFile(QString fileName, QByteArray& fileData);
 	void sendOk();
 	bool writePacket(QByteArray& data);

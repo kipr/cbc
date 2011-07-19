@@ -76,7 +76,9 @@ void SerialServer::processTransfer(QByteArray& header)
 
 	if(startWord != SERIAL_START && startWord != SERIAL2_START) return;
 	qWarning("StartWord: %x", startWord);
-
+	
+	quint16 command = 0;
+	if(startWord == SERIAL2_START) headerStream << command;
 
 	qWarning() << "Reading...";
 	QByteArray compressedData;
@@ -93,7 +95,7 @@ void SerialServer::processTransfer(QByteArray& header)
 	compressedData.squeeze();
 
 	
-	if(startWord == SERIAL2_START) processData2(data); else processData(data);
+	if(startWord == SERIAL2_START) processData2(command, data); else processData(data);
 }
 
 void SerialServer::processData(QByteArray& data)
@@ -130,12 +132,10 @@ void SerialServer::processData(QByteArray& data)
     emit downloadFinished(mainFilePath);
 }
 
-void SerialServer::processData2(QByteArray& data)
+void SerialServer::processData2(quint16 command, QByteArray& data)
 {
 	QDataStream dataStream(&data, QIODevice::ReadOnly);
 
-	quint16 command;
-	dataStream >> command;
 	dataStream >> data;
 	
 	qWarning() << "RECV" << command << data;
