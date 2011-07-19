@@ -73,7 +73,7 @@ void SerialServer::processTransfer(QByteArray& header)
 	if(startWord != SERIAL_START) return;
 	qWarning("StartWord: %x", startWord);
 
-	qWarning() << "Reading...";
+	qWarning() << "Reading Header for command" << command;
 	QByteArray compressedData;
 	QProcess::startDetached("aplay /mnt/kiss/sounds/downloading.wav");
 	for(quint16 i = 0;i < packetCount;i++) {
@@ -95,27 +95,16 @@ void SerialServer::processData(quint16 command, QByteArray& data)
 	qWarning() << "RECV" << command << data;
 	
 	switch(command) {
-	case KISS_SEND_FILE_COMMAND:
-		kissSendFileCommand(data);
-	break;
-	case KISS_RUN_COMMAND:
-		kissRunCommand(data);
-	break;
-	case KISS_STOP_COMMAND:
-		kissStopCommand(data);
-	break;
-	case KISS_COMPILE_COMMAND:
-		kissCompileCommand(data);
-	break;
-	case KISS_CREATE_PROJECT_COMMAND:
-		kissCreateProjectCommand(data);
-	break;
+	case KISS_SEND_FILE_COMMAND: kissSendFileCommand(data); break;
+	case KISS_RUN_COMMAND: kissRunCommand(data); break;
+	case KISS_STOP_COMMAND: kissStopCommand(data); break;
+	case KISS_COMPILE_COMMAND: kissCompileCommand(data); break;
+	case KISS_CREATE_PROJECT_COMMAND: kissCreateProjectCommand(data); break;
 	}
 }
 
 void SerialServer::writeFile(QString fileName, QByteArray& fileData)
 {
-	qWarning() << fileName << fileData;
 	QFile fout(fileName);
 	fout.open(QIODevice::WriteOnly);
 	fout.write(fileData);
