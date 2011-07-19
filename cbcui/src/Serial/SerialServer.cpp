@@ -194,7 +194,7 @@ void SerialServer::kissLsCommand(const QByteArray& data)
 
 void SerialServer::kissRunCommand(const QByteArray& data)
 {
-	UserProgram::instance()->run();	
+	UserProgram::instance()->start();	
 }
 
 void SerialServer::kissStopCommand(const QByteArray& data)
