@@ -67,13 +67,12 @@ private:
 	bool readPacket(QByteArray *packetData);
 
 	void processTransfer(QByteArray& header);
-	void processData(QByteArray& data);
-	void processData2(quint16 command, QByteArray& data);
+	void processData(quint16 command, QByteArray& data);
 	void writeFile(QString fileName, QByteArray& fileData);
 	void sendOk();
-	bool writePacket(QByteArray& data);
 	bool checkOk();
-
+	bool writePacket(QByteArray& data);
+	
 	QString createProject(QString projectName);
 };
 

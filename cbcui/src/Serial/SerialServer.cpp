@@ -32,13 +32,9 @@ SerialServer::SerialServer(QObject *parent) : QThread(parent),
                                               m_port(SERIAL_DEVICE, this),
                                               m_stream(&m_port),
                                               m_quit(false)
-{
-}
+{}
 
-SerialServer::~SerialServer()
-{
-    stop();
-}
+SerialServer::~SerialServer() { stop(); }
 
 void SerialServer::run()
 {
@@ -58,11 +54,7 @@ void SerialServer::run()
     m_port.close();
 }
 
-void SerialServer::stop()
-{
-    m_quit = true;
-    while(isRunning());
-}
+void SerialServer::stop() { m_quit = true; while(isRunning()); }
 
 void SerialServer::processTransfer(QByteArray& header)
 {
@@ -70,15 +62,14 @@ void SerialServer::processTransfer(QByteArray& header)
 
 	quint16 startWord;
 	quint16 packetCount;
+	quint16 command;
 
 	headerStream >> startWord;
 	headerStream >> packetCount;
+	headerStream >> command;
 
-	if(startWord != SERIAL_START && startWord != SERIAL2_START) return;
+	if(startWord != SERIAL_START) return;
 	qWarning("StartWord: %x", startWord);
-	
-	quint16 command = 0;
-	if(startWord == SERIAL2_START) headerStream << command;
 
 	qWarning() << "Reading...";
 	QByteArray compressedData;
@@ -95,49 +86,13 @@ void SerialServer::processTransfer(QByteArray& header)
 	compressedData.squeeze();
 
 	
-	if(startWord == SERIAL2_START) processData2(command, data); else processData(data);
+	processData(command, data);
 }
 
-void SerialServer::processData(QByteArray& data)
-{
-    QDataStream dataStream(&data, QIODevice::ReadOnly);
-    
-    QString fileName;
-    QByteArray fileData;
-    
-    dataStream >> fileName;
-    dataStream >> fileData;
-    
-    if(fileName.isEmpty())
-        return;
-    
-    QFileInfo fileInfo(fileName);
-    
-    QString projectPath = createProject(fileInfo.baseName());
-    writeFile(projectPath + "/" + fileName, fileData);
-    
-    QString mainFilePath = projectPath + "/" + fileName;
-    
-    while(dataStream.status() == QDataStream::Ok) {
-        fileName.clear();
-        fileData.clear();
-        
-        dataStream >> fileName;
-        dataStream >> fileData;
-        
-        if(!fileName.isEmpty()) {
-            writeFile(projectPath + "/" + fileName, fileData);
-        }
-    }
-    emit downloadFinished(mainFilePath);
-}
-
-void SerialServer::processData2(quint16 command, QByteArray& data)
+void SerialServer::processData(quint16 command, QByteArray& data)
 {
 	QDataStream dataStream(&data, QIODevice::ReadOnly);
-
 	dataStream >> data;
-	
 	qWarning() << "RECV" << command << data;
 }
 
@@ -193,10 +148,7 @@ bool SerialServer::readPacket(QByteArray *packetData)
     return false;
 }
 
-void SerialServer::sendOk()
-{
-    m_stream << SERIAL_MESSAGE_OK;
-}
+void SerialServer::sendOk() { m_stream << SERIAL_MESSAGE_OK; }
 
 bool SerialServer::checkOk()
 {
@@ -207,13 +159,12 @@ bool SerialServer::checkOk()
 
 bool SerialServer::writePacket(QByteArray& data)
 {
-	quint16 checksum = qChecksum(data, data.size());
-
-	for(int i = 0;i < SERIAL_MAX_RETRY;i++) {
+	for(int i = 0; i < SERIAL_MAX_RETRY; ++i) {
 		m_stream << SERIAL_KEY;
 		m_stream << data;
 		m_stream << qChecksum(data.constData(), data.size());
 		if(checkOk()) return true;
 	}
+	
 	return false;
 }
