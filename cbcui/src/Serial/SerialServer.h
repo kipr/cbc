@@ -39,6 +39,8 @@ typedef struct {
 #define SERIAL_START        ((quint16)0xCBC)
 #define SERIAL2_START       ((quint16)0xCBC2)
 
+#define SERIAL_MAX_RETRY 5
+#define SERIAL_KEY (quint32)(0xB07BA11)
 #define HEADER_KEY (quint32)(0xB07BA11)
 #define SERIAL_DEVICE "/dev/uart0"
 #define TEMP_PATH "/tmp/upload"
