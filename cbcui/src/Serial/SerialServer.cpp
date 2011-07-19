@@ -90,26 +90,31 @@ void SerialServer::processTransfer(QByteArray& header)
 
 void SerialServer::processData(quint16 command, QByteArray& data)
 {
-	QDataStream dataStream(&data, QIODevice::ReadOnly);
 	qWarning() << "RECV" << command << data;
-}
-
-QString SerialServer::createProject(QString projectName)
-{
-    QString projectPath = "/mnt/user/code/" + projectName;
-    
-    system(("rm -rf \""   + projectPath + "\"").toLocal8Bit());
-    system(("mkdir -p \"" + projectPath + "\"").toLocal8Bit());
-    
-    return projectPath;
+	
+	switch(command) {
+	case KISS_SEND_FILE_COMMAND:
+		kissSendFileCommand(data);
+	break;
+	case KISS_RUN_COMMAND:
+		kissRunCommand(data);
+	break;
+	case KISS_STOP_COMMAND:
+		kissStopCommand(data);
+	break;
+	case KISS_CREATE_PROJECT_COMMAND:
+		kissCreateProjectCommand(data);
+	break;
+	}
 }
 
 void SerialServer::writeFile(QString fileName, QByteArray& fileData)
 {
-    QFile fout(fileName);
-    fout.open(QIODevice::WriteOnly);
-    fout.write(fileData);
-    fout.close();
+	qWarning() << fileName << fileData;
+	QFile fout(fileName);
+	fout.open(QIODevice::WriteOnly);
+	fout.write(fileData);
+	fout.close();
 }
 
 /* Packets look like this:
@@ -165,4 +170,45 @@ bool SerialServer::writePacket(QByteArray& data)
 	}
 	
 	return false;
+}
+
+void SerialServer::kissSendFileCommand(const QByteArray& data)
+{
+	QString dest;
+	QByteArray fileData;
+	QDataStream stream(data);
+	stream >> dest;
+	stream >> fileData;
+	writeFile(dest, fileData);
+}
+
+void SerialServer::kissRequestFileCommand(const QByteArray& data)
+{	
+}
+
+void SerialServer::kissLsCommand(const QByteArray& data)
+{
+}
+
+void SerialServer::kissRunCommand(const QByteArray& data)
+{
+	UserProgram::instance()->run();	
+}
+
+void SerialServer::kissStopCommand(const QByteArray& data)
+{
+	CbobData::instance()->allStop();
+	UserProgram::instance()->stop();
+}
+
+void SerialServer::kissExecuteCommand(const QByteArray& data)
+{
+	system(data.toString());
+}
+
+void SerialServer::kissCreateProjectCommand(const QByteArray& data)
+{
+	QString projectPath = "/mnt/user/code/" + data.toString();
+	system(("rm -rf \""   + projectPath + "\"").toLocal8Bit());
+	system(("mkdir -p \"" + projectPath + "\"").toLocal8Bit());
 }

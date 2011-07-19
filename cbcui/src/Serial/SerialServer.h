@@ -45,6 +45,18 @@ typedef struct {
 #define SERIAL_DEVICE "/dev/uart0"
 #define TEMP_PATH "/tmp/upload"
 
+#define KISS_SEND_FILE_COMMAND 		1
+#define KISS_REQUEST_FILE_COMMAND 	2
+#define KISS_LS_COMMAND 		3
+#define KISS_RUN_COMMAND 		4
+#define KISS_STOP_COMMAND 		5
+#define KISS_EXECUTE_COMMAND 		6
+#define KISS_COMPILE_COMMAND 		7
+
+#define CBC_LS_RESULT 			128
+#define CBC_EXECUTE_RESULT 		129
+#define CBC_COMPILE_RESULT 		130
+
 class SerialServer : public QThread
 {
     Q_OBJECT
@@ -73,7 +85,13 @@ private:
 	bool checkOk();
 	bool writePacket(QByteArray& data);
 	
-	QString createProject(QString projectName);
+	void kissSendFileCommand(const QByteArray& data);
+	void kissRequestFileCommand(const QByteArray& data);
+	void kissLsCommand(const QByteArray& data);
+	void kissRunCommand(const QByteArray& data);
+	void kissStopCommand(const QByteArray& data);
+	void kissExecuteCommand(const QByteArray& data);
+	void kissCreateProjectCommand(const QByteArray& data);
 };
 
 #endif
