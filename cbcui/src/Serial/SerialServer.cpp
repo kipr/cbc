@@ -88,7 +88,7 @@ void SerialServer::processTransfer(QByteArray& header)
 	compressedData.clear();
 	compressedData.squeeze();
 
-	if(startWord == SERIAL2_START) processData2(data); else processData();
+	if(startWord == SERIAL2_START) processData2(data); else processData(data);
 }
 
 void SerialServer::processData(QByteArray& data)
