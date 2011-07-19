@@ -29,6 +29,7 @@
 
 #include "SerialPort.h"
 #include "SharedMem.h"
+#include "UIData.h"
 
 typedef struct {
     QStringList filenames;
