@@ -27,14 +27,16 @@
 
 Compiler::Compiler(QWidget *parent) : Page(parent), m_serial(this)
 {
-    setupUi(this);
+	setupUi(this);
 
-    QObject::connect(&m_compiler, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));
-    QObject::connect(&m_compiler, SIGNAL(readyReadStandardOutput()), this, SLOT(readStandardOutput()));
-    QObject::connect(&m_compiler, SIGNAL(finished(int, QProcess::ExitStatus)), UserProgram::instance(), SLOT(compileFinished(int, QProcess::ExitStatus)));
-    QObject::connect(&m_serial, SIGNAL(downloadFinished(QString)), this, SLOT(compileFile(QString)));
-    
-    m_serial.start();
+	QObject::connect(&m_compiler, SIGNAL(readyReadStandardError()), this, SLOT(readStandardError()));
+	QObject::connect(&m_compiler, SIGNAL(readyReadStandardOutput()), this, SLOT(readStandardOutput()));
+	QObject::connect(&m_compiler, SIGNAL(finished(int, QProcess::ExitStatus)), UserProgram::instance(), SLOT(compileFinished(int, QProcess::ExitStatus)));
+	QObject::connect(&m_serial, SIGNAL(downloadFinished(QString)), this, SLOT(compileFile(QString)));
+	QObject::connect(&m_serial, SIGNAL(run()), UserProgram::instance(), SLOT(start()));
+	QObject::connect(&m_serial, SIGNAL(stop()), UserProgram::instance(), SLOT(stop()));
+
+	m_serial.start();
 }
 
 Compiler::~Compiler()

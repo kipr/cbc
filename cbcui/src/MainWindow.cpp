@@ -35,35 +35,37 @@ MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent),
     m_mainMenu(0)
 {
-    setupUi(this);
+	setupUi(this);
 
-    setWindowState(windowState() | Qt::WindowFullScreen);
+	setWindowState(windowState() | Qt::WindowFullScreen);
 
-    m_mainMenu = new MainMenu(ui_widget);
-    m_mainMenu->raisePage();
+	m_mainMenu = new MainMenu(ui_widget);
+	m_mainMenu->raisePage();
 
-    QWSServer *qserver = QWSServer::instance();
+	QWSServer *qserver = QWSServer::instance();
 
-   //qserver->closeKeyboard();
+	//qserver->closeKeyboard();
 
-    m_wifiSig = new QTimer(this);
-    m_wifiSig->setInterval(5000);
+	m_wifiSig = new QTimer(this);
+	m_wifiSig->setInterval(5000);
 
-    QObject::connect(m_wifiSig, SIGNAL(timeout()), this, SLOT(checkWifiSignal()));
-    QObject::connect(ui_runstopButton, SIGNAL(clicked()), UserProgram::instance(), SLOT(toggleState()));
-    QObject::connect(CbobData::instance(), SIGNAL(refresh()), this, SLOT(updateBatteryDisplay()));
-    QObject::connect(CbobData::instance(), SIGNAL(lowBattery(float)), this, SLOT(batteryWarning(float)));
-    QObject::connect(UserProgram::instance(), SIGNAL(loadedState(bool)), ui_runstopButton, SLOT(setEnabled(bool)));
-    QObject::connect(UserProgram::instance(), SIGNAL(stateChange(int)), this, SLOT(userProgramStateChange(int)));
-    
-    updateBatteryDisplay();
+	QObject::connect(m_wifiSig, SIGNAL(timeout()), this, SLOT(checkWifiSignal()));
+	QObject::connect(ui_runstopButton, SIGNAL(clicked()), UserProgram::instance(), SLOT(toggleState()));
+	QObject::connect(CbobData::instance(), SIGNAL(refresh()), this, SLOT(updateBatteryDisplay()));
+	QObject::connect(CbobData::instance(), SIGNAL(lowBattery(float)), this, SLOT(batteryWarning(float)));
+	QObject::connect(UserProgram::instance(), SIGNAL(loadedState(bool)), ui_runstopButton, SLOT(setEnabled(bool)));
+	QObject::connect(UserProgram::instance(), SIGNAL(stateChange(int)), this, SLOT(userProgramStateChange(int)));
 
-    CbobData::instance()->resetPullups();
+	connect();
 
-    QwertyKeypad::initialize(parent);
-    Keypad::initialize(parent);
+	updateBatteryDisplay();
 
-    userProgramStateChange(0);
+	CbobData::instance()->resetPullups();
+
+	QwertyKeypad::initialize(parent);
+	Keypad::initialize(parent);
+
+	userProgramStateChange(0);
 }
 
 MainWindow::~MainWindow()
