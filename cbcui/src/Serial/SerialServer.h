@@ -53,6 +53,18 @@ typedef struct {
 #define KISS_EXECUTE_COMMAND 		6
 #define KISS_COMPILE_COMMAND 		7
 #define KISS_CREATE_PROJECT_COMMAND 	8
+#define KISS_PRESS_A_COMMAND 		9
+#define KISS_PRESS_B_COMMAND 		10
+#define KISS_PRESS_LEFT_COMMAND 	11
+#define KISS_PRESS_RIGHT_COMMAND 	12
+#define KISS_PRESS_UP_COMMAND 		13
+#define KISS_PRESS_DOWN_COMMAND 	14
+#define KISS_RELEASE_A_COMMAND 		15
+#define KISS_RELEASE_B_COMMAND 		16
+#define KISS_RELEASE_LEFT_COMMAND 	17
+#define KISS_RELEASE_RIGHT_COMMAND 	18
+#define KISS_RELEASE_UP_COMMAND 	19
+#define KISS_RELEASE_DOWN_COMMAND 	20
 
 #define CBC_LS_RESULT 			128
 #define CBC_EXECUTE_RESULT 		129
@@ -96,6 +108,18 @@ private:
 	void kissExecuteCommand(const QByteArray& data);
 	void kissCompileCommand(const QByteArray& data);
 	void kissCreateProjectCommand(const QByteArray& data);
+	void kissPressACommand(const QByteArray& data);
+	void kissPressBCommand(const QByteArray& data);
+	void kissPressLeftCommand(const QByteArray& data);
+	void kissPressRightCommand(const QByteArray& data);
+	void kissPressUpCommand(const QByteArray& data);
+	void kissPressDownCommand(const QByteArray& data);
+	void kissReleaseACommand(const QByteArray& data);
+	void kissReleaseBCommand(const QByteArray& data);
+	void kissReleaseLeftCommand(const QByteArray& data);
+	void kissReleaseRightCommand(const QByteArray& data);
+	void kissReleaseUpCommand(const QByteArray& data);
+	void kissReleaseDownCommand(const QByteArray& data);
 };
 
 #endif

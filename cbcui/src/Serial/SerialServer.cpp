@@ -100,6 +100,18 @@ void SerialServer::processData(quint16 command, QByteArray& data)
 	case KISS_STOP_COMMAND: kissStopCommand(data); break;
 	case KISS_COMPILE_COMMAND: kissCompileCommand(data); break;
 	case KISS_CREATE_PROJECT_COMMAND: kissCreateProjectCommand(data); break;
+	case KISS_PRESS_A_COMMAND: kissPressACommand(data); break;
+	case KISS_PRESS_B_COMMAND: kissPressBCommand(data); break;
+	case KISS_PRESS_LEFT_COMMAND: kissPressLeftCommand(data); break;
+	case KISS_PRESS_RIGHT_COMMAND: kissPressRightCommand(data); break;
+	case KISS_PRESS_UP_COMMAND: kissPressUpCommand(data); break;
+	case KISS_PRESS_DOWN_COMMAND: kissPressDownCommand(data); break;
+	case KISS_RELEASE_A_COMMAND: kissReleaseACommand(data); break;
+	case KISS_RELEASE_B_COMMAND: kissReleaseBCommand(data); break;
+	case KISS_RELEASE_LEFT_COMMAND: kissReleaseLeftCommand(data); break;
+	case KISS_RELEASE_RIGHT_COMMAND: kissReleaseRightCommand(data); break;
+	case KISS_RELEASE_UP_COMMAND: kissReleaseUpCommand(data); break;
+	case KISS_RELEASE_DOWN_COMMAND: kissReleaseDownCommand(data); break;
 	}
 }
 
@@ -179,7 +191,8 @@ void SerialServer::kissSendFileCommand(const QByteArray& data)
 }
 
 void SerialServer::kissRequestFileCommand(const QByteArray& data)
-{	
+{
+		
 }
 
 void SerialServer::kissLsCommand(const QByteArray& data)
@@ -214,3 +227,16 @@ void SerialServer::kissCreateProjectCommand(const QByteArray& data)
 	system(("rm -rf \""   + projectPath + "\"").toLocal8Bit());
 	system(("mkdir -p \"" + projectPath + "\"").toLocal8Bit());
 }
+
+void SerialServer::kissPressACommand(const QByteArray& data) { m_uiData.shared().a_button = 1; }
+void SerialServer::kissPressBCommand(const QByteArray& data) { m_uiData.shared().b_button = 1; }
+void SerialServer::kissPressLeftCommand(const QByteArray& data) { m_uiData.shared().left_button = 1; }
+void SerialServer::kissPressRightCommand(const QByteArray& data) { m_uiData.shared().right_button = 1; }
+void SerialServer::kissPressUpCommand(const QByteArray& data) { m_uiData.shared().up_button = 1; }
+void SerialServer::kissPressDownCommand(const QByteArray& data) { m_uiData.shared().down_button = 1; }
+void SerialServer::kissReleaseACommand(const QByteArray& data) { m_uiData.shared().a_button = 0; }
+void SerialServer::kissReleaseBCommand(const QByteArray& data) { m_uiData.shared().b_button = 0; }
+void SerialServer::kissReleaseLeftCommand(const QByteArray& data) { m_uiData.shared().left_button = 0; }
+void SerialServer::kissReleaseRightCommand(const QByteArray& data) { m_uiData.shared().right_button = 0; }
+void SerialServer::kissReleaseUpCommand(const QByteArray& data) { m_uiData.shared().up_button = 0; }
+void SerialServer::kissReleaseDownCommand(const QByteArray& data) { m_uiData.shared().down_button = 0; }
