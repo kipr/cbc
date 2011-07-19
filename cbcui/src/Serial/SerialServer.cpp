@@ -33,7 +33,8 @@
 SerialServer::SerialServer(QObject *parent) : QThread(parent), 
                                               m_port(SERIAL_DEVICE, this),
                                               m_stream(&m_port),
-                                              m_quit(false)
+                                              m_quit(false),
+						m_uiData("/tmp/cbc_uidata")
 {}
 
 SerialServer::~SerialServer() { stop(); }
