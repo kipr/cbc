@@ -37,6 +37,7 @@ typedef struct {
 #define SERIAL_MESSAGE_OK   ((quint8)1)
 #define SERIAL_MESSAGE_FAIL ((quint8)2)
 #define SERIAL_START        ((quint16)0xCBC)
+#define SERIAL2_START       ((quint16)0xCBC2)
 
 #define HEADER_KEY (quint32)(0xB07BA11)
 #define SERIAL_DEVICE "/dev/uart0"
@@ -47,28 +48,31 @@ class SerialServer : public QThread
     Q_OBJECT
 
 public:
-    SerialServer(QObject *parent = 0);
-    ~SerialServer();
+	SerialServer(QObject *parent = 0);
+	~SerialServer();
 
-    void run();
-    void stop();
+	void run();
+	void stop();
     
 signals:
-    void downloadFinished(QString filename);
+ 	void downloadFinished(QString filename);
     
 private:
-    SerialPort m_port;
-    QDataStream m_stream;
-    bool  m_quit;
+	SerialPort m_port;
+	QDataStream m_stream;
+	bool  m_quit;
 
-    bool readPacket(QByteArray *packetData);
+	bool readPacket(QByteArray *packetData);
 
-    void processTransfer(QByteArray& header);
-    void processData(QByteArray& data);
-    void writeFile(QString fileName, QByteArray& fileData);
-    void sendOk();
-    
-    QString createProject(QString projectName);
+	void processTransfer(QByteArray& header);
+	void processData(QByteArray& data);
+	void processData2(QByteArray& data);
+	void writeFile(QString fileName, QByteArray& fileData);
+	void sendOk();
+	bool readPacket(QByteArray* packetData);
+	bool checkOk();
+
+	QString createProject(QString projectName);
 };
 
 #endif

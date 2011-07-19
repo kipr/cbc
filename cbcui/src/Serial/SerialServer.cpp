@@ -26,6 +26,7 @@
 #include <QBuffer>
 #include <QDir>
 #include <QProcess>
+#include <QDebug>
 
 SerialServer::SerialServer(QObject *parent) : QThread(parent), 
                                               m_port(SERIAL_DEVICE, this),
@@ -65,32 +66,29 @@ void SerialServer::stop()
 
 void SerialServer::processTransfer(QByteArray& header)
 {
-    QDataStream headerStream(&header, QIODevice::ReadOnly);
-    
-    quint16 startWord;
-    quint16 packetCount;
-    
-    headerStream >> startWord;
-    headerStream >> packetCount;
-    
-    if(startWord != SERIAL_START)
-        return;
-    
-    QByteArray compressedData;
-    QProcess::startDetached("aplay /mnt/kiss/sounds/downloading.wav");
-    for(quint16 i = 0;i < packetCount;i++) {
-        QByteArray data;
-        if(!readPacket(&data))
-            return;
-        compressedData += data;
-    }
-    
-    
-    QByteArray data = qUncompress(compressedData);
-    compressedData.clear();
-    compressedData.squeeze();
-    
-    processData(data);
+	QDataStream headerStream(&header, QIODevice::ReadOnly);
+
+	quint16 startWord;
+	quint16 packetCount;
+
+	headerStream >> startWord;
+	headerStream >> packetCount;
+
+	if(startWord != SERIAL_START || startWord != SERIAL2_START) return;
+
+	QByteArray compressedData;
+	QProcess::startDetached("aplay /mnt/kiss/sounds/downloading.wav");
+	for(quint16 i = 0;i < packetCount;i++) {
+		QByteArray data;
+		if(!readPacket(&data)) return;
+		compressedData += data;
+	}
+
+	QByteArray data = qUncompress(compressedData);
+	compressedData.clear();
+	compressedData.squeeze();
+
+	if(startWord == SERIAL2_START) processData2(data); else processData();
 }
 
 void SerialServer::processData(QByteArray& data)
@@ -125,6 +123,17 @@ void SerialServer::processData(QByteArray& data)
         }
     }
     emit downloadFinished(mainFilePath);
+}
+
+void SerialServer::processData2(QByteArray& data)
+{
+	QDataStream dataStream(&data, QIODevice::ReadOnly);
+
+	quint16 command;
+	dataStream >> command;
+	dataStream >> data;
+	
+	qWarning() << "RECV" << command << data;
 }
 
 QString SerialServer::createProject(QString projectName)
@@ -182,4 +191,24 @@ bool SerialServer::readPacket(QByteArray *packetData)
 void SerialServer::sendOk()
 {
     m_stream << SERIAL_MESSAGE_OK;
+}
+
+bool SerialServer::checkOk()
+{
+	quint8 ret = 0;
+	m_stream >> ret;
+	return ret == SERIAL_MESSAGE_OK;
+}
+
+bool SerialServer::writePacket(QByteArray& data)
+{
+	quint16 checksum = qChecksum(data, data.size());
+
+	for(int i = 0;i < SERIAL_MAX_RETRY;i++) {
+		m_stream << SERIAL_KEY;
+		m_stream << data;
+		m_stream << qChecksum(data.constData(), data.size());
+		if(checkOk()) return true;
+	}
+	return false;
 }
