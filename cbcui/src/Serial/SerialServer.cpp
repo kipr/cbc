@@ -75,7 +75,10 @@ void SerialServer::processTransfer(QByteArray& header)
 	headerStream >> packetCount;
 
 	if(startWord != SERIAL_START || startWord != SERIAL2_START) return;
+	qWarning("StartWord: %x", startWord);
 
+
+	qWarning() << "Reading...";
 	QByteArray compressedData;
 	QProcess::startDetached("aplay /mnt/kiss/sounds/downloading.wav");
 	for(quint16 i = 0;i < packetCount;i++) {
@@ -83,12 +86,13 @@ void SerialServer::processTransfer(QByteArray& header)
 		if(!readPacket(&data)) return;
 		compressedData += data;
 	}
+	qWarning() << "Uncompressing...";
 
 	QByteArray data = qUncompress(compressedData);
 	compressedData.clear();
 	compressedData.squeeze();
 
-	qWarning("StartWord: %x", startWord);
+	
 	if(startWord == SERIAL2_START) processData2(data); else processData(data);
 }
 
