@@ -84,7 +84,6 @@ void SerialServer::processTransfer(QByteArray& header)
 	QByteArray data = qUncompress(compressedData);
 	compressedData.clear();
 	compressedData.squeeze();
-
 	
 	processData(command, data);
 }
@@ -92,7 +91,6 @@ void SerialServer::processTransfer(QByteArray& header)
 void SerialServer::processData(quint16 command, QByteArray& data)
 {
 	QDataStream dataStream(&data, QIODevice::ReadOnly);
-	dataStream >> data;
 	qWarning() << "RECV" << command << data;
 }
 
