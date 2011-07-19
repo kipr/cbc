@@ -76,7 +76,7 @@ void SerialServer::processTransfer(QByteArray& header)
 
 	qWarning() << "Reading Header for command" << command;
 	QByteArray compressedData;
-	QProcess::startDetached("aplay /mnt/kiss/sounds/downloading.wav");
+	
 	for(quint16 i = 0;i < packetCount;i++) {
 		QByteArray data;
 		if(!readPacket(&data)) return;
@@ -219,6 +219,7 @@ void SerialServer::kissExecuteCommand(const QByteArray& data)
 void SerialServer::kissCompileCommand(const QByteArray& data)
 {
 	qWarning() << "Emitting downloadFinished.";
+	QProcess::startDetached("aplay /mnt/kiss/sounds/downloading.wav");
 	emit downloadFinished(QString(data.data()));
 }
 
