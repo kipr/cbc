@@ -19,6 +19,8 @@
  **************************************************************************/
 
 #include "SerialServer.h"
+#include "CbobData.h"
+#include "UserProgram.h"
 #include <fcntl.h>
 
 #include <QtGlobal>
