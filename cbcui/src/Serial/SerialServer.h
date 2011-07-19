@@ -28,6 +28,7 @@
 #include <QDataStream>
 
 #include "SerialPort.h"
+#include "SharedMem.h"
 
 typedef struct {
     QStringList filenames;
@@ -120,6 +121,8 @@ private:
 	void kissReleaseRightCommand(const QByteArray& data);
 	void kissReleaseUpCommand(const QByteArray& data);
 	void kissReleaseDownCommand(const QByteArray& data);
+	
+	SharedMem<UIData>    m_uiData;
 };
 
 #endif
