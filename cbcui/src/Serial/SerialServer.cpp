@@ -88,6 +88,7 @@ void SerialServer::processTransfer(QByteArray& header)
 	compressedData.clear();
 	compressedData.squeeze();
 
+	qWarning("StartWord: %x", startWord);
 	if(startWord == SERIAL2_START) processData2(data); else processData(data);
 }
 
@@ -160,20 +161,20 @@ void SerialServer::writeFile(QString fileName, QByteArray& fileData)
         quint16     checksum = 2 bytes */
 bool SerialServer::readPacket(QByteArray *packetData)
 {
-   //qWarning("SerialServer::readPacket");
+   qWarning("SerialServer::readPacket");
     while(1){
         QByteArray data;
         quint32 key = 0;
         quint16 checksum = 0xFFFF;
         
-        //qWarning("reading stream");
+        qWarning("reading stream");
         m_stream >> key;
-        //qWarning("checking key");
+        qWarning("checking key");
         if (key == HEADER_KEY) {
             m_stream >> data;
             m_stream >> checksum;
-            //qWarning("data.size()=%d", data.size());
-            //qWarning("checksum=%x", checksum);
+            qWarning("data.size()=%d", data.size());
+            qWarning("checksum=%x", checksum);
             if(checksum == qChecksum(data, data.size())) {
                 *packetData = data;
                 sendOk();
@@ -182,7 +183,7 @@ bool SerialServer::readPacket(QByteArray *packetData)
         }
         m_stream.skipRawData(512);
         m_stream.resetStatus();
-        //qWarning("Retry...");
+        qWarning("Retry...");
         if(m_quit) return false;
     }
     return false;
