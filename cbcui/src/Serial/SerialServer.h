@@ -52,6 +52,7 @@ typedef struct {
 #define KISS_STOP_COMMAND 		5
 #define KISS_EXECUTE_COMMAND 		6
 #define KISS_COMPILE_COMMAND 		7
+#define KISS_CREATE_PROJECT_COMMAND 	8
 
 #define CBC_LS_RESULT 			128
 #define CBC_EXECUTE_RESULT 		129
