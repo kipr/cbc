@@ -56,8 +56,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	QObject::connect(UserProgram::instance(), SIGNAL(loadedState(bool)), ui_runstopButton, SLOT(setEnabled(bool)));
 	QObject::connect(UserProgram::instance(), SIGNAL(stateChange(int)), this, SLOT(userProgramStateChange(int)));
 
-	connect();
-
 	updateBatteryDisplay();
 
 	CbobData::instance()->resetPullups();
