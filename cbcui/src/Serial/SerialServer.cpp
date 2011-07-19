@@ -215,6 +215,7 @@ void SerialServer::kissExecuteCommand(const QByteArray& data)
 
 void SerialServer::kissCompileCommand(const QByteArray& data)
 {
+	qWarning() << "Emitting downloadFinished.";
 	emit downloadFinished(QString(data.data()));
 }
 
