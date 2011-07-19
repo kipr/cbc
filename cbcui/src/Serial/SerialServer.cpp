@@ -74,7 +74,7 @@ void SerialServer::processTransfer(QByteArray& header)
 	headerStream >> startWord;
 	headerStream >> packetCount;
 
-	if(startWord != SERIAL_START || startWord != SERIAL2_START) return;
+	if(startWord != SERIAL_START && startWord != SERIAL2_START) return;
 	qWarning("StartWord: %x", startWord);
 
 
