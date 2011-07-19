@@ -197,12 +197,12 @@ void SerialServer::kissLsCommand(const QByteArray& data)
 void SerialServer::kissRunCommand(const QByteArray& data)
 {
 	qWarning() << "KISS_RUN_COMMAND";
-	emit run();	
+	emit runProgram();	
 }
 
 void SerialServer::kissStopCommand(const QByteArray& data)
 {
-	emit stop();
+	emit stopProgram();
 }
 
 void SerialServer::kissExecuteCommand(const QByteArray& data)
