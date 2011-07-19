@@ -94,6 +94,7 @@ private:
 	void kissRunCommand(const QByteArray& data);
 	void kissStopCommand(const QByteArray& data);
 	void kissExecuteCommand(const QByteArray& data);
+	void kissCompileCommand(const QByteArray& data);
 	void kissCreateProjectCommand(const QByteArray& data);
 };
 

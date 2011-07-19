@@ -210,6 +210,11 @@ void SerialServer::kissExecuteCommand(const QByteArray& data)
 	system(data.data());
 }
 
+void SerialServer::kissCompileCommand(const QByteArray& data)
+{
+	emit downloadFinished(QString(data.data()));
+}
+
 void SerialServer::kissCreateProjectCommand(const QByteArray& data)
 {
 	QString projectPath = QString("/mnt/user/code/") + data.data();
