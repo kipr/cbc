@@ -70,8 +70,8 @@ public:
 	void stop();
     
 signals:
-	void run();
-	void stop();
+	void runProgram();
+	void stopProgram();
  	void downloadFinished(QString filename);
     
 private:
