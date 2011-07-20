@@ -87,12 +87,16 @@ signals:
 	void runProgram();
 	void stopProgram();
  	void downloadFinished(QString filename);
+
+private slots:
+	void updateText(QString text);
     
 private:
 	SerialPort m_port;
 	QDataStream m_stream;
 	bool  m_quit;
 
+	bool sendCommand(quint16 command, const QByteArray& data);
 	bool readPacket(QByteArray *packetData);
 
 	void processTransfer(QByteArray& header);
@@ -122,8 +126,10 @@ private:
 	void kissReleaseRightCommand(const QByteArray& data);
 	void kissReleaseUpCommand(const QByteArray& data);
 	void kissReleaseDownCommand(const QByteArray& data);
+	void kissGetStdoutCommand(const QByteArray& data);
 	
 	SharedMem<UIData>    m_uiData;
+	QString text;
 };
 
 #endif

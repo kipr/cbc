@@ -35,7 +35,9 @@ SerialServer::SerialServer(QObject *parent) : QThread(parent),
                                               m_stream(&m_port),
                                               m_quit(false),
 						m_uiData("/tmp/cbc_uidata")
-{}
+{ 
+	QObject::connect(UserProgram::instance(), SIGNAL(consoleOutput(QString)), this, SLOT(updateText(QString)));
+}
 
 SerialServer::~SerialServer() { stop(); }
 
@@ -58,6 +60,32 @@ void SerialServer::run()
 }
 
 void SerialServer::stop() { m_quit = true; while(isRunning()); }
+
+bool SerialServer::sendCommand(quint16 command, const QByteArray& data)
+{
+	QByteArray compressedData = qCompress(data, 9);
+
+	QList<QByteArray> dataChunks;
+	while(compressedData.size()) {
+		dataChunks.push_front(compressedData.right(32));
+		compressedData.chop(32);
+	}
+
+	compressedData.squeeze();
+
+	QByteArray header;
+	QDataStream stream(&header, QIODevice::WriteOnly);
+	stream << SERIAL_START;
+	stream << (quint16)dataChunks.size();
+	stream << command;
+
+	dataChunks.push_front(header);
+
+	for(int i = 0; i < dataChunks.size(); ++i) 
+		if(!writePacket(dataChunks[i])) return false;
+	
+	return true;
+}
 
 void SerialServer::processTransfer(QByteArray& header)
 {
@@ -113,6 +141,7 @@ void SerialServer::processData(quint16 command, QByteArray& data)
 	case KISS_RELEASE_RIGHT_COMMAND: kissReleaseRightCommand(data); break;
 	case KISS_RELEASE_UP_COMMAND: kissReleaseUpCommand(data); break;
 	case KISS_RELEASE_DOWN_COMMAND: kissReleaseDownCommand(data); break;
+	case KISS_GET_STDOUT_COMMAND: kissGetStdoutCommand(data); break;
 	}
 }
 
@@ -179,6 +208,8 @@ bool SerialServer::writePacket(QByteArray& data)
 	return false;
 }
 
+void SerialServer::updateText(QString text) { this->text += text; }
+
 void SerialServer::kissSendFileCommand(const QByteArray& data)
 {
 	qWarning() << "KISS_SEND_FILE_COMMAND";
@@ -242,3 +273,5 @@ void SerialServer::kissReleaseLeftCommand(const QByteArray& data) { m_uiData.sha
 void SerialServer::kissReleaseRightCommand(const QByteArray& data) { m_uiData.shared().right_button = 0; }
 void SerialServer::kissReleaseUpCommand(const QByteArray& data) { m_uiData.shared().up_button = 0; }
 void SerialServer::kissReleaseDownCommand(const QByteArray& data) { m_uiData.shared().down_button = 0; }
+void SerialServer::kissGetStdoutCommand(const QByteArray& data) { sendCommand(CBC_STDOUT_RESULT, text.toAscii()); }
+
