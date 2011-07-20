@@ -202,8 +202,8 @@ bool SerialServer::writePacket(QByteArray& data)
 {
 	m_stream.resetStatus();
 	for(int i = 0; i < SERIAL_MAX_RETRY; ++i) {
-		m_stream << 0xB0;
-		m_stream << 0x7BA11;
+		m_stream << SERIAL_KEY;
+		m_stream << SERIAL_KEY;
 		
 		qWarning("%x", SERIAL_KEY);
 		m_stream << data;
