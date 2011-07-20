@@ -68,8 +68,8 @@ bool SerialServer::sendCommand(quint16 command, const QByteArray& data)
 
 	QList<QByteArray> dataChunks;
 	while(compressedData.size()) {
-		dataChunks.push_front(compressedData.right(64));
-		compressedData.chop(64);
+		dataChunks.push_front(compressedData.right(128));
+		compressedData.chop(128);
 	}
 
 	compressedData.squeeze();
@@ -183,7 +183,7 @@ bool SerialServer::readPacket(QByteArray *packetData)
                 return true;
             }
         }
-        m_stream.skipRawData(512);
+        m_stream.skipRawData(1024);
         m_stream.resetStatus();
         qWarning("Retry...");
         if(m_quit) return false;
