@@ -93,6 +93,7 @@ signals:
  	void downloadFinished(QString filename);
 
 private slots:
+	void clearText();
 	void updateText(QString text);
     
 private:
