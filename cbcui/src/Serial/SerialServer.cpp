@@ -103,9 +103,7 @@ void SerialServer::processTransfer(QByteArray& header)
 	headerStream >> command;
 
 	if(startWord != SERIAL_START) return;
-	qWarning("StartWord: %x", startWord);
 
-	qWarning() << "Reading Header for command" << command;
 	QByteArray compressedData;
 	
 	for(quint16 i = 0;i < packetCount;i++) {
@@ -113,7 +111,6 @@ void SerialServer::processTransfer(QByteArray& header)
 		if(!readPacket(&data)) return;
 		compressedData += data;
 	}
-	qWarning() << "Uncompressing...";
 
 	QByteArray data = qUncompress(compressedData);
 	compressedData.clear();
@@ -163,20 +160,16 @@ void SerialServer::writeFile(QString fileName, QByteArray& fileData)
         quint16     checksum = 2 bytes */
 bool SerialServer::readPacket(QByteArray *packetData)
 {
-   qWarning("SerialServer::readPacket");
     while(1){
         QByteArray data;
         quint32 key = 0;
         quint16 checksum = 0xFFFF;
-        
-        qWarning("reading stream");
+       
         m_stream >> key;
-        qWarning("checking key");
         if (key == HEADER_KEY) {
             m_stream >> data;
             m_stream >> checksum;
             qWarning("data.size()=%d", data.size());
-            qWarning("checksum=%x", checksum);
             if(checksum == qChecksum(data, data.size())) {
                 *packetData = data;
                 sendOk();
