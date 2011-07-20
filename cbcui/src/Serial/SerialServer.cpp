@@ -80,6 +80,8 @@ bool SerialServer::sendCommand(quint16 command, const QByteArray& data)
 	stream << command;
 
 	dataChunks.push_front(header);
+	
+	qWarning() << "Writing" << command << " with " << data;
 
 	for(int i = 0; i < dataChunks.size(); ++i) 
 		if(!writePacket(dataChunks[i])) return false;
