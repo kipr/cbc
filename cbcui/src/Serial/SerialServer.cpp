@@ -68,8 +68,8 @@ bool SerialServer::sendCommand(quint16 command, const QByteArray& data)
 
 	QList<QByteArray> dataChunks;
 	while(compressedData.size()) {
-		dataChunks.push_front(compressedData.right(32));
-		compressedData.chop(32);
+		dataChunks.push_front(compressedData.right(64));
+		compressedData.chop(64);
 	}
 
 	compressedData.squeeze();
