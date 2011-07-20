@@ -125,6 +125,7 @@ void SerialServer::processData(quint16 command, QByteArray& data)
 	
 	switch(command) {
 	case KISS_SEND_FILE_COMMAND: kissSendFileCommand(data); break;
+	case KISS_REQUEST_FILE_COMMAND: kissRequestFileCommand(data); break;
 	case KISS_RUN_COMMAND: kissRunCommand(data); break;
 	case KISS_STOP_COMMAND: kissStopCommand(data); break;
 	case KISS_COMPILE_COMMAND: kissCompileCommand(data); break;
@@ -211,7 +212,6 @@ void SerialServer::updateText(QString text) { this->text += text; }
 
 void SerialServer::kissSendFileCommand(const QByteArray& data)
 {
-	qWarning() << "KISS_SEND_FILE_COMMAND";
 	QString dest;
 	QByteArray fileData;
 	QDataStream stream(data);
@@ -223,32 +223,22 @@ void SerialServer::kissSendFileCommand(const QByteArray& data)
 
 void SerialServer::kissRequestFileCommand(const QByteArray& data)
 {
-		
+	QFile fin(data.data());
+	fin.open(QIODevice::ReadOnly);
+	sendCommand(CBC_REQUEST_FILE_RESULT, fin.readAll());
+	fin.close();
 }
 
 void SerialServer::kissLsCommand(const QByteArray& data)
 {
 }
 
-void SerialServer::kissRunCommand(const QByteArray& data)
-{
-	qWarning() << "KISS_RUN_COMMAND";
-	emit runProgram();	
-}
-
-void SerialServer::kissStopCommand(const QByteArray& data)
-{
-	emit stopProgram();
-}
-
-void SerialServer::kissExecuteCommand(const QByteArray& data)
-{
-	system(data.data());
-}
+void SerialServer::kissRunCommand(const QByteArray& data) { emit runProgram(); }
+void SerialServer::kissStopCommand(const QByteArray& data) { emit stopProgram(); }
+void SerialServer::kissExecuteCommand(const QByteArray& data) { system(data.data()); }
 
 void SerialServer::kissCompileCommand(const QByteArray& data)
 {
-	qWarning() << "Emitting downloadFinished.";
 	QProcess::startDetached("aplay /mnt/kiss/sounds/downloading.wav");
 	emit downloadFinished(QString(data.data()));
 }
@@ -277,40 +267,40 @@ void SerialServer::kissGetStateCommand(const QByteArray& data)
 {
 	QMap<QString, QString> state;
 	
-	state["a_button"] = QString::number(m_uiData.shared().a_button);
-	state["b_button"] = QString::number(m_uiData.shared().b_button);
-	state["left_button"] = QString::number(m_uiData.shared().left_button);
-	state["right_button"] = QString::number(m_uiData.shared().right_button);
-	state["up_button"] = QString::number(m_uiData.shared().up_button);
-	state["down_button"] = QString::number(m_uiData.shared().down_button);
-	state["analog 0"] = QString::number(CbobData::instance()->analog(0));
-	state["analog 1"] = QString::number(CbobData::instance()->analog(1));
-	state["analog 2"] = QString::number(CbobData::instance()->analog(2));
-	state["analog 3"] = QString::number(CbobData::instance()->analog(3));
-	state["analog 4"] = QString::number(CbobData::instance()->analog(4));
-	state["analog 5"] = QString::number(CbobData::instance()->analog(5));
-	state["analog 6"] = QString::number(CbobData::instance()->analog(6));
-	state["analog 7"] = QString::number(CbobData::instance()->analog(7));
-	state["digital 0"] = QString::number(CbobData::instance()->digital(0));
-	state["digital 1"] = QString::number(CbobData::instance()->digital(1));
-	state["digital 2"] = QString::number(CbobData::instance()->digital(2));
-	state["digital 3"] = QString::number(CbobData::instance()->digital(3));
-	state["digital 4"] = QString::number(CbobData::instance()->digital(4));
-	state["digital 5"] = QString::number(CbobData::instance()->digital(5));
-	state["digital 6"] = QString::number(CbobData::instance()->digital(6));
-	state["digital 7"] = QString::number(CbobData::instance()->digital(7));
-	state["motor 0"] = QString::number(CbobData::instance()->motorPWM(0));
-	state["motor 1"] = QString::number(CbobData::instance()->motorPWM(1));
-	state["motor 2"] = QString::number(CbobData::instance()->motorPWM(2));
-	state["motor 3"] = QString::number(CbobData::instance()->motorPWM(3));
-	state["motor 0 position"] = QString::number(CbobData::instance()->motorPosition(0));
-	state["motor 1 position"] = QString::number(CbobData::instance()->motorPosition(1));
-	state["motor 2 position"] = QString::number(CbobData::instance()->motorPosition(2));
-	state["motor 3 position"] = QString::number(CbobData::instance()->motorPosition(3));
-	state["accel x"] = QString::number(CbobData::instance()->accelerometerX());
-	state["accel y"] = QString::number(CbobData::instance()->accelerometerY());
-	state["accel z"] = QString::number(CbobData::instance()->accelerometerZ());
-	state["battery"] = QString::number(CbobData::instance()->batteryVoltage(),'f',3);
+	state["A Button"] = QString::number(m_uiData.shared().a_button);
+	state["B Button"] = QString::number(m_uiData.shared().b_button);
+	state["Left Button"] = QString::number(m_uiData.shared().left_button);
+	state["Right Button"] = QString::number(m_uiData.shared().right_button);
+	state["Up Button"] = QString::number(m_uiData.shared().up_button);
+	state["Down Button"] = QString::number(m_uiData.shared().down_button);
+	state["Analog 0"] = QString::number(CbobData::instance()->analog(0));
+	state["Analog 1"] = QString::number(CbobData::instance()->analog(1));
+	state["Analog 2"] = QString::number(CbobData::instance()->analog(2));
+	state["Analog 3"] = QString::number(CbobData::instance()->analog(3));
+	state["Analog 4"] = QString::number(CbobData::instance()->analog(4));
+	state["Analog 5"] = QString::number(CbobData::instance()->analog(5));
+	state["Analog 6"] = QString::number(CbobData::instance()->analog(6));
+	state["Analog 7"] = QString::number(CbobData::instance()->analog(7));
+	state["Digital 0"] = QString::number(CbobData::instance()->digital(0));
+	state["Digital 1"] = QString::number(CbobData::instance()->digital(1));
+	state["Digital 2"] = QString::number(CbobData::instance()->digital(2));
+	state["Digital 3"] = QString::number(CbobData::instance()->digital(3));
+	state["Digital 4"] = QString::number(CbobData::instance()->digital(4));
+	state["Digital 5"] = QString::number(CbobData::instance()->digital(5));
+	state["Digital 6"] = QString::number(CbobData::instance()->digital(6));
+	state["Digital 7"] = QString::number(CbobData::instance()->digital(7));
+	state["Motor 0"] = QString::number(CbobData::instance()->motorPWM(0));
+	state["Motor 1"] = QString::number(CbobData::instance()->motorPWM(1));
+	state["Motor 2"] = QString::number(CbobData::instance()->motorPWM(2));
+	state["Motor 3"] = QString::number(CbobData::instance()->motorPWM(3));
+	state["Motor 0 Position"] = QString::number(CbobData::instance()->motorPosition(0));
+	state["Motor 1 Position"] = QString::number(CbobData::instance()->motorPosition(1));
+	state["Motor 2 Position"] = QString::number(CbobData::instance()->motorPosition(2));
+	state["Motor 3 Position"] = QString::number(CbobData::instance()->motorPosition(3));
+	state["Accel x"] = QString::number(CbobData::instance()->accelerometerX());
+	state["Accel y"] = QString::number(CbobData::instance()->accelerometerY());
+	state["Accel z"] = QString::number(CbobData::instance()->accelerometerZ());
+	state["Battery"] = QString::number(CbobData::instance()->batteryVoltage(),'f',3);
 	
 	QByteArray mapData;
 	QDataStream mapStream(&mapData, QIODevice::WriteOnly);
