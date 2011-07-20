@@ -198,8 +198,6 @@ bool SerialServer::writePacket(QByteArray& data)
 	m_stream.resetStatus();
 	for(int i = 0; i < SERIAL_MAX_RETRY; ++i) {
 		m_stream << SERIAL_KEY;
-		
-		qWarning("%x", SERIAL_KEY);
 		m_stream << data;
 		m_stream << qChecksum(data.constData(), data.size());
 		if(checkOk()) return true;
