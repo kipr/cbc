@@ -72,7 +72,7 @@ typedef struct {
 
 #define CBC_LS_RESULT 			128
 #define CBC_EXECUTE_RESULT 		129
-#define CBC_COMPILE_RESULT 		130
+#define CBC_COMPILE_SUCCESS_RESULT 	130
 #define CBC_STATE_RESULT 		131
 #define CBC_STDOUT_RESULT 		132
 
