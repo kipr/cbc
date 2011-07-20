@@ -131,6 +131,7 @@ private:
 	void kissReleaseRightCommand(const QByteArray& data);
 	void kissReleaseUpCommand(const QByteArray& data);
 	void kissReleaseDownCommand(const QByteArray& data);
+	void kissGetStateCommand(const QByteArray& data);
 	void kissGetStdoutCommand(const QByteArray& data);
 	
 	SharedMem<UIData>    m_uiData;
