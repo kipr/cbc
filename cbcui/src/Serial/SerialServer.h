@@ -67,10 +67,14 @@ typedef struct {
 #define KISS_RELEASE_RIGHT_COMMAND 	18
 #define KISS_RELEASE_UP_COMMAND 	19
 #define KISS_RELEASE_DOWN_COMMAND 	20
+#define KISS_GET_STATE_COMMAND 		21
+#define KISS_GET_STDOUT_COMMAND 	22
 
 #define CBC_LS_RESULT 			128
 #define CBC_EXECUTE_RESULT 		129
 #define CBC_COMPILE_RESULT 		130
+#define CBC_STATE_RESULT 		131
+#define CBC_STDOUT_RESULT 		132
 
 class SerialServer : public QThread
 {
