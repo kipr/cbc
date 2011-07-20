@@ -287,12 +287,12 @@ void SerialServer::kissGetStateCommand(const QByteArray& data)
 {
 	QMap<QString, QString> state;
 	
-	state["a_button"] = QString::number(m_uiData.shared().a_button));
-	state["b_button"] = QString::number(m_uiData.shared().b_button));
-	state["left_button"] = QString::number(m_uiData.shared().left_button));
-	state["right_button"] = QString::number(m_uiData.shared().right_button));
-	state["up_button"] = QString::number(m_uiData.shared().up_button));
-	state["down_button"] = QString::number(m_uiData.shared().down_button));
+	state["a_button"] = QString::number(m_uiData.shared().a_button);
+	state["b_button"] = QString::number(m_uiData.shared().b_button);
+	state["left_button"] = QString::number(m_uiData.shared().left_button);
+	state["right_button"] = QString::number(m_uiData.shared().right_button);
+	state["up_button"] = QString::number(m_uiData.shared().up_button);
+	state["down_button"] = QString::number(m_uiData.shared().down_button);
 	state["analog 0"] = QString::number(CbobData::instance()->analog(0));
 	state["analog 1"] = QString::number(CbobData::instance()->analog(1));
 	state["analog 2"] = QString::number(CbobData::instance()->analog(2));
