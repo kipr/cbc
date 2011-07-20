@@ -189,10 +189,11 @@ bool SerialServer::readPacket(QByteArray *packetData)
     return false;
 }
 
-void SerialServer::sendOk() { m_stream << SERIAL_MESSAGE_OK; }
+void SerialServer::sendOk() { qWarning() << "OK";  m_stream << SERIAL_MESSAGE_OK; }
 
 bool SerialServer::checkOk()
 {
+	qWarning() << "OK?"; 
 	quint8 ret = 0;
 	m_stream >> ret;
 	return ret == SERIAL_MESSAGE_OK;
