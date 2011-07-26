@@ -1,4 +1,4 @@
-UPGRADEFILE = CBC_interface 
+UPGRADEFILE = CBC_interface
 cbc_interface: cbc_interface.body make-cbc_interface.pl filesystems
 	ln -sf ../kiss-ext2/FIRMWARE_VERSION .
 	ln -sf ../kiss-ext2/cbc_boot .
