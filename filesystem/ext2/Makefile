@@ -95,6 +95,8 @@ filesystem: gcc qt jvm
 	(cd $(LIBCBC_DIR); rsync -a libcbc.a              	       $(DEST)/usercode/lib)
 	(cd $(LIBCBC_DIR)/src; rsync -a cbcserial.h compat.h create.h $(DEST)/usercode/include)
 	(cd $(LIBCBC_DIR)/src; rsync -a process.h botball.h cbc.h  $(DEST)/usercode/include)
+	(cd $(LIBCBC_DIR)/src; rsync -a cbc2cxx.h $(DEST)/usercode/include)
+	
 
 	# CBC graphical interface
 	make -C $(CBC_GUI_DIR)

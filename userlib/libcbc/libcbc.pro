@@ -19,6 +19,7 @@ HEADERS += src/cbc.h \
            src/process.h \
            src/cbcserial.h \
            src/create.h \
+           src/cbc2cxx.h \
            ../shared_mem/shared_mem.h
 SOURCES += src/botball.c \ 
            src/cbc.c \
