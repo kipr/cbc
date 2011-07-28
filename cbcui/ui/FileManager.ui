@@ -216,7 +216,7 @@ color:white;
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="ui_stage">
+      <widget class="QPushButton" name="ui_stageButton">
        <property name="minimumSize">
         <size>
          <width>80</width>

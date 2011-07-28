@@ -343,7 +343,7 @@ void FileManager::on_ui_stageButton_clicked()
 	if(!QDir(STAGE_PATH).exists()) QDir(DEFAULT_PATH).mkdir("stage");
 	if(QFile::copy(info.filePath(), QString(STAGE_PATH) + info.fileName()))
 		QMessageBox::information(this, "Stage", "File is ready for transfer.");
-	else QMessageBox::error(this, "Stage", "File copy failed.");
+	else QMessageBox::warning(this, "Stage", "File copy failed.");
 }
 
 // stop playing sound file
