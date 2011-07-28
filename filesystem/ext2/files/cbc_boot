@@ -43,9 +43,7 @@ if [ ${CBC_DEBUG} -ge 1 ]; then
 	echo "CBC Firmware Version $VERSION" | $PRINT --echo
 else
     PRINT=echo
-    echo 1 > /proc/driver/imxfb/enable
-    echo 0xFF > /proc/driver/imxfb/alpha
-    dd if=$KISS/images/splash_screen.bin of=/dev/fb1
+    dd if=$KISS/images/splash_screen.bin of=/dev/fb0
 fi
 
 #######################################
