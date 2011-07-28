@@ -158,9 +158,9 @@ namespace Vision {
 	};
 	
 	struct Camera {
-		Camera() : m_channels((Channel[4]) { Channel(0), Channel(1), Channel(2), Channel(3) }) { init(); }
+		Camera() : m_channels((Channel[4]) { Channel(0), Channel(1), Channel(2), Channel(3) }) {}
 
-		int update() { return track_update(); }
+		void update() { track_update(); }
 		int getFrame() { return track_get_frame(); }
 
 		int getTimeSinceCapture() { return track_capture_time(); }
@@ -168,8 +168,6 @@ namespace Vision {
 		Channel& getChannel(int ch) { return m_channels[ch]; }
 
 	private:
-		int init() { return init_camera(); }
-
 		Channel m_channels[4];
 	};
 }
@@ -346,12 +344,10 @@ struct Create {
 	CreateSensor::PlayButton getPlayButton(float lag = 0.1) const { return CreateSensor::PlayButton(lag); }
 	
 	int getDistance(float lag = 0.1) { return get_create_distance(lag); }
-	int getIncrementalDistance(float lag = 0.1) { return get_create_incremental_distance(lag); }
 	void setDistance(int dist) { set_create_distance(dist); }
 	
 	int getNormalizedAngle(float lag = 0.1) { return get_create_normalized_angle(lag); }
 	int getTotalAngle(float lag = 0.1) { return get_create_total_angle(lag); }
-	int getIncrementalAngle(float lag = 0.1) { return get_create_incremental_angle(lag); }
 	void setNormalizedAngle(int a) { set_create_normalized_angle(a); }
 	void setTotalAngle(int a) { set_create_total_angle(a); }
 	

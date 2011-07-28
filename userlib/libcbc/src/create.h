@@ -156,7 +156,7 @@ int get_create_song_playing(float lag);
 int get_create_number_of_stream_packets(float lag);
 int get_create_requested_velocity(float lag);
 int get_create_requested_radius(float lag);
-int get_create_requested__right_velocity(float lag);
+int get_create_requested_right_velocity(float lag);
 int get_create_requested_left_velocity(float lag);
 void create_stop();
 void create_drive (int speed, int radius);
