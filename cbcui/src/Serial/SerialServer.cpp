@@ -230,11 +230,11 @@ void SerialServer::kissRequestFileCommand(const QByteArray& data)
 	fin.close();
 }
 
-void SerialServer::kissLsCommand(const QByteArray& data)
+void SerialServer::kissLsCommand(const QByteArray& filename)
 {
 	QByteArray data;
 	QDataStream stream(&data, QIODevice::WriteOnly);
-	stream << QDir(QString(data)).entryList(QDir::Files);
+	stream << QDir(QString(filename)).entryList(QDir::Files);
 	sendCommand(CBC_LS_RESULT, data);
 }
 
