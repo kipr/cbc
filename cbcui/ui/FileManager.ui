@@ -216,6 +216,44 @@ color:white;
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="ui_stage">
+       <property name="minimumSize">
+        <size>
+         <width>80</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton{
+border:0px;
+background-image:url(:/actions/rivet80x30L.png);
+color:black;
+}
+QPushButton:pressed{
+border:0px;
+background-image:url(:/actions/rivet80x30D.png);
+color:white;
+}</string>
+       </property>
+       <property name="text">
+        <string>Stage</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QPushButton" name="ui_copyButton">
        <property name="minimumSize">
         <size>

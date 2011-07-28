@@ -126,6 +126,7 @@ void SerialServer::processData(quint16 command, QByteArray& data)
 	switch(command) {
 	case KISS_SEND_FILE_COMMAND: kissSendFileCommand(data); break;
 	case KISS_REQUEST_FILE_COMMAND: kissRequestFileCommand(data); break;
+	case KISS_LS_COMMAND: kissLsCommand(data); break;
 	case KISS_RUN_COMMAND: kissRunCommand(data); break;
 	case KISS_STOP_COMMAND: kissStopCommand(data); break;
 	case KISS_COMPILE_COMMAND: kissCompileCommand(data); break;
@@ -231,6 +232,10 @@ void SerialServer::kissRequestFileCommand(const QByteArray& data)
 
 void SerialServer::kissLsCommand(const QByteArray& data)
 {
+	QByteArray data;
+	QDataStream stream(&data, QIODevice::WriteOnly);
+	stream << QDir(QString(data)).entryList(QDir::Files);
+	sendCommand(CBC_LS_RESULT, data);
 }
 
 void SerialServer::kissRunCommand(const QByteArray& data) { emit runProgram(); }

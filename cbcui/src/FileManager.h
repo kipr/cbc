@@ -51,31 +51,31 @@ class CopyDialog : public QDialog
 
 class FileManager : public Page, private Ui::FileManager
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    FileManager(QWidget *parent = 0);
-    ~FileManager();
+	FileManager(QWidget *parent = 0);
+	~FileManager();
 
-    bool isUSBMounted();
-    
+	bool isUSBMounted();
+
 public slots:
-    void on_ui_directoryBrowser_clicked(const QModelIndex &index);
-    void on_ui_directoryBrowser_entered(const QModelIndex &index);
-    void on_ui_homeButton_clicked();
-    void on_ui_mountButton_clicked();
-    void on_ui_actionButton_clicked();
-    void on_ui_stopButton_clicked();
-    void on_ui_copyButton_clicked();
-    void on_ui_deleteButton_clicked();
-    void updateGUI();
+	void on_ui_directoryBrowser_clicked(const QModelIndex &index);
+	void on_ui_directoryBrowser_entered(const QModelIndex &index);
+	void on_ui_homeButton_clicked();
+	void on_ui_mountButton_clicked();
+	void on_ui_actionButton_clicked();
+	void on_ui_stageButton_clicked();
+	void on_ui_stopButton_clicked();
+	void on_ui_copyButton_clicked();
+	void on_ui_deleteButton_clicked();
+	void updateGUI();
 
 private:
 	Compiler             m_compiler;
 	QFileSystemModel    m_dir;
 	QModelIndex         m_index;
 	bool m_compile;
-    //QStringList         m_usbMounts;
 };
 
 #endif

@@ -28,6 +28,7 @@
 #define INTERNAL_USER_PATH "/mnt/browser/code"
 #define USB_USER_PATH "/mnt/browser/usb"
 #define COMPILERS_PATH "/mnt/kiss/usercode/compilers/"
+#define STAGE_PATH "/mnt/browser/stage/"
 
 ////////////////////////////////////////
 //  copy dialog setup
@@ -147,6 +148,7 @@ void FileManager::updateGUI()
     if(m_dir.isDir(m_index)) {
         ui_actionButton->setText("Open");
         ui_actionButton->show();
+	ui_stageButton->hide();
         ui_stopButton->hide();
 
         if(indexName == DEFAULT_PATH ||
@@ -166,6 +168,7 @@ void FileManager::updateGUI()
     else {
         QString filename = m_dir.fileName(m_index);
         // ui_copyButton->show();   // uncomment to allow copy
+	ui_stageButton->show();
         ui_deleteButton->show();
 
 	const QStringList& validExts = QDir(COMPILERS_PATH).entryList(QDir::Files | QDir::NoDotAndDotDot);
@@ -332,6 +335,15 @@ void FileManager::on_ui_actionButton_clicked()
         }
     }
     this->updateGUI();
+}
+
+void FileManager::on_ui_stageButton_clicked()
+{
+	QFileInfo info(m_dir.filePath(ui_directoryBrowser->currentIndex()));
+	if(!QDir(STAGE_PATH).exists()) QDir(DEFAULT_PATH).mkdir("stage");
+	if(QFile::copy(info.filePath(), QString(STAGE_PATH) + info.fileName()))
+		QMessageBox::information(this, "Stage", "File is ready for transfer.");
+	else QMessageBox::error(this, "Stage", "File copy failed.");
 }
 
 // stop playing sound file
