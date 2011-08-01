@@ -145,6 +145,7 @@ void SerialServer::processData(quint16 command, QByteArray& data)
 	case KISS_RELEASE_DOWN_COMMAND: kissReleaseDownCommand(data); break;
 	case KISS_GET_STATE_COMMAND: kissGetStateCommand(data); break;
 	case KISS_GET_STDOUT_COMMAND: kissGetStdoutCommand(data); break;
+	case KISS_DELETE_FILE_COMMAND: kissDeleteFileCommand(data); break;
 	}
 }
 
@@ -314,4 +315,4 @@ void SerialServer::kissGetStateCommand(const QByteArray& data)
 }
 
 void SerialServer::kissGetStdoutCommand(const QByteArray& data) { sendCommand(CBC_STDOUT_RESULT, text.toAscii()); text.clear(); }
-
+void SerialServer::kissDeleteFileCommand(const QByteArray& data) { QFile::remove(QString(data)); }
