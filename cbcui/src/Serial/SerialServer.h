@@ -70,6 +70,7 @@ typedef struct {
 #define KISS_GET_STATE_COMMAND 		21
 #define KISS_GET_STDOUT_COMMAND 	22
 #define KISS_DELETE_FILE_COMMAND 	23
+#define KISS_MKDIR_COMMAND 		24
 
 #define CBC_REQUEST_FILE_RESULT 	127
 #define CBC_LS_RESULT 			128
@@ -136,6 +137,7 @@ private:
 	void kissGetStateCommand(const QByteArray& data);
 	void kissGetStdoutCommand(const QByteArray& data);
 	void kissDeleteFileCommand(const QByteArray& data);
+	void kissMkdirCommand(const QByteArray& data);
 	
 	SharedMem<UIData>    m_uiData;
 	QString text;
