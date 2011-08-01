@@ -7,8 +7,9 @@ NAME=$DIR/robot_name.txt
 rm -rf $DIR
 mkdir -p $DIR
 
-echo "Compiling ${1}" 
-/mnt/kiss/usercode/g++-usercode -I${FOLDER} "${1}" -o $PROG 2>&1
+echo "Compiling ${1}"
+FOLDER="${1%/*}"
+/mnt/kiss/usercode/g++-usercode "-I${FOLDER}" "${1}" -o $PROG 2>&1
 if [ -e $PROG ]; then
   echo "Compile succeeded." 
   echo "${1}" > $NAME
