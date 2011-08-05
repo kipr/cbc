@@ -93,6 +93,7 @@ bool SerialServer::sendCommand(quint16 command, const QByteArray& data)
 void SerialServer::processTransfer(QByteArray& header)
 {
 	QDataStream headerStream(&header, QIODevice::ReadOnly);
+	bool old = false;
 
 	quint16 startWord;
 	quint16 packetCount;
@@ -100,7 +101,8 @@ void SerialServer::processTransfer(QByteArray& header)
 
 	headerStream >> startWord;
 	headerStream >> packetCount;
-	headerStream >> command;
+	if(headerStream.atEnd()) old = true;
+	else headerStream >> command;
 
 	if(startWord != SERIAL_START) return;
 
@@ -116,7 +118,7 @@ void SerialServer::processTransfer(QByteArray& header)
 	compressedData.clear();
 	compressedData.squeeze();
 	
-	processData(command, data);
+	if(!old) processData(command, data); else processDataOld(data);
 }
 
 void SerialServer::processData(quint16 command, QByteArray& data)
@@ -148,6 +150,53 @@ void SerialServer::processData(quint16 command, QByteArray& data)
 	case KISS_DELETE_FILE_COMMAND: kissDeleteFileCommand(data); break;
 	case KISS_MKDIR_COMMAND: kissMkdirCommand(data); break;
 	}
+}
+
+void SerialServer::processDataOld(QByteArray& data)
+{
+	
+	qWarning() << "RECV OLD" << data;
+
+	QDataStream dataStream(&data, QIODevice::ReadOnly);
+
+	QString fileName;
+	QByteArray fileData;
+
+	dataStream >> fileName;
+	dataStream >> fileData;
+
+	if(fileName.isEmpty()) return;
+
+	QFileInfo fileInfo(fileName);
+
+	QString projectPath = createProject(fileInfo.baseName());
+	writeFile(projectPath + "/" + fileName, fileData);
+
+	QString mainFilePath = projectPath + "/" + fileName;
+
+	while(dataStream.status() == QDataStream::Ok) {
+		fileName.clear();
+		fileData.clear();
+
+		dataStream >> fileName;
+		dataStream >> fileData;
+
+		if(!fileName.isEmpty()) {
+			writeFile(projectPath + "/" + fileName, fileData);
+		}
+	}
+
+	emit downloadFinished(mainFilePath);
+}
+
+QString SerialServer::createProject(const QString& projectName)
+{
+	const QString& projectPath = "/mnt/user/code/" + projectName;
+
+	system(("rm -rf \""   + projectPath + "\"").toLocal8Bit());
+	system(("mkdir -p \"" + projectPath + "\"").toLocal8Bit());
+
+	return projectPath;
 }
 
 void SerialServer::writeFile(QString fileName, QByteArray& fileData)

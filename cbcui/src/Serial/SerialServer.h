@@ -108,6 +108,8 @@ private:
 	bool readPacket(QByteArray *packetData);
 
 	void processTransfer(QByteArray& header);
+	void processDataOld(QByteArray& data);
+	QString createProject(const QString& projectName);
 	void processData(quint16 command, QByteArray& data);
 	void writeFile(QString fileName, QByteArray& fileData);
 	void sendOk();
