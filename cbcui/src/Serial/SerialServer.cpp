@@ -131,6 +131,7 @@ void SerialServer::processData(quint16 command, QByteArray& data)
 	case KISS_LS_COMMAND: kissLsCommand(data); break;
 	case KISS_RUN_COMMAND: kissRunCommand(data); break;
 	case KISS_STOP_COMMAND: kissStopCommand(data); break;
+	case KISS_EXECUTE_COMMAND: kissExecuteCommand(data); break;
 	case KISS_COMPILE_COMMAND: kissCompileCommand(data); break;
 	case KISS_CREATE_PROJECT_COMMAND: kissCreateProjectCommand(data); break;
 	case KISS_PRESS_A_COMMAND: kissPressACommand(data); break;
