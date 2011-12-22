@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # get the device the internal usb drive is mounted on
-INTUSB=`ls -l /dev/disk/by-label/rfs_boot | awk '{print $11}'`
+INTUSB=`ls -l /dev/disk/by-label/kissys | awk '{print $11}' | sed 's/[0-9]*//g'`
 INTUSB=${INTUSB#../../}
 
 # make sure there is an argument containing a mount path
@@ -25,7 +25,7 @@ USBFOLDER=$1
 for dev in sda sdb sdc sdd;
 do
     # ignore the internal usb device
-    if [ "${INTUSB}" = "${dev}1" ]; then
+    if [ "${INTUSB}1" = "${dev}1" ]; then
 	continue
     fi
     
