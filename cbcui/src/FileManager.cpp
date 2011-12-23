@@ -175,7 +175,14 @@ void FileManager::updateGUI()
 	// qWarning() << validExts;
 
 	m_compile = false;
-        if(validExts.contains(filename.section(".", 1))){
+	bool shouldCompile = false;
+	foreach(const QString& ext, validExts) {
+		if(filename.endsWith(QString(".") + ext)) {
+			shouldCompile = true;
+			break;
+		}
+	}
+        if(shouldCompile) {
 		ui_actionButton->setText("Compile");
 		ui_actionButton->show();
 		ui_stopButton->hide();
