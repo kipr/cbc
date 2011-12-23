@@ -9,7 +9,7 @@ mkdir -p $DIR
 
 echo "Compiling ${1}"
 FOLDER="${1%/*}"
-/mnt/kiss/usercode/gcc-usercode "-I${FOLDER}" "${1}" -o $PROG 2>&1
+/mnt/kiss/usercode/gcc-usercode "-I${FOLDER}" "\"${1}\"" -o $PROG 2>&1
 if [ -e $PROG ]; then
   echo "Compile succeeded." 
   echo "${1}" > $NAME
