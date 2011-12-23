@@ -1,5 +1,5 @@
 #!/bin/sh
-/mnt/kiss/gcc/bin/g++ -w -I/mnt/kiss/usercode/include -include track.h -include stdio.h -include unistd.h -include fcntl.h -include sys/types.h -include sys/socket.h -include netinet/in.h -include arpa/inet.h -include netdb.h -include errno.h -include string.h -include cbc.h -include compat.h -include process.h -include create.h -include botball.h -include cbc2cxx.h $@ /mnt/kiss/usercode/lib/init.o /mnt/kiss/usercode/lib/libcbc.a /mnt/kiss/usercode/lib/libtrack.a /mnt/kiss/usercode/lib/libshared.a -lpthread -lm
+/mnt/kiss/gcc/bin/g++ -w -I/mnt/kiss/usercode/include -include track.h -include stdio.h -include unistd.h -include fcntl.h -include sys/types.h -include sys/socket.h -include netinet/in.h -include arpa/inet.h -include netdb.h -include errno.h -include string.h -include cbc.h -include compat.h -include process.h -include create.h -include botball.h -include cbc2cxx.h "$@" /mnt/kiss/usercode/lib/init.o /mnt/kiss/usercode/lib/libcbc.a /mnt/kiss/usercode/lib/libtrack.a /mnt/kiss/usercode/lib/libshared.a -lpthread -lm
 sync
 sync
 
