@@ -278,7 +278,7 @@ void FileManager::on_ui_actionButton_clicked()
 		
 	const QStringList& validExts = QDir(COMPILERS_PATH).entryList(QDir::Files | QDir::NoDotAndDotDot);		
 		// file is a c program
-        if(validExts.contains(fileInfo.completeSuffix())){
+        if(validExts.contains(fileInfo.suffix())){
 
             // if the file to compile is on the external usb, copy it to the internal storage
             if(fileInfo.absolutePath().startsWith(USB_USER_PATH)){
