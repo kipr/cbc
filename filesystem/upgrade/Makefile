@@ -1,4 +1,5 @@
 UPGRADEFILE = CBC_interface
+OLDUPGRADEFILE = userhook0
 cbc_interface: cbc_interface.body make-cbc_interface.pl filesystems
 	ln -sf ../kiss-ext2/FIRMWARE_VERSION .
 	ln -sf ../kiss-ext2/cbc_boot .
@@ -18,10 +19,14 @@ cbc_interface: cbc_interface.body make-cbc_interface.pl filesystems
 
 	./make-cbc_interface.pl $(UPGRADEFILE) block_probe fb_print ext2.ko mkfs.ext2 mkdosfs ptable.bin cbc_boot config.tgz drivers.tgz wifi.tgz gui.tgz images.tgz sounds.tgz usercode.tgz qt.tgz gcc.tgz jvm.tgz
 
+	./make-cbc_interface.pl $(OLDUPGRADEFILE) block_probe fb_print ext2.ko mkfs.ext2 mkdosfs ptable.bin cbc_boot config.tgz drivers.tgz wifi.tgz gui.tgz images.tgz sounds.tgz usercode.tgz qt.tgz gcc.tgz jvm.tgz
+
 	 chmod a+x $(UPGRADEFILE)
+	 chmod a+x $(OLDUPGRADEFILE)
 
 filesystems:
 	make -C ../ext2
 
 clean:
-	rm -rf $(UPGRADEFILE) FIRMWARE_VERSION cbc_boot block_probe fb_print *.tgz 
+	rm -rf $(UPGRADEFILE) FIRMWARE_VERSION cbc_boot block_probe fb_print *.tgz
+	rm -rf $(OLDUPGRADEFILE) FIRMWARE_VERSION cbc_boot block_probe fb_print *.tgz 

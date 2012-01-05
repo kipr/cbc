@@ -166,6 +166,8 @@ insmod /drivers/snd-usb-lib.ko
 insmod /drivers/snd-hwdep.ko
 insmod /drivers/snd-usb-audio.ko
 
+echo 0 > /proc/chumby/touchscreen/touchclick
+
 echo "Startup btplay daemon" | $PRINT
 btplayd </dev/null >/dev/null 2>&1 &
 sleep 2
