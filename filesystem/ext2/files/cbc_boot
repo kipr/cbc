@@ -21,7 +21,6 @@ mkdir -p $EXTUSB
 # make sure a full reflash is possible with the CBC_interface on the root
 # of a usb drive and check for browser upgrades on the external usb
 
-sleep 5s # Wait for linux to make drives available
 for dev in sdb sdc sdd;
 do
 	# mount and look for a CBC_interface file on it's root
@@ -33,7 +32,7 @@ do
         # if the string is not null and the upgrade exists
 	# first word in the string ${string%% *} which is the location
 	elif [ -n "$BROWSER_UPGRADE" -a -e ${BROWSER_UPGRADE%% *} ]; then
-                ${BROWSER_UPGRADE} &
+                ${BROWSER_UPGRADE} --upgrade &
 		exit 0
 	fi
         umount $EXTUSB
