@@ -32,7 +32,7 @@ do
         # if the string is not null and the upgrade exists
 	# first word in the string ${string%% *} which is the location
 	elif [ -n "$BROWSER_UPGRADE" -a -e ${BROWSER_UPGRADE%% *} ]; then
-                ${BROWSER_UPGRADE} &
+                ${BROWSER_UPGRADE} --upgrade &
 		exit 0
 	fi
         umount $EXTUSB
