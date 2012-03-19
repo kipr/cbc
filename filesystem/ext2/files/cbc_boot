@@ -20,6 +20,8 @@ fi
 mkdir -p $EXTUSB
 # make sure a full reflash is possible with the CBC_interface on the root
 # of a usb drive and check for browser upgrades on the external usb
+
+sleep 5s # Wait for linux to make drives available
 for dev in sdb sdc sdd;
 do
 	# mount and look for a CBC_interface file on it's root
