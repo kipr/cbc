@@ -24,10 +24,6 @@ userlib/init/init.o
 filesystem/upgrade/vfat.tgz
 filesystem/upgrade/userhook0
 filesystem/upgrade/rcS
-filesystem/upgrade/ptable.bin
-filesystem/upgrade/mkfs.ext2
-filesystem/upgrade/mkdosfs
-filesystem/upgrade/fb_print
 filesystem/upgrade/ext2.tgz
 filesystem/upgrade/ext2.ko
 filesystem/upgrade/block_probe
